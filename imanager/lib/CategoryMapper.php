@@ -1,4 +1,4 @@
-<?php
+<?php namespace Imanager;
 
 class CategoryMapper
 {

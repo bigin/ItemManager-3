@@ -2,4 +2,5 @@
 
 //global $basedir;
 $basedir = __DIR__;
-include($basedir.'/imanager/_inc.php');
+include($basedir.'/imanager/inc/_inc.php');
+$imanager = imanager();

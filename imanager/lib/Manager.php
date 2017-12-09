@@ -1,4 +1,4 @@
-<?php
+<?php namespace Imanager;
 
 class Manager
 {
@@ -19,52 +19,9 @@ class Manager
 
 	public function __construct()
 	{
-		// set ItemManager-installed to false
-		self::$installed = false;
-		// initialize settup class
-		$this->config = new Setup();
-		// Deprecated check if the user inside admin panel (not really for security reasons, just to avoid the backend loading)
-		$this->is_admin_panel = false;
-		// start SETUP Procedure
-		if(!file_exists(ITEMDATA))
-		{
-			if($this->config->setup())
-				if(!file_exists(IM_CONFIG_FILE))
-				{
-					if($this->config->setupConfig())
-					{
-						$this->preferencesRefresh();
-						self::$installed = true;
-					}
-				}
-		} else
-		{
-			self::$installed = true;
-		}
-
-		// Admin only aktions
-		if(defined('IS_ADMIN_PANEL') && !$this->config->hiddeAdmin) {
-			$this->is_admin_panel = !empty(self::$installed) ? true : false;
-			// Initialize Admin
-			$this->setAdmin(new Admin());
-		}
-
-		// Set actions?
-		if(!empty($this->config->injectActions))
-		{
-			global $plugins;
-			$actions = array('ImActivated');
-			foreach($plugins as $key => $plugin)
-			{
-				if(in_array($plugin['hook'], $actions))
-				{
-					$plugins[$key]['args']['imanager'] = & $this;
-				}
-			}
-			$this->setActions();
-		}
-
+		$this->config = Util::buildConfig();
 		$this->sanitizer = new Sanitizer();
+		$this->setActions();
 	}
 
 
@@ -80,15 +37,6 @@ class Manager
 		global $plugins;
 		$actions = array('ImActivated');
 		if(function_exists('exec_action')) exec_action('ImActivated');
-	}
-
-
-	public function __call($method, $args)
-	{
-		//if($this->actionsProcessor === null)
-			//$this->actionsProcessor = new ActionsProcessor();
-		//return $this->actionsProcessor->{$method}($args);
-		//return $this->{$method}($args);
 	}
 
 

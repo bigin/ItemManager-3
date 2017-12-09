@@ -1,43 +1,18 @@
-<?php
-//namespace Imanager;
+<?php namespace Imanager;
 
 class Util
 {
 	/**
-	 * Function for checking session status
+	 * Build ItemManager configuration
 	 *
-	 * @return bool
+	 * @return Config object
 	 */
-	public static function is_session_started()
+	public static function buildConfig()
 	{
-		if(php_sapi_name() !== 'cli') {
-			if (version_compare(phpversion(), '5.4.0', '>='))
-			{
-				return session_status() === PHP_SESSION_ACTIVE ? true : false;
-			} else
-			{
-				return session_id() === '' ? false : true;
-			}
-		}
-		return false;
-	}
-
-	public static function reparse_url($parsed_url, $imcat)
-	{
-		$scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'].'://' : '';
-		$host     = isset($parsed_url['host'])   ? $parsed_url['host'] : '';
-		$path     = isset($parsed_url['path'])   ? $parsed_url['path'] : '';
-		$query    = isset($parsed_url['query'])  ? '?'.$parsed_url['query'] : '';
-		$pairs = explode('&', $query);
-		foreach($pairs as $pair)
-		{
-			$part = explode('=', $pair);
-			if($part[0] == 'page')
-			{
-				return ($scheme.$host.$path.'?id=imanager&cat='. $imcat->current_category().'&page=');
-			}
-		}
-		return ;
+		$config = new Config();
+		include(IM_ROOTPATH.'imanager/inc/config.php');
+		if(file_exists(IM_ROOTPATH.'imanager/inc/custom.config.php')) { include(IM_ROOTPATH.'imanager/inc/custom.config.php'); }
+		return $config;
 	}
 
 	public static function dataLog($data, $file = '')
@@ -88,4 +63,70 @@ class Util
 		header('Location: ' . htmlspecialchars($url), $flag, $statusCode);
 		die();
 	}
+
+	public static function exec_action($a)
+	{
+		global $plugins;
+
+		foreach ($plugins as $hook) {
+			if ($hook['hook'] == $a) {
+				call_user_func_array($hook['function'], $hook['args']);
+			}
+		}
+	}
+
+
+	public static function createBackup($path, $file, $suffix)
+	{
+		if(!file_exists($path.$file.$suffix)) return false;
+		$stamp = time();
+		if(!copy($path.$file.$suffix, IM_BACKUPPATH.'backup_'.$stamp.'_'.$file.$suffix)) return false;
+		self::deleteOutdatedBackups($suffix);
+		return true;
+	}
+
+
+	public static function deleteOutdatedBackups($suffix)
+	{
+		switch ($suffix)
+		{
+			case IM_FIELDS_SUFFIX:
+				$token = 'field';
+				break;
+			case IM_CATEGORY_SUFFIX:
+				$token = 'cat';
+				break;
+			case IM_ITEM_SUFFIX:
+				$token = 'item';
+				break;
+			default:
+				return false;
+		}
+		$min_days = (int)manager('config')->minBackupTimePeriod;
+		foreach(glob(IM_BACKUPPATH.'backup_*_*'.$suffix) as $file) {
+			if(self::isCacheFileExpired($file, $min_days)) { self::removeFilename($file);}
+		}
+	}
+
+	/**
+	 * Is the given backup filename expired?
+	 *
+	 * @param string $filename
+	 * @return bool
+	 *
+	 */
+	protected static function isCacheFileExpired($filename, $min_days)
+	{
+		if(!$mtime = @filemtime($filename)) return false;
+		if(($mtime + (60 * 60 * 24 * $min_days)) < time()) {
+			return true;
+		}
+		return false;
+	}
+
+
+	/**
+	 * Removes just the given file
+	 */
+	protected static function removeFilename($filename){@unlink($filename);}
 }

@@ -1,5 +1,6 @@
 <?php
 
+define('IS_IM', true);
 define('IM_ROOTPATH', $basedir.'/');
 define('IM_SOURCEPATH', IM_ROOTPATH.'imanager/lib/');
 define('IM_DATAPATH', IM_ROOTPATH.'data/');

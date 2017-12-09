@@ -1,4 +1,5 @@
-<?php
+<?php namespace Imanager;
+
 /**
  * ItemManager Sanitizer
  *

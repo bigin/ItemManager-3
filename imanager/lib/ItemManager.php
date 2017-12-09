@@ -1,4 +1,4 @@
-<?php
+<?php namespace Imanager;
 
 class ItemManager extends Manager
 {
@@ -11,22 +11,24 @@ class ItemManager extends Manager
 	public function __construct()
 	{
 		spl_autoload_register(array($this, 'loader'));
-		require_once(IM_SOURCE_DIR.'_Util.php');
-		require_once(IM_SOURCE_DIR . 'processors/FieldInterface.php');
-		require_once(IM_SOURCE_DIR . 'processors/InputInterface.php');
+
+		require_once(IM_SOURCEPATH.'processors/FieldInterface.php');
+		require_once(IM_SOURCEPATH.'processors/InputInterface.php');
+
 		self::$counter++;
 		parent::__construct();
 	}
 
 	/**
 	 * Autoload method
-	 * @param $classPattern
+	 * @param $lclass - Class pattern
 	 */
-	private function loader($classPattern)
+	private function loader($lclass)
 	{
-		$classPath = IM_SOURCE_DIR . $classPattern . '.php';
-		$fieldsPath = IM_SOURCE_DIR . 'processors/fields/' . $classPattern. '.php';
-		$inputsPath = IM_SOURCE_DIR . 'processors/inputs/' . $classPattern . '.php';
+		$classPattern = str_replace(__NAMESPACE__.'\\', '', $lclass);
+		$classPath = IM_SOURCEPATH . $classPattern . '.php';
+		$fieldsPath = IM_SOURCEPATH . 'processors/fields/' . $classPattern. '.php';
+		$inputsPath = IM_SOURCEPATH . 'processors/inputs/' . $classPattern . '.php';
 		if(file_exists($classPath)) include($classPath);
 		elseif(file_exists($fieldsPath)) include($fieldsPath);
 		elseif(file_exists($inputsPath)) include($inputsPath);
