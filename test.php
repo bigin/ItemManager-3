@@ -1,10 +1,26 @@
 <?php
 
 include 'index.php';
-//use \Imanager;
 
-var_dump($imanager->config);
+//var_dump($imanager->config);
 
-$category = new \Imanager\Category();
+// Creating new categories
+/*$category = new \Imanager\Category();
+$category->set('name', 'My Second Category');
+$category->set('slug', 'My Second Category');
+$category->save();*/
 
-var_dump($category);
+// Get an existing category by id
+/*$catMapper = imanager()->getCategoryMapper();
+$catMapper->init(1);
+$secondCategory = $catMapper->getCategory(2);*/
+
+// Update an existing category
+/*$catMapper = imanager()->getCategoryMapper();
+$catMapper->init(1);
+$secondCategory = $catMapper->getCategory(2);
+$secondCategory->name = 'My Second Category Updated';
+$secondCategory->save();*/
+
+
+var_dump($secondCategory);

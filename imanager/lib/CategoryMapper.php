@@ -2,23 +2,16 @@
 
 class CategoryMapper
 {
+
 	/**
-	 * @var array of the object of type Category
-	 */
-	//public  $categories;
-	/**
-	 * @var string filter by node
+	 * @var string - Filter by attribute
 	 */
 	private $filterby;
 
-
+	/**
+	 * @var int - Categories counter
+	 */
 	public $total = 0;
-
-
-	public function __construct()
-	{
-		//$this->categories = array();
-	}
 
 
 	public function &__get($param)
@@ -35,25 +28,27 @@ class CategoryMapper
 	public function init()
 	{
 		$this->categories = array();
-		foreach (glob(IM_CATEGORY_DIR . '*' . IM_CATEGORY_FILE_SUFFIX) as $file)
+		foreach(glob(IM_CATEGORYPATH.'*'.IM_CATEGORY_SUFFIX) as $file)
 		{
 			$cat = new Category();
 
 			$base = basename($file);
 			$strp = strpos($base, '.');
-			$id = substr($base, 0, $strp);
-			$xml = getXML($file);
 
-			if(!$cat->setProtectedParams((int) $id))
-				continue;
+			$cat->id = (int) substr($base, 0, $strp);
+			$cat->file = IM_CATEGORYPATH.$cat->id.IM_CATEGORY_SUFFIX;
+			$cat->filename = $cat->id.IM_CATEGORY_SUFFIX;
 
+			if(!$cat->id) continue;
+
+			$xml = simplexml_load_file($file);
 			$cat->name = (string) $xml->name;
 			$cat->slug = (string) $xml->slug;
 			$cat->position = (int) $xml->position;
-			$cat->created = (int) $xml->created;
-			$cat->updated = (int) $xml->updated;
+			$cat->created = (string) $xml->created;
+			$cat->updated = (string) $xml->updated;
 
-			$this->categories[$cat->get('id')] = $cat;
+			$this->categories[$cat->id] = $cat;
 		}
 		$this->total = count($this->categories);
 	}
@@ -97,7 +92,7 @@ class CategoryMapper
 		if(is_numeric($stat))
 		{
 			// id not found
-			if(!isset($loccat[(int) $stat]) || !$loccat[(int) $stat]->get('id'))
+			if(!isset($loccat[(int) $stat]) || !$loccat[(int) $stat]->id)
 				return false;
 
 			return !empty($loccat[(int) $stat]) ? $loccat[(int) $stat] : false;
@@ -280,8 +275,8 @@ class CategoryMapper
 	 */
 	public function destroyCategory(Category $cat)
 	{
-		if(file_exists(IM_CATEGORY_DIR . $cat->get('id') . IM_CATEGORY_FILE_SUFFIX))
-			return unlink(IM_CATEGORY_DIR . $cat->get('id') . IM_CATEGORY_FILE_SUFFIX);
+		if(file_exists(IM_CATEGORYPATH . $cat->id . IM_CATEGORY_SUFFIX))
+			return unlink(IM_CATEGORYPATH . $cat->id . IM_CATEGORY_SUFFIX);
 		return false;
 	}
 
@@ -310,7 +305,7 @@ class CategoryMapper
 		if(!is_array($catcontainer)) return false;
 		$result = array();
 		foreach($catcontainer as $val)
-			$result[$val->get('id')] = $val;
+			$result[$val->id] = $val;
 		return $result;
 	}
 
@@ -328,8 +323,7 @@ class CategoryMapper
 		if(is_numeric($a))
 		{
 			if($a == $b) {return 0;}
-			else
-			{
+			else{
 				if($b > $a) {return -1;}
 				else {return 1;}
 			}
