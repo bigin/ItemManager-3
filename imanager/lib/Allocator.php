@@ -6,6 +6,12 @@ class Allocator
 	protected $chmodFile = 0666;
 	protected $chmodDir = 0755;
 
+	/**
+	 * 
+	 * @param $catid
+	 *
+	 * @return bool
+	 */
 	public function alloc($catid)
 	{
 		$this->path = IM_BUFFER_CACHE_DIR.'/'.(int)$catid.'.php';

@@ -14,10 +14,20 @@ class CategoryMapper
 	public $total = 0;
 
 
+	public $path = null;
+
+
+	protected $chmodFile = 0666;
+
+
+	protected $chmodDir = 0755;
+
+
 	public function &__get($param)
 	{
-		if($param == 'categories') {
-			$this->init();
+		if($param == 'categories')
+		{
+			if(!$this->categories) $this->init();
 			return $this->categories;
 		}
 	}
@@ -27,30 +37,48 @@ class CategoryMapper
 	 */
 	public function init()
 	{
-		$this->categories = array();
-		foreach(glob(IM_CATEGORYPATH.'*'.IM_CATEGORY_SUFFIX) as $file)
+		$this->path = IM_BUFFERPATH.'/categories.php';
+		if(!file_exists(dirname($this->path))) {
+			$this->install($this->path);
+		}
+		if(file_exists($this->path)) {
+			$this->categories = include $this->path;
+			$this->total = count($this->categories);
+			return true;
+		}
+		unset($this->categories);
+		$this->categories = null;
+		$this->total = 0;
+		return false;
+
+	}
+
+	private function initRaw()
+	{
+		$this->rawCategories = array();
+		foreach(glob(IM_CATEGORYPATH . '*' . IM_CATEGORY_SUFFIX) as $file)
 		{
-			$cat = new Category();
+			$cat = new RawCategory();
 
 			$base = basename($file);
 			$strp = strpos($base, '.');
 
-			$cat->id = (int) substr($base, 0, $strp);
-			$cat->file = IM_CATEGORYPATH.$cat->id.IM_CATEGORY_SUFFIX;
-			$cat->filename = $cat->id.IM_CATEGORY_SUFFIX;
+			$cat->id = (int)substr($base, 0, $strp);
+			$cat->file = IM_CATEGORYPATH . $cat->id . IM_CATEGORY_SUFFIX;
+			$cat->filename = $cat->id . IM_CATEGORY_SUFFIX;
 
 			if(!$cat->id) continue;
 
 			$xml = simplexml_load_file($file);
-			$cat->name = (string) $xml->name;
-			$cat->slug = (string) $xml->slug;
-			$cat->position = (int) $xml->position;
-			$cat->created = (string) $xml->created;
-			$cat->updated = (string) $xml->updated;
+			$cat->name = (string)$xml->name;
+			$cat->slug = (string)$xml->slug;
+			$cat->position = (int)$xml->position;
+			$cat->created = (string)$xml->created;
+			$cat->updated = (string)$xml->updated;
 
-			$this->categories[$cat->id] = $cat;
+			$this->rawCategories[$cat->id] = $cat;
 		}
-		$this->total = count($this->categories);
+		$this->total = count($this->rawCategories);
 	}
 
 
@@ -79,46 +107,31 @@ class CategoryMapper
 	 */
 	public function getCategory($stat, array $categories=array())
 	{
-
-		$loccat = !empty($categories) ? $categories : $this->categories;
-		// nothing to select
-		if(empty($categories))
-		{
-			if(!$this->countCategories() || $this->countCategories() <= 0)
-				return false;
+		if($categories) $this->categories = $categories;
+		// No items selected
+		if(empty($this->categories)) return null;
+		// A nummeric value, id was entered?
+		if(is_numeric($stat)) return !empty($this->categories[$stat]) ? $this->categories[$stat] : null;
+		// Separate selector
+		$data = explode('=', $stat, 2);
+		$key = strtolower(trim($data[0]));
+		$val = trim($data[1]);
+		$num = substr_count($val, '%');
+		$pat = false;
+		if($num == 1) {
+			$pos = strpos($val, '%');
+			if($pos == 0) { $pat = '/'.strtolower(trim(str_replace('%', '', $val))).'$/';}
+			elseif($pos == strlen($val)) {$pat = '/^'.strtolower(trim(str_replace('%', '', $val))).'/';}
+		} elseif($num == 2) {
+			$pat = '/'.strtolower(trim(str_replace('%', '', $val))).'/';
 		}
-
-		// stat is an id
-		if(is_numeric($stat))
-		{
-			// id not found
-			if(!isset($loccat[(int) $stat]) || !$loccat[(int) $stat]->id)
-				return false;
-
-			return !empty($loccat[(int) $stat]) ? $loccat[(int) $stat] : false;
-
-			// stat is a string
-		} elseif (false !== strpos($stat, '='))
-		{
-			$data = explode('=', $stat, 2);
-			$key = strtolower(trim($data[0]));
-			$val = trim($data[1]);
-			if(false !== strpos($key, ' '))
-				return false;
-
-			// id
-			if($key == 'id')
-			{
-				return !empty($loccat[(int) $val]) ? $loccat[(int) $val] : false;
-			}
-			foreach($loccat as $catid => $c)
-			{
-				if(!isset($c->$key) || strtolower($c->$key) != strtolower($val)) continue;
-
-				return !empty($loccat[$catid]) ? $loccat[$catid] : false;
-			}
+		if(false !== strpos($key, ' ')) return null;
+		// Searching for entered value
+		foreach($this->categories as $itemkey => $item) {
+			if(!$pat && strtolower($item->{$key}) == strtolower($val)) return $item;
+			elseif($pat && preg_match($pat, strtolower($item->{$key}))) return $item;
 		}
-		return false;
+		return null;
 	}
 
 
@@ -142,69 +155,153 @@ class CategoryMapper
 		// reset offset
 		$offset = ($offset > 0) ? $offset-1 : $offset;
 
-		$loccat = !empty($categories) ? $categories : $this->categories;
+		if($offset > 0 && $length > 0 && $offset >= $length) return null;
+
+		if($categories) $this->categories = $categories;
+
 		// nothing to select
-		if(empty($categories))
+		if(empty($this->categories)) return null;
+
+		// all parameter have to match the data
+		$treads = array();
+
+		if(false !== strpos($stat, '&&'))
 		{
-			if(!$this->countCategories() || $this->countCategories() <= 0)
-				return false;
+			$treads = explode('&&', $stat, 2);
+			$parts[] = trim($treads[0]);
+			$parts[] = trim($treads[1]);
+
+			$sepitems = array();
+			foreach($parts as $part)
+			{
+				$sepitems[] = $this->separateCategories($this->categories, $part);
+			}
+			if(!empty($sepitems[0]) && !empty($sepitems[1]))
+			{
+				$arr = array_map('unserialize', array_intersect(array_map('serialize', $sepitems[0]), array_map('serialize', $sepitems[1])));
+
+				// limited output
+				if(!empty($arr) && ((int) $offset > 0 || (int) $length > 0))
+				{
+					if((int) $length == 0) $len = null;
+					$arr = array_slice($arr, (int) $offset, (int) $length, true);
+				}
+				return $arr;
+			}
+			// only one parameter have to match the data
+		} elseif(false !== strpos($stat, '||'))
+		{
+			$treads = explode('||', $stat, 2);
+			$parts[] = trim($treads[0]);
+			$parts[] = trim($treads[1]);
+
+			$sepitems = array();
+			foreach($parts as $part)
+			{
+				$sepitems[] = $this->separateCategories($this->categories, $part);
+			}
+			if(!empty($sepitems[0]) || !empty($sepitems[1]))
+			{
+				if(is_array($sepitems[0]) && is_array($sepitems[1]))
+				{
+					// limited output
+					if(!empty($sepitems[0]) && ((int) $offset > 0 || (int) $length > 0))
+					{
+						if((int) $length == 0) $len = null;
+						$sepitems[0] = array_slice($sepitems[0], (int) $offset, (int) $length, true);
+						$sepitems[1] = array_slice($sepitems[1], (int) $offset, (int) $length, true);
+						$return = array_merge($sepitems[0], $sepitems[1]);
+						return array_slice($return, (int) $offset, (int) $length, true);
+					}
+					return array_merge($sepitems[0], $sepitems[1]);
+
+				} elseif(is_array($sepitems[0]) && !is_array($sepitems[1]))
+				{
+					// limited output
+					if(!empty($sepitems[0]) && ((int) $offset > 0 || (int) $length > 0))
+					{
+						if((int) $length == 0) $len = null;
+						$sepitems[0] = array_slice($sepitems[0], (int) $offset, (int) $length, true);
+					}
+					return $sepitems[0];
+				} else
+				{
+					// limited output
+					if(!empty($sepitems[1]) && ((int) $offset > 0 || (int) $length > 0))
+					{
+						if((int) $length == 0) $len = null;
+						$sepitems[1] = array_slice($sepitems[1], (int) $offset, (int) $length, true);
+					}
+					return $sepitems[1];
+				}
+			}
+			// If $stat contains only one or empty selector
+		} else
+		{
+			if(!empty($stat)) $arr = $this->separateCategories($this->categories, $stat);
+			else $arr = $this->categories;
+			// limited output
+			if(!empty($arr) && ((int) $offset > 0 || (int) $length > 0))
+			{
+				if((int) $length == 0) $len = null;
+				$arr = array_slice($arr, (int) $offset, (int) $length, true);
+			}
+
+			return $arr;
 		}
+		return null;
+	}
 
-		$catcontainer = array();
 
+	protected function separateCategories(array $items, $stat)
+	{
+		$res = array();
 		$pattern = array(0 => '>=', 1 => '<=', 2 => '!=', 3 => '>', 4 => '<', 5 => '=');
 
 		foreach($pattern as $pkey => $pval)
 		{
-			if(false !== strpos($stat, $pval))
-			{
+			if(false === strpos($stat, $pval)) continue;
 
-				$data = explode($pval, $stat, 2);
-				$key = strtolower(trim($data[0]));
-				if($pkey != 5 && $pkey != 2)
-					$val = (int) trim($data[1]);
-				else
-					$val = trim($data[1]);
+			$data = explode($pval, $stat, 2);
+			$key = strtolower(trim($data[0]));
+			$val = trim($data[1]);
+			if(false !== strpos($key, ' ')) return false;
 
-				if(false !== strpos($key, ' '))
-					return false;
-
-				foreach($loccat as $cat_id => $c)
-				{
-					if($pkey == 0)
-					{
-						if(!isset($c->$key) || $c->$key < $val) continue;
-					} elseif($pkey == 1)
-					{
-						if(!isset($c->$key) || $c->$key > $val) continue;
-					} elseif($pkey == 2)
-					{
-						if(!isset($c->$key) || $c->$key == $val) continue;
-					} elseif($pkey == 3)
-					{
-						if(!isset($c->$key) || $c->$key <= $val) continue;
-					} elseif($pkey == 4)
-					{
-						if(!isset($c->$key) || $c->$key >= $val) continue;
-					} elseif($pkey == 5)
-					{
-						if(!isset($c->$key) || $c->$key != $val) continue;
-					}
-
-					$catcontainer[$cat_id] = $loccat[$cat_id];
+			$num = substr_count($val, '%');
+			$pat = false;
+			if($num == 1) {
+				$pos = strpos($val, '%');
+				if($pos == 0) {
+					$pat = '/'.strtolower(trim(str_replace('%', '', $val))).'$/';
+				} elseif($pos == (strlen($val)-1)) {
+					$pat = '/^'.strtolower(trim(str_replace('%', '', $val))).'/';
 				}
-				if(!empty($catcontainer))
-				{
-					// limited output
-					if((int) $offset > 0 || (int) $length > 0)
-					{
-						if((int) $length == 0) $len = null;
-						$catcontainer = array_slice($catcontainer, (int) $offset, (int) $length, true);
-					}
-					return $catcontainer;
-				}
-				return false;
+			} elseif($num == 2) {
+				$pat = '/'.strtolower(trim(str_replace('%', '', $val))).'/';
 			}
+
+			foreach($items as $itemkey => $item)
+			{
+				if(!isset($item->$key)) { continue; }
+				if($pkey == 0) {
+					if($item->$key < $val) continue;
+				} elseif($pkey == 1) {
+					if($item->$key > $val) continue;
+				} elseif($pkey == 2) {
+					if($item->$key == $val) continue;
+				} elseif($pkey == 3) {
+					if($item->$key <= $val) continue;
+				} elseif($pkey == 4) {
+					if($item->$key >= $val) continue;
+				} elseif($pkey == 5) {
+					if($item->$key != $val && !$pat) { continue; }
+					elseif($pat && !preg_match($pat, strtolower($item->$key))){ continue; }
+				}
+				$res[$item->id] = $item;
+			}
+
+			if(!empty($res)) return $res;
+			return false;
 		}
 		return false;
 	}
@@ -221,49 +318,43 @@ class CategoryMapper
 	 * ImCategory::filterCategories('position', 'DESC', $your_categories_array)
 	 *
 	 * @param string $filterby
-	 * @param string $key
 	 * @param array $categories
 	 * @return boolean|array of objects of the type Category
 	 */
-	public function filterCategories($filterby, $key, $offset=0, $length=0, array $categories=array())
+	public function filterCategories($filterby='id', $option='asc', $offset=0, $length=0, array $items=array())
 	{
 		// reset offset
 		$offset = ($offset > 0) ? $offset-1 : $offset;
 
-		$loccat = !empty($categories) ? $categories : $this->categories;
-		if(empty($categories))
-		{
-			if(!$this->countCategories() || $this->countCategories() <= 0)
-				return false;
+		$locitems = !empty($items) ? $items : $this->categories;
+
+		if(empty($locitems) || count($locitems) <= 0) return false;
+
+		$itemcontainer = array();
+
+		foreach($locitems as $item_id => $i) {
+			//if(!isset($i->$filterby)) continue;
+			$itemcontainer[$item_id] = $locitems[$item_id];
 		}
 
-		$catcontainer = array();
+		if(empty($itemcontainer)) return false;
 
-		foreach($loccat as $cat_id => $c)
+		$this->filterby = $filterby;
+		usort($itemcontainer, array($this, 'sortObjects'));
+		// sort DESCENDING
+		if(strtolower($option) != 'asc') $itemcontainer = $this->reverseItems($itemcontainer);
+		$itemcontainer = $this->reviseItemIds($itemcontainer);
+
+		// limited output
+		if(!empty($itemcontainer) && ((int) $offset > 0 || (int) $length > 0))
 		{
-			if(!isset($c->$filterby)) continue;
-
-			$catcontainer[$cat_id] = $loccat[$cat_id];
+			if((int) $length == 0) $len = null;
+			$itemcontainer = array_slice($itemcontainer, (int) $offset, (int) $length, true);
 		}
 
-		if(!empty($catcontainer))
-		{
-			$this->filterby = $filterby;
-			usort($catcontainer, array($this, 'sortObjects'));
-			// sorte DESCENDING
-			if(strtolower($key) != 'asc') $catcontainer = $this->reverseCategories($catcontainer);
-			$catcontainer = $this->reviseCatIds($catcontainer);
-
-			// limited output
-			if((int) $offset > 0 || (int) $length > 0)
-			{
-				if((int) $length == 0) $len = null;
-				$catcontainer = array_slice($catcontainer, (int) $offset, (int) $length, true);
-			}
-			return $catcontainer;
-		}
-
-		return false;
+		if(!empty($items)) return $itemcontainer;
+		$this->categories = $itemcontainer;
+		return $this->categories;
 	}
 
 
@@ -282,32 +373,33 @@ class CategoryMapper
 
 
 	/**
-	 * Reverse the array of categoriies
+	 * Reverse the array of items
 	 *
-	 * @param array $catcontainer An array of objects
+	 * @param array $itemcontainer An array of objects
 	 * @return boolean|array
 	 */
-	public function reverseCategories($catcontainer)
+	public function reverseItems($itemcontainer)
 	{
-		if(!is_array($catcontainer)) return false;
-		return array_reverse($catcontainer);
+		if(!is_array($itemcontainer)) return false;
+		return array_reverse($itemcontainer);
 	}
 
 
 	/**
-	 * Revise keys of the array of categories and changes these into real category Ids
+	 * Revise keys of the array of items and changes these into real item id's
 	 *
-	 * @param array $catcontainer An array of objects
+	 * @param array $itemcontainer An array of objects
 	 * @return boolean|array
 	 */
-	public function reviseCatIds($catcontainer)
+	public function reviseItemIds($itemcontainer)
 	{
-		if(!is_array($catcontainer)) return false;
+		if(!is_array($itemcontainer)) return false;
 		$result = array();
-		foreach($catcontainer as $val)
+		foreach($itemcontainer as $val)
 			$result[$val->id] = $val;
 		return $result;
 	}
+
 
 
 	/**
@@ -478,5 +570,27 @@ class CategoryMapper
 			$output .= $tpl->render($tpls['next_inactive'], array(), true);
 
 		return $tpl->render($tpls['wrapper'], array('value' => $output), true);
+	}
+
+	protected function install($path)
+	{
+		/*$value = "# apache < 2.3\r\n";
+		$value .= "<IfModule !mod_authz_core.c>\r\n";
+		$value .= "Deny from all\r\n";
+		$value .= "</IfModule>\r\n\r\n";
+		$value .= "# apache > 2.3 with mod_access_compat\r\n";
+		$value .= "<IfModule mod_access_compat.c>\r\n";
+		$value .= "Deny from all\r\n";
+		$value .= "</IfModule>\r\n\r\n";
+		$value .= "# apache > 2.3 without mod_access_compat\r\n";
+		$value .= "<IfModule mod_authz_core.c>\r\n\r\n";
+		$value .= "<IfModule !mod_access_compat.c>\r\n";
+		$value .= "Require all denied\r\n";
+		$value .= "</IfModule>\r\n\r\n";
+		$value .= "</IfModule>\r\n";*/
+		if(!mkdir(dirname($path), $this->chmodDir, true)) echo 'Unable to create path: '.dirname($path);
+		if(!$handle = fopen(dirname($path).'/.htaccess', 'w')) return false;
+		fwrite($handle, $value);
+		fclose($handle);
 	}
 }

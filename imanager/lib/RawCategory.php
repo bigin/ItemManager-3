@@ -1,6 +1,6 @@
 <?php namespace Imanager;
 
-class Category
+class RawCategory
 {
 	/**
 	 * @var integer - Category id
@@ -42,6 +42,7 @@ class Category
 	 */
 	public $updated = null;
 
+
 	/**
 	 * Category constructor.
 	 */
@@ -51,15 +52,6 @@ class Category
 		settype($this->position, 'integer');
 	}
 
-	public static function __set_state($an_array)
-	{
-		$_instance = new Category();
-		foreach($an_array as $key => $val) {
-			if(is_array($val)) $_instance->{$key} = $val;
-			else $_instance->{$key} = $val;
-		}
-		return $_instance;
-	}
 
 	public function get($name){ return isset($this->{$name}) ? $this->{$name} : null; }
 
@@ -82,6 +74,11 @@ class Category
 		$this->{$key} = $val;
 	}
 
+	/**
+	 * Save category file
+	 *
+	 * @return mixed
+	 */
 	public function save()
 	{
 		// Edit an existing category
@@ -97,18 +94,7 @@ class Category
 			$xml->created = $this->created;
 			$xml->updated = time();
 
-			if($xml->asXml($this->file)) {
-
-				$cm = imanager()->getCategoryMapper();
-				$cm->init();
-
-				$cm->categories[$this->id] = $this;
-
-				$export = var_export($cm->categories, true);
-				file_put_contents($cm->path, '<?php return ' . $export . '; ?>');
-
-				return true;
-			}
+			return $xml->asXml($this->file);
 		}
 		// A new category
 		else
@@ -130,15 +116,7 @@ class Category
 			$xml->created = ($this->created) ? $this->created : time();
 			$xml->updated = $xml->created;
 
-			if($xml->asXml($this->file)) {
-
-				$cm->categories[$this->id] = $this;
-
-				$export = var_export($cm->categories, true);
-				file_put_contents($cm->path, '<?php return ' . $export . '; ?>');
-
-				return true;
-			}
+			return $xml->asXml($this->file);
 		}
 	}
 }
