@@ -1,14 +1,11 @@
 <?php
-class ItemMapper extends Allocator
+class ItemMapper
 {
-	/**
-	 * @var array of the objects of type Item
-	 */
-	public $items;
 	/**
 	 * @var string filter by node
 	 */
 	protected $filterby;
+
 	/**
 	 * @var boolean indicates to searchig field values
 	 */
@@ -16,8 +13,19 @@ class ItemMapper extends Allocator
 
 	public $total = 0;
 
+	public $path = null;
 
-	public function __construct(){$this->items = array();}
+	protected $chmodFile = 0666;
+
+	protected $chmodDir = 0755;
+
+	/**
+	 * @var - An array of the Item objects
+	 */
+	public $items = array();
+
+
+	//public function __construct(){$this->items = array();}
 
 	/**
 	 * Just another forced init method
@@ -206,10 +214,34 @@ class ItemMapper extends Allocator
 		$this->total = count($this->items);
 	}
 
+
+	/**
+	 * Regular init method for item objects of a category
+	 *
+	 * @return bool
+	 */
+	public function init($category_id)
+	{
+		$this->path = IM_BUFFERPATH.'items/'.(int) $this->categoryid.'.items.php';
+
+		if(!file_exists(dirname($this->path))) {
+			$this->install($this->path);
+		}
+		if(file_exists($this->path)) {
+			$this->items = include($this->path);
+			$this->total = count($this->items);
+			return true;
+		}
+		unset($this->items);
+		$this->items = null;
+		$this->total = 0;
+		return false;
+	}
+
 	/**
 	 * Initializes all the items of a category and made them available in ImItem::$items
 	 */
-	public function init($catid)
+	public function initRaw($catid)
 	{
 		// nitialize the fields class
 		$fc = new FieldMapper();
@@ -1185,5 +1217,9 @@ class ItemMapper extends Allocator
 			$output .= $tpl->render($tpls['next_inactive'], array(), true);
 
 		return $tpl->render($tpls['wrapper'], array('value' => $output), true);
+	}
+
+	protected function install($path) {
+		if(!mkdir(dirname($path), $this->chmodDir, true)) echo 'Unable to create path: '.dirname($path);
 	}
 }

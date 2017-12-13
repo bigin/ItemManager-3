@@ -1,6 +1,30 @@
-<?php
+<?php if(!defined('IS_IM')){ die('you cannot load this page directly.'); }
+
 $i18n = array(
-  'delete' => 'Delete field'
+	// Ver 3.0
+	'err_general' => 'General error',
+	'unknown_category' => 'Unknown category',
+	'err_field_name_maxlength' => 'Length for the field name is limited to [[count]] characters.',
+	'err_multiple_upload_fields' => 'One upload field is allowed for each category.',
+	'err_reserved_field_name' => '"[[fieldname]]" field name is a reserved - The field is renamed to "[[newname]]"',
+  	'err_fields_unique_names' => 'The field names must be unique. The duplicates have been removed.',
+	'err_field_save_failed' => 'The field could not be saved.',
+	'err_backup' => 'Error creating a backup file (Please make sure that backup directory is existing: [[backup]])',
+	'err_field_deleting' => 'Error deleting the field "[[fieldname]]"',
+ 	'fields_successful_saved' => 'Fields successfully saved',
+ 	'err_field_id' => 'The entered field id does not exist'
+
+
+
+
+
+
+
+
+
+
+
+ /* 'delete' => 'Delete field'
   //, 'option-value' => 'Choose category...'
   //, 'undo_failure' => '<div >The custom fields could not be restored.</div>'
   //, 'undo_success' => '<div >The custom fields have been successfully restored.</div>'
@@ -259,6 +283,6 @@ $i18n = array(
 	, 'unique_itemname' => 'Unique item names'
 	, 'unique_itemname_info' => '<i class="fa fa-info-circle"></i> Please check this in order for the item names to be unique.'
 	, 'money_field_value' => 'Money field'
-	, 'imagetitle_placeholder' => 'Title'
+	, 'imagetitle_placeholder' => 'Title'*/
 
 );

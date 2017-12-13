@@ -13,11 +13,6 @@ class Category
 	public $file = null;
 
 	/**
-	 * @var string - Categorys file name
-	 */
-	public $filename = null;
-
-	/**
 	 * @var integer - Category position
 	 */
 	public $position = null;
@@ -33,12 +28,12 @@ class Category
 	public $slug = null;
 
 	/**
-	 * @var string - Category created date
+	 * @var integer - Category created date
 	 */
 	public $created = null;
 
 	/**
-	 * @var string - Category updated date
+	 * @var integer - Category updated date
 	 */
 	public $updated = null;
 
@@ -49,6 +44,15 @@ class Category
 	{
 		settype($this->id, 'integer');
 		settype($this->position, 'integer');
+		settype($this->created, 'integer');
+		settype($this->updated, 'integer');
+	}
+
+	/**
+	 * Retrives category attributes array
+	 */
+	protected function getAttributes() {
+		return array('id', 'file', 'position', 'name', 'slug', 'created', 'updated');
 	}
 
 	public static function __set_state($an_array)
@@ -71,37 +75,58 @@ class Category
 	 *
 	 * @return bool
 	 */
-	public function set($key, $val)
+	public function set($key, $val, $sanitize=true)
 	{
+		$sanitizer = imanager('sanitizer');
 		$key = strtolower($key);
-		$val = imanager('sanitizer')->text($val);
+
 		// Allowed attributes
-		if(!in_array($key, array('id', 'name', 'slug', 'position', 'created', 'updated'))) return false;
-		if($key == 'slug') $val = imanager('sanitizer')->pageName($val);
-		elseif($key == 'id' || $key == 'position') $val = (int) $val;
+		if(!in_array($key, $this->getAttributes())) { return false; }
+
+		if($key == 'slug') {
+			$val = ($sanitize) ? $sanitizer->pageName($val) : $val;
+		} elseif($key == 'id' || $key == 'created' || $key == 'updated' || $key == 'position') {
+			$val = ($sanitize) ? (int) $val : $val;
+		} else {
+			$val = ($sanitize) ? $sanitizer->text($val) : $val;
+		}
 		$this->{$key} = $val;
 	}
 
 	public function save()
 	{
+		$sanitizer = imanager('sanitizer');
+		$now = time();
+
 		// Edit an existing category
 		if(!is_null($this->id) && $this->id > 0)
 		{
-			$xml = simplexml_load_file($this->file);
+			$xml = simplexml_load_file($sanitizer->path($this->file));
 			$this->updated = time();
 
 			$xml->id = (int) $this->id;
-			$xml->name = (string) $this->name;
-			$xml->slug = (string) $this->slug;
-			$xml->position = !is_null($this->position) ? (int) $this->position : (int) $this->id;
-			$xml->created = $this->created;
-			$xml->updated = time();
+			$this->id = (int) $xml->id;
+			$xml->name = $sanitizer->text($this->name);
+			$this->name= (string) $xml->name;
+			$xml->slug = $sanitizer->pageName($this->slug);
+			$this->slug = (string) $xml->slug;
+			$xml->position = ($this->position) ? (int) $this->position : (int) $this->id;
+			$this->position = (int) $xml->position;
+			$xml->created = $sanitizer->text($this->created);
+			$this->created = (int) $xml->created;
+			$xml->updated = $now;
+			$this->updated = (int) $xml->updated;
 
 			if($xml->asXml($this->file)) {
 
 				$cm = imanager()->getCategoryMapper();
 				$cm->init();
-
+				// Delete redundant attributes
+				foreach($this as $key => $value) {
+					if(!in_array($key, $this->getAttributes())) {
+						unset($this->{$key});
+					}
+				}
 				$cm->categories[$this->id] = $this;
 
 				$export = var_export($cm->categories, true);
@@ -120,18 +145,28 @@ class Category
 			if(!empty($cm->categories))
 				$this->id = max(array_keys($cm->categories))+1;
 
-			$this->file = IM_CATEGORYPATH.$this->id.IM_CATEGORY_SUFFIX;
+			$this->file = $sanitizer->path(IM_CATEGORYPATH.$this->id.IM_CATEGORY_SUFFIX);
 
 			$xml = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><category></category>');
 
-			$xml->name = (string) $this->name;
-			$xml->slug = (string) $this->slug;
-			$xml->position = !is_null($this->position) ? (int) $this->position : (int) $this->id;
-			$xml->created = ($this->created) ? $this->created : time();
+			$xml->name = $sanitizer->text($this->name);
+			$this->name = (string) $xml->name;
+			$xml->slug = $sanitizer->pageName($this->slug);
+			$this->slug =  (string) $xml->slug;
+			$xml->position = ($this->position) ? (int) $this->position : (int) $this->id;
+			$this->position =  (int) $xml->position;
+			$xml->created = time();
+			$this->created =  (int) $xml->created;
 			$xml->updated = $xml->created;
+			$this->updated =  (int) $xml->updated;
 
 			if($xml->asXml($this->file)) {
-
+				// Delete redundant attributes
+				foreach($this as $key => $value) {
+					if(!in_array($key, $this->getAttributes())) {
+						unset($this->{$key});
+					}
+				}
 				$cm->categories[$this->id] = $this;
 
 				$export = var_export($cm->categories, true);

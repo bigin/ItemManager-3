@@ -1,6 +1,6 @@
 <?php namespace Imanager;
 
-class CategoryMapper
+class CategoryMapper extends Mapper
 {
 
 	/**
@@ -37,12 +37,12 @@ class CategoryMapper
 	 */
 	public function init()
 	{
-		$this->path = IM_BUFFERPATH.'/categories.php';
+		$this->path = IM_BUFFERPATH.'/categories/categories.php';
 		if(!file_exists(dirname($this->path))) {
 			$this->install($this->path);
 		}
 		if(file_exists($this->path)) {
-			$this->categories = include $this->path;
+			$this->categories = include($this->path);
 			$this->total = count($this->categories);
 			return true;
 		}
@@ -50,7 +50,6 @@ class CategoryMapper
 		$this->categories = null;
 		$this->total = 0;
 		return false;
-
 	}
 
 	private function initRaw()
@@ -65,7 +64,6 @@ class CategoryMapper
 
 			$cat->id = (int)substr($base, 0, $strp);
 			$cat->file = IM_CATEGORYPATH . $cat->id . IM_CATEGORY_SUFFIX;
-			$cat->filename = $cat->id . IM_CATEGORY_SUFFIX;
 
 			if(!$cat->id) continue;
 
@@ -426,8 +424,8 @@ class CategoryMapper
 	public function pagination(array $params, $argtpls = array())
 	{
 
-		$tpl = imanager()->getTemplateEngine();
-		$config = imanager('config');
+		$tpl = $this->imanager->getTemplateEngine();
+		$config = $this->imanager->config;
 
 		$pagination = $tpl->getTemplates('pagination');
 		$tpls['wrapper'] = !empty($argtpls['wrapper']) ? $argtpls['wrapper'] : $tpl->getTemplate('wrapper', $pagination);
@@ -589,8 +587,8 @@ class CategoryMapper
 		$value .= "</IfModule>\r\n\r\n";
 		$value .= "</IfModule>\r\n";*/
 		if(!mkdir(dirname($path), $this->chmodDir, true)) echo 'Unable to create path: '.dirname($path);
-		if(!$handle = fopen(dirname($path).'/.htaccess', 'w')) return false;
-		fwrite($handle, $value);
-		fclose($handle);
+		//if(!$handle = fopen(dirname($path).'/.htaccess', 'w')) return false;
+		//fwrite($handle, $value);
+		//fclose($handle);
 	}
 }

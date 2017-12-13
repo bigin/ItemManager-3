@@ -1,40 +1,65 @@
-<?php
+<?php namespace Imanager;
 
 class FieldMapper
 {
 	/**
 	 * @var array of the objects of type Field
 	 */
-	public $fields;
-
-	public function __construct(){$this->fields = array();}
+	public $fields = array();
 
 	/**
-	 * Initializes all the fields of one category and mades them available in ImFields::$fields array
+	 * @var int - Fields counter
 	 */
-	public function init($id)
-	{
-		$this->fields = array();
+	public $total = 0;
 
-		$base = basename(IM_FIELDS_DIR . (int) $id . IM_FIELDS_FILE_SUFFIX);
+	/**
+	 * @var string - Path of the buffered fields
+	 */
+	public $path = null;
+
+	/**
+	 * @var int access permissions for new files
+	 */
+	protected $chmodFile = 0666;
+
+	/**
+	 * @var int access permissions for new directories
+	 */
+	protected $chmodDir = 0755;
+
+	/**
+	 * Init fields of a category
+	 *
+	 * @since 3.0
+	 * @param $category_id
+	 *
+	 * @return array
+	 */
+	public function init($category_id)
+	{
+		$base = basename(IM_FIELDSPATH.(int) $category_id.IM_FIELDS_SUFFIX);
+
 		$strp = strpos($base, '.');
 		$file_id = substr($base, 0, $strp);
-		$xml = getXML(IM_FIELDS_DIR . (int) $id . IM_FIELDS_FILE_SUFFIX);
 
+		$xml = null;
+		if(file_exists(IM_FIELDSPATH.(int) $category_id.IM_FIELDS_SUFFIX)) {
+			$xml = simplexml_load_file(IM_FIELDSPATH.(int) $category_id.IM_FIELDS_SUFFIX);
+		}
 		if(!$xml) return $this->fields;
 
 		$i = 0;
 		foreach($xml->field as $field)
 		{
-			$f = new Field($id);
+			$f = new Field($category_id);
 			$f->options = array();
 			$f->confirmed = false;
 			foreach($field as $key => $val)
 			{
-				if(is_numeric($val)) $f->$key = (int) $val;
+				if(is_numeric($val)) $f->{$key} = (int) $val;
 				elseif($key == 'option') $f->options[] = (string) $val;
 				elseif($key == 'configs') $f->configs = $val;
-				else $f->$key = (string) $val;
+				else $f->{$key} = (string) $val;
 			}
 			$i++;
 
@@ -42,50 +67,48 @@ class FieldMapper
 		}
 	}
 
+	/**
+	 *
+	 * @since 3.0
+	 * @param $stat
+	 * @param array $fields
+	 *
+	 * @return bool|mixed
+	 */
 	public function getField($stat, array $fields=array())
 	{
-
 		$locfields = !empty($fields) ? $fields : $this->fields;
 		// nothing to select
-		if(empty($fields))
-		{
-			if(!$this->countFields() || $this->countFields() <= 0)
-				return false;
+		if(empty($fields)) {
+			if(!$this->countFields() || $this->countFields() <= 0) { return false; }
 		}
 
-		// just id was entered
-		if(is_numeric($stat))
-			foreach($locfields as $fieldkey => $field)
-				if((int) $field->id == (int) $stat)
-					return $field;
+		// only id is entered
+		if(is_numeric($stat)) {
+			foreach($locfields as $fieldkey => $field) {
+				if((int) $field->id == (int) $stat) return $field;
+			}
+		}
 
-		if (false !== strpos($stat, '='))
+		if(false !== strpos($stat, '='))
 		{
 			$data = explode('=', $stat, 2);
 			$key = strtolower(trim($data[0]));
 			$val = trim($data[1]);
-			if(false !== strpos($key, ' '))
-				return false;
+			if(false !== strpos($key, ' ')) return false;
 
-			// searching for the name
-			if($key == 'name')
-				return isset($locfields[$val]) ? $locfields[$val] : false;
+			// Searching for the field name
+			if($key == 'name') return isset($locfields[$val]) ? $locfields[$val] : false;
 
-			foreach($locfields as $fieldkey => $field)
-			{
-				foreach($field as $k => $v)
-				{
-					// id
-					if($key == 'id' && (int) $field->id == (int) $val)
-						return $field;
-					if($key == $k && $val == $v)
-						return $field;
+			foreach($locfields as $fieldkey => $field) {
+				foreach($field as $k => $v) {
+					// looking for the field id
+					if($key == 'id' && (int) $field->id == (int) $val) return $field;
+					if($key == $k && $val == $v) return $field;
 				}
 			}
-		} else
-		{
-			if(isset($locfields[$stat]))
-				return $locfields[$stat];
+		} else {
+			if(isset($locfields[$stat])) return $locfields[$stat];
 		}
 		return false;
 	}
@@ -148,26 +171,24 @@ class FieldMapper
 	 */
 	public function createFields($id)
 	{
-		if(!file_exists(IM_FIELDS_DIR . intval($id) . IM_FIELDS_FILE_SUFFIX) &&
-			file_exists(IM_CATEGORY_DIR . intval($id) . IM_CATEGORY_FILE_SUFFIX))
-		{
+		if(!file_exists(IM_FIELDSPATH.(int) $id.IM_FIELDS_SUFFIX) &&
+			file_exists(IM_CATEGORYPATH.(int) $id.IM_CATEGORY_SUFFIX)) {
 			$field = new Field($id);
 			return $field->save();
 		}
 	}
 
-	public function fieldsExists($id){return file_exists(IM_FIELDS_DIR . intval($id) . IM_FIELDS_FILE_SUFFIX);}
+	public function fieldsExists($id){ return file_exists(IM_FIELDSPATH.(int)$id.IM_FIELDS_SUFFIX); }
 
-	public function fieldNameExists($fieldname)
-	{
+	public function fieldNameExists($fieldname) {
 		return array_key_exists(str_replace('-', '_', imanager('sanitizer')->name($fieldname)), $this->fields);
 	}
 
 
 
 	/**
-	 * Returns the array of objects of the type Field, sorted by any node
-	 * NOTE: However if no $fields argument is passed to the function, the fields
+	 * Returns the array of objects of the type Field, sorted by any object attribute
+	 * NOTE: However, if no $fields argument is passed to the function, the $fields
 	 * must already be in the buffer: ImFields::$fields. Call the ImFields::init($category_id)
 	 * method before to assign the fields to the buffer.
 	 *
@@ -217,10 +238,10 @@ class FieldMapper
 	}
 
 
-	public static function getFieldsSaveInfo($catid, $sort=false)
+	public function getFieldsSaveInfo($catid, $sort=false)
 	{
 		$data = array();
-		$xml = getXML(IM_FIELDS_DIR . intval($catid) . IM_FIELDS_FILE_SUFFIX);
+		$xml = simplexml_load_file(IM_FIELDSPATH.(int) $catid.IM_FIELDS_SUFFIX);
 		if(!$xml) return $data;
 		$data['ids'] = array_map('intval', $xml->xpath('//fields/field/id'));
 		$data['names'] = array_map('strval', $xml->xpath('//fields/field/name'));
@@ -278,6 +299,10 @@ class FieldMapper
 				else {return 1;}
 			}
 		} else {return strcasecmp($a, $b);}
+	}
+
+	protected function install($path) {
+		if(!mkdir(dirname($path), $this->chmodDir, true)) echo 'Unable to create path: '.dirname($path);
 	}
 
 }

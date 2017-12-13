@@ -1,10 +1,20 @@
 <?php defined('IS_IM') or die('you cannot load this page directly.');
 
 
-// Backup files in days
+/**
+ * Backup files in days
+ */
 $config->minBackupTimePeriod = 2;
 
+/**
+ * Max length for the fieds names
+ */
+$config->maxFieldNameLength = 30;
 
+/**
+ * Create field backups?
+ */
+$config->backupFields = false;
 
 
 

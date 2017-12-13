@@ -13,11 +13,6 @@ class RawCategory
 	public $file = null;
 
 	/**
-	 * @var string - Categorys file name
-	 */
-	public $filename = null;
-
-	/**
 	 * @var integer - Category position
 	 */
 	public $position = null;

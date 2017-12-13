@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fields><categoryid>1</categoryid><field><id>1</id><name>data</name><label>Data field</label><type>text</type><position>1</position><default></default><info>Please never change or delete this data!</info><required>1</required><minimum>0</minimum><maximum>0</maximum><cssclass></cssclass><created>1513159511</created><updated>1513159511</updated></field></fields>

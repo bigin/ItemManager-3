@@ -1,67 +1,45 @@
-<?php namespace Imanager;
+<?php
 
-class Item extends FieldMapper
+class Item
 {
-	/**
-	 * @var int|null - Category id
-	 */
-	public $categoryid = null;
-
-	/**
-	 * @var int|null - Item id
-	 */
-	public $id = null;
-
-	/**
-	 * @var string|null - Item real file
-	 */
-	public $file = null;
-
-	public $name = null;
-	public $label = null;
-	public $position = null;
-	public $active = null;
-	public $created = null;
-	public $updated = null;
-	public $fields = array();
-
-
-	public function __construct($category_id)
+	public function __construct($catid)
 	{
-		$this->categoryid = (int) $category_id;
+		$this->categoryid = intval($catid);
 
-		settype($this->categoryid, 'integer');
-		settype($this->id, 'integer');
-		settype($this->position, 'integer');
-		settype($this->active, 'boolean');
-		settype($this->created, 'integer');
-		settype($this->updated, 'integer');
+		$this->id = null;
+		$this->file = '';
+		$this->filename = '';
 
+		$this->name = '';
+		$this->label = '';
+		$this->position = null;
+		$this->active = 0;
+
+		$this->created = time();
+		$this->updated = null;
+
+		$this->fields = new stdClass();
 		// field arts object array
-		//$fm = new FieldMapper();
-		//$fm->init($this->categoryid);
-
-		$this->init($this->categoryid);
-		//foreach($fc->fields as $name => $value) $this->fields->$name = $value;
+		$fc = new FieldMapper();
+		$fc->init($catid);
+		foreach($fc->fields as $name => $value)
+			$this->fields->$name = $value;
 
 	}
 
 
 	public static function __set_state($an_array)
 	{
-		$_instance = new Item($an_array['categoryid']);
-		foreach($an_array as $key => $val) {
-			if(is_array($val)) $_instance->{$key} = $val;
-			else $_instance->{$key} = $val;
-		}
-		return $_instance;
-
-		/*$obj = new Item($an_array['categoryid']);
-		foreach($an_array as $key => $val) {
+		$obj = new Item($an_array['categoryid']);
+		foreach($an_array as $key => $val)
+		{
 			if($key != 'fields') $obj->var1 = $an_array[$key];
 		}
-		return $obj;*/
+
+
+		return $obj;
 	}
+
 
 
 	public function getNextId()
@@ -70,32 +48,6 @@ class Item extends FieldMapper
 		if(!$this->categoryid) return false;
 
 		$ids = array();
-
-		$im =
-		init($category_id);
-
-
-		// check item file exists return back
-		if(file_exists(IM_BUFFERPATH.'items/'.(int) $this->categoryid.'.items.php'))
-		{
-			include(IM_BUFFERPATH.'items/'.(int) $this->categoryid.'.items.php');
-
-
-			foreach (glob(IM_ITEM_DIR.'*.'.$this->categoryid.IM_ITEM_FILE_SUFFIX) as $file)
-			{
-				$base = basename($file, IM_ITEM_FILE_SUFFIX);
-				$strp = strpos($base, '.');
-				$ids[] = substr($base, 0, $strp);
-			}
-			return !empty($ids) ? max($ids)+1 : false;
-		}
-		// ok this may the first item for this category
-		if(!file_exists(IM_ITEM_DIR.'1.'.$this->categoryid.IM_ITEM_FILE_SUFFIX))
-			return 1;
-
-
-
-		/*$ids = array();
 		// check item file exists return back
 		if(glob(IM_ITEM_DIR.'*.'.$this->categoryid.IM_ITEM_FILE_SUFFIX))
 		{
@@ -109,7 +61,7 @@ class Item extends FieldMapper
 		}
 		// ok this may the first item for this category
 		if(!file_exists(IM_ITEM_DIR.'1.'.$this->categoryid.IM_ITEM_FILE_SUFFIX))
-			return 1;*/
+			return 1;
 	}
 
 

@@ -40,10 +40,10 @@ class Manager
 	}
 
 
-	public function ProcessCategory() {
+	/*public function ProcessCategory() {
 		self::$categoryMapper = (!self::$categoryMapper) ? $this->getCategoryMapper() : self::$categoryMapper;
 		$this->cp = new CategoryProcessor(self::$categoryMapper);
-	}
+	}*/
 
 	/**
 	 * Deletes the category and ther fields and items
@@ -270,16 +270,20 @@ class Manager
 		}
 	}
 
-
+	/**
+	 * Create category fields
+	 *
+	 * @since 3.0
+	 * @param array $input
+	 *
+	 * @return bool
+	 */
 	public function createFields(array $input)
 	{
-		if(empty($input)) return false;
-
-		$this->ProcessCategory();
-		// Check category first
-		if(!$this->cp->isCategoryValid($input['cat']))
-		{
-			MsgReporter::setClause('invalid_category', array(), true);
+		Util::buildLanguage();
+		// Check category exists
+		if(!$exist = self::$categoryMapper->getCategory($input['cat'])) {
+			MsgReporter::setError('unknown_category');
 			return false;
 		}
 
@@ -293,36 +297,33 @@ class Manager
 		for($i=0; isset($input['cf_'.$i.'_key']); $i++)
 		{
 			// check the max name length
-			if(!empty($input['cf_'.$i.'_key']) && $this->config->common->maxfieldname > $input['cf_'.$i.'_key'])
-			{
-				MsgReporter::setClause('err_save_fields_maxlength', array(
-						'count' => intval($this->config->common->maxfieldname), true
-					)
-				);
-				continue;
-			}
-
 			if(!empty($input['cf_'.$i.'_key']))
 			{
-				if(!empty($input['cf_'.$i.'_type']) && ($input['cf_'.$i.'_type'] == 'imageupload' || $input['cf_'.$i.'_type'] == 'fileupload'))
-				{
-					if(in_array($input['cf_'.$i.'_type'], $types))
-					{
-						MsgReporter::setClause('err_upload_fields_usage', array(), true);
+				if((int)$this->config->maxFieldNameLength < mb_strlen($input['cf_'.$i.'_key'])) {
+					MsgReporter::setError('err_field_name_maxlength', array(
+							'count' => (int)$this->config->maxFieldNameLength
+						)
+					);
+					continue;
+				}
+
+				if(!empty($input['cf_'.$i.'_type']) && $input['cf_'.$i.'_type'] == 'fileupload') {
+					if(in_array($input['cf_'.$i.'_type'], $types)) {
+						MsgReporter::setError('err_multiple_upload_fields');
 						continue;
 					}
 				}
 
 				// Check/Rename reserved field names
 				$buffname = strtolower($input['cf_'.$i.'_key']);
-				if(in_array($buffname, array('id', 'categoryid', 'file', 'filename', 'name', 'label', 'position', 'active', 'created', 'updated'))) {
+				if(in_array($buffname, array('id', 'categoryid', 'file', 'name', 'label', 'position', 'active', 'created', 'updated'))) {
 					$newname = $buffname.($i + 1);
-					MsgReporter::setClause('err_reserved_field_name', array('fieldname' => $buffname, 'newname' => $newname), true);
+					MsgReporter::setError('err_reserved_field_name', array('fieldname' => $buffname, 'newname' => $newname));
 					$buffname = $newname;
 				}
 
 
-				$ids[] = !empty($input['cf_'.$i.'_id']) ? intval($input['cf_'.$i.'_id']) : null;
+				$ids[] = !empty($input['cf_'.$i.'_id']) ? (int) $input['cf_'.$i.'_id'] : null;
 				$names[] = $buffname;
 				$labels[] = !empty($input['cf_'.$i.'_label']) ? $input['cf_'.$i.'_label'] : '';
 				$types[] = !empty($input['cf_'.$i.'_type']) ? $input['cf_'.$i.'_type'] : '';
@@ -334,13 +335,10 @@ class Manager
 		// Show message when duplicate values exist, but save correctly entered names
 		if(count($names) != count(array_unique($names)))
 		{
-			//$names = array_unique($names);
 			// remove duplicate keys in other arrays
 			$dupl = $this->getDuplicate($names);
-			if(!empty($dupl))
-			{
-				foreach($dupl as $val)
-				{
+			if(!empty($dupl)) {
+				foreach($dupl as $val) {
 					unset($ids[$val]);
 					unset($names[$val]);
 					unset($labels[$val]);
@@ -349,32 +347,31 @@ class Manager
 					unset($defaults[$val]);
 				}
 			}
-			MsgReporter::setClause('err_save_fields_unique', array(), true);
+			MsgReporter::setError('err_fields_unique_names');
 		}
 
 		$fc = new FieldMapper();
 		$fc->init($input['cat']);
 
-		// backup fields?
-		if((int)$this->config->backend->fieldbackup == 1)
+		// Create backup of the fields
+		if($this->config->backupFields)
 		{
-			if(!$fc->fieldsExists($input['cat']))
-				if(!$fc->createFields($input['cat']))
-				{
-					MsgReporter::setClause('save_failure', array(), true);
+			if(!$fc->fieldsExists($input['cat'])) {
+				if(!$fc->createFields($input['cat'])) {
+					MsgReporter::setError('err_field_save_failed');
 					return false;
 				}
-			if(!$this->config->createBackup(IM_FIELDS_DIR, $input['cat'], IM_FIELDS_FILE_SUFFIX))
-			{
-				MsgReporter::setClause('err_backup', array('backup' => $this->config->backend->fieldbackupdir), true);
+			}
+			if(!Util::createBackup(IM_FIELDSPATH, $input['cat'], IM_FIELDS_SUFFIX)) {
+				MsgReporter::setError('err_backup', array('backup' => IM_BACKUPPATH));
 				return false;
 			}
 		}
 
-		// Update the field data or create new
+		// Update the field data or create it
 		foreach($ids as $key => $id)
 		{
-			// check if fields already exists
+			// Check if that fields already exists
 			$field = $fc->getField($id);
 
 			if($field)
@@ -391,13 +388,11 @@ class Manager
 					$field->default = str_replace('"', '\'', $defaults[$key]);
 				}
 				$field->options = array();
-				if(!empty($options[$key]))
-				{
+				if(!empty($options[$key])) {
 					$split = preg_split("/\r?\n/", rtrim(stripslashes(str_replace('"', '\'', $options[$key]))));
-					foreach($split as $option)
-						$field->options[] = $option;
+					foreach($split as $option) $field->options[] = $option;
 				}
-			// field does not exist, create a new field
+			// That field does not exist yet, create a new one
 			} else
 			{
 				$field = new Field($input['cat']);
@@ -413,51 +408,96 @@ class Manager
 					$field->default = str_replace('"', '\'', $defaults[$key]);
 				}
 				$field->options = array();
-				if(!empty($options[$key]))
-				{
+				if(!empty($options[$key])) {
 					$split = preg_split("/\r?\n/", rtrim(stripslashes(str_replace('"', '\'', $options[$key]))));
-					foreach($split as $option)
-						$field->options[] = $option;
+					foreach($split as $option) $field->options[] = $option;
 				}
 			}
 			$field->save();
 		}
 
-		// useAllocater is activated
-		if($this->config->useAllocater == true) {
-			$mapper = $this->getItemMapper();
-			$mapper->disalloc($input['cat']);
 
-			if($mapper->alloc($input['cat']) !== true)
-			{
-				$mapper->init($input['cat']);
-				if(!empty($mapper->items))
-				{
-					$mapper->simplifyBunch($mapper->items);
-					$mapper->save();
-				}
+
+		/*$mapper = $this->getItemMapper();
+		//$mapper->disalloc($input['cat']);
+
+		if($mapper->init($input['cat']) !== true) {
+			$mapper->init($input['cat']);
+			if(!empty($mapper->items)) {
+				$mapper->simplifyBunch($mapper->items);
+				$mapper->save();
 			}
-		}
+		}*/
 
-		// remove deleted fieds
-		$data = FieldMapper::getFieldsSaveInfo($input['cat']);
+
+		// Remove deleted fieds
+		$data = $fc->getFieldsSaveInfo($input['cat']);
 		$result = array_diff($data['ids'], $ids);
 		foreach($result as $fieldkey)
 		{
 			$deletion = $fc->getField($fieldkey);
 			if(is_object($deletion) && !$deletion->delete())
 			{
-				MsgReporter::setClause('err_delete_field', array('fieldname' => $deletion->name), true);
+				MsgReporter::setError('err_field_deleting', array('fieldname' => $deletion->name));
 				return false;
 			}
 		}
 
-		MsgReporter::setClause('save_success');
+		MsgReporter::setMessage('fields_successful_saved');
 		return true;
 	}
 
+	/**
+	 * Like as saveFieldDetails(), but allows saving data recursively
+	 *
+	 * @since 3.0
+	 * @param $catid
+	 * @param array $fieldsdata
+	 *
+	 * @return bool
+	 */
+	public function setFiedData($catid, array $fieldsdata)
+	{
+		$fm = new FieldMapper();
+		$fm->init($catid);
 
+		foreach($fieldsdata as $input)
+		{
+			// Field already exists
+			$currfield = $fm->getField((int) $input['field']);
 
+			if(!$currfield) {
+				MsgReporter::setError('err_field_id');
+				return false;
+			}
+
+			$currfield->default = !empty($input['default']) ?
+				str_replace('"', "'", $input['default']) : '';
+			$currfield->info = !empty($input['info']) ?
+				str_replace('"', "'", $input['info']) : '';
+			$currfield->required = (isset($input['required']) && $input['required'] > 0) ? true : null;
+			$currfield->minimum = (isset($input['min_field_input']) && (int) $input['min_field_input'] > 0)
+				? (int) $input['min_field_input'] : null;
+			$currfield->maximum = (isset($input['max_field_input']) && (int) $input['max_field_input'] > 0)
+				? (int) $input['max_field_input'] : null;
+			$currfield->areaclass = !empty($input['areaclass']) ?
+				str_replace('"', "'", $input['areaclass']) : '';
+			$currfield->labelclass = !empty($input['labelclass']) ?
+				str_replace('"', "'", $input['labelclass']) : '';
+			$currfield->fieldclass = !empty($input['fieldclass']) ?
+				str_replace('"', "'", $input['fieldclass']) : '';
+
+			// Process custom Fieldtype settings
+			foreach($input as $key => $value) {
+				if(strpos($key, 'custom-') !== false) {
+					$fieldkey = str_replace('custom-', '', $key);
+					$currfield->configs->{$fieldkey} = $value;
+				}
+			}
+			if(!$currfield->save()) return false;
+		}
+		return true;
+	}
 
 
 	public function saveFieldDetails($input)

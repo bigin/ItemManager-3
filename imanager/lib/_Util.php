@@ -15,6 +15,16 @@ class Util
 		return $config;
 	}
 
+	/**
+	 * @param null $path
+	 * @param string $language
+	 */
+	public static function buildLanguage($path=null, $language='en_US.php')
+	{
+		global $i18n;
+		if(file_exists(IM_ROOTPATH.'imanager/lang/'.$language)) { include(IM_ROOTPATH.'imanager/lang/'.$language); }
+	}
+
 	public static function dataLog($data, $file = '')
 	{
 		$filename = empty($file) ? GSDATAOTHERPATH.'logs/imlog_'.date('Ym').'.txt' : GSDATAOTHERPATH.'logs/'.$file.'.txt';
@@ -102,7 +112,7 @@ class Util
 			default:
 				return false;
 		}
-		$min_days = (int)manager('config')->minBackupTimePeriod;
+		$min_days = (int) imanager('config')->minBackupTimePeriod;
 		foreach(glob(IM_BACKUPPATH.'backup_*_*'.$suffix) as $file) {
 			if(self::isCacheFileExpired($file, $min_days)) { self::removeFilename($file);}
 		}
