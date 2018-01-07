@@ -2,16 +2,23 @@
 class InputPassword implements InputInterface
 {
 	protected $values;
+
 	protected $field;
 
 	public function __construct(Field $field)
 	{
 		$this->field = $field;
+
 		$this->values = new stdClass();
+
 		$this->values->value = null;
+
 		$this->confirm = null;
+
 		$this->password = '';
+
 		$this->salt = '';
+
 		$this->values->salt = null;
 	}
 

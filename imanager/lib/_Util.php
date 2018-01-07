@@ -41,6 +41,12 @@ class Util
 
 	public static function preformat($data){echo '<pre>'.print_r($data, true).'</pre>';}
 
+
+	public static function install($path) {
+		if(!mkdir(dirname($path), imanager('config')->chmodDir, true)) echo 'Unable to create path: '.dirname($path);
+	}
+
+	// TODO: Wird diese hier benutzt?
 	public static function isTimestamp($string){return (1 === preg_match( '~^[1-9][0-9]*$~', $string ));}
 
 	/**

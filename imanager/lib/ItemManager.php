@@ -66,6 +66,12 @@ class ItemManager extends Manager
 		return self::$itemMapper;
 	}
 
+	public function getFieldMapper()
+	{
+		if(self::$fieldMapper === null)
+			self::$fieldMapper = new FieldMapper();
+		return self::$fieldMapper;
+	}
 
 	public function getCategory($stat, array $categories=array())
 	{

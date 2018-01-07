@@ -1,5 +1,6 @@
-<?php
-class ItemMapper
+<?php namespace Imanager;
+
+class ItemMapper extends Mapper
 {
 	/**
 	 * @var string filter by node
@@ -15,205 +16,10 @@ class ItemMapper
 
 	public $path = null;
 
-	protected $chmodFile = 0666;
-
-	protected $chmodDir = 0755;
-
 	/**
 	 * @var - An array of the Item objects
 	 */
 	public $items = array();
-
-
-	//public function __construct(){$this->items = array();}
-
-	/**
-	 * Just another forced init method
-	 *
-	 * @param $catid        - Category ID to be searched through
-	 * @param array $fields - Define custom fields that item objects should load (default: all)
-	 * @param int $start    - Define start index for the loop
-	 * @param bool $bulk    - Define max number of items in selected array
-	 * @param string $pat   - Define a pattern (optional)
-	 */
-	public function quickInit($catid, $fields=array(), $start=0, $bulk=false, $pat='*')
-	{
-		// nitialize the fields class
-		$fc = new FieldMapper();
-		$fc->init($catid);
-		$this->items = array();
-		$i=0;
-		$fl = glob(IM_ITEM_DIR.$pat.'.'.$catid.IM_ITEM_FILE_SUFFIX, GLOB_NOSORT);
-		$this->total = count($fl);
-		foreach($fl as $file)
-		{
-			if($i < $start) {$i++; continue;}
-
-			$base = basename($file, IM_ITEM_FILE_SUFFIX);
-			$strp = strpos($base, '.');
-			$id = substr($base, 0, $strp);
-			$category = substr($base, $strp+1);
-
-			$xml = getXML($file);
-
-			$item = new Item($category);
-
-			$item->categoryid = (int) $category;
-			$item->id = (int) $id;
-			$item->file = $file;
-			$item->filename = $base.IM_ITEM_FILE_SUFFIX;
-
-			$item->name = (string) $xml->name;
-			$item->label = (string) $xml->label;
-			$item->position = (int) $xml->position;
-			$item->active = (int) $xml->active;
-
-			$item->created = (int) $xml->created;
-			$item->updated = (int) $xml->updated;
-
-			$this->items[$item->id] = $item;
-
-			foreach($fc->fields as $name => $obj)
-			{
-				if(in_array($name, $fields))
-				{
-					$new_field = new Field($category);
-					// clone object otherwise we'll lose the value data
-					$new_field = clone $obj;
-
-					foreach($xml->field as $fieldkey => $field)
-					{
-						if($new_field->id == $field->id)
-						{
-							$inputClassName = 'Input'.ucfirst($new_field->type);
-							$InputType = new $inputClassName($fc->fields[$name]);
-							$output = $InputType->prepareOutput();
-
-							foreach($output as $outputkey => $outputvalue)
-							{
-								if(is_array($outputvalue))
-								{
-									$new_field->$outputkey = array();
-									$counter = 0;
-									foreach($field->$outputkey as $arrkey => $arrval)
-									{
-										$url = (($outputkey == 'imageurl' || $outputkey == 'imagefullurl') ? IM_SITE_URL : '');
-										$new_field->{$outputkey}[] = $url.(string)$field->{$outputkey}[$counter];
-										$counter++;
-									}
-								} else
-								{
-									$new_field->$outputkey = '';
-									$new_field->$outputkey = (string) $field->$outputkey;
-								}
-							}
-							if(empty($new_field->value) && !empty($new_field->default))
-							{
-								$new_field->value = (string)$new_field->default;
-							}
-						}
-					}
-
-					$item->fields->$name = $new_field;
-				}
-			}
-			$this->items[$item->id] = $item;
-			if($bulk && (++$i) == $bulk) return;
-		}
-	}
-
-	/**
-	 * A limited init method, very useful when you wish to select only one or a few items
-	 *
-	 * @param integer $catid  - Category ID to be searched through
-	 * @param integer $from   - Define start id index for the loop
-	 * @param integer $limit    - Define max id of items in selected array
-	 */
-	public function limitedInit($catid, $index, $limit=0)
-	{
-		// nitialize the fields class
-		$fc = new FieldMapper();
-		$fc->init($catid);
-		$this->items = array();
-
-		if($limit == 0) $limit = ($index+1);
-		else $limit++;
-		for($i = $index; $i < $limit; $i++)
-		{
-			$res = glob(IM_ITEM_DIR.$i.'.'.$catid.IM_ITEM_FILE_SUFFIX, GLOB_NOSORT);
-			if(empty($res)) continue;
-			$file = $res[0];
-
-			$base = basename($file, IM_ITEM_FILE_SUFFIX);
-			$strp = strpos($base, '.');
-			$id = substr($base, 0, $strp);
-			$category = substr($base, $strp+1);
-
-			$xml = getXML($file);
-
-			$item = new Item($category);
-
-			$item->categoryid = (int)$category;
-			$item->id = (int) $id;
-			$item->file =  $file;
-			$item->filename = $base.IM_ITEM_FILE_SUFFIX;
-
-			$item->name = (string) $xml->name;
-			$item->label = (string) $xml->label;
-			$item->position = (int) $xml->position;
-			$item->active = (int) $xml->active;
-
-			$item->created = (int) $xml->created;
-			$item->updated = (int) $xml->updated;
-
-			$this->items[$item->id] = $item;
-
-			foreach($fc->fields as $name => $obj)
-			{
-				$new_field = new Field($category);
-				// clone object because otherwise we'll lose the value data
-				$new_field = clone $obj;
-
-				foreach($xml->field as $fieldkey => $field)
-				{
-					if( $new_field->id == $field->id)
-					{
-						$inputClassName = 'Input'.ucfirst($new_field->type);
-						$InputType = new $inputClassName($fc->fields[$name]);
-						$output = $InputType->prepareOutput();
-
-						foreach($output as $outputkey => $outputvalue)
-						{
-							if(is_array($outputvalue))
-							{
-								$new_field->$outputkey = array();
-								$counter = 0;
-								foreach($field->$outputkey as $arrkey => $arrval)
-								{
-									$url = (($outputkey == 'imageurl' || $outputkey == 'imagefullurl') ? IM_SITE_URL : '');
-									$new_field->{$outputkey}[] = $url.(string)$field->{$outputkey}[$counter];
-									$counter++;
-								}
-							} else
-							{
-								$new_field->$outputkey = '';
-								$new_field->$outputkey = (string) $field->$outputkey;
-							}
-						}
-						if(empty($new_field->value) && !empty($new_field->default))
-						{
-							$new_field->value = (string) $new_field->default;
-						}
-					}
-				}
-				$item->fields->$name = $new_field;
-			}
-			$this->items[$item->id] = $item;
-		}
-
-		$this->total = count($this->items);
-	}
-
 
 	/**
 	 * Regular init method for item objects of a category
@@ -222,10 +28,10 @@ class ItemMapper
 	 */
 	public function init($category_id)
 	{
-		$this->path = IM_BUFFERPATH.'items/'.(int) $this->categoryid.'.items.php';
+		$this->path = IM_BUFFERPATH.'items/'.(int) $category_id.'.items.php';
 
 		if(!file_exists(dirname($this->path))) {
-			$this->install($this->path);
+			Util::install($this->path);
 		}
 		if(file_exists($this->path)) {
 			$this->items = include($this->path);
@@ -236,87 +42,6 @@ class ItemMapper
 		$this->items = null;
 		$this->total = 0;
 		return false;
-	}
-
-	/**
-	 * Initializes all the items of a category and made them available in ImItem::$items
-	 */
-	public function initRaw($catid)
-	{
-		// nitialize the fields class
-		$fc = new FieldMapper();
-		$fc->init($catid);
-		$this->items = array();
-		foreach(glob(IM_ITEM_DIR.'*.'.$catid.IM_ITEM_FILE_SUFFIX) as $file)
-		{
-
-			$base = basename($file, IM_ITEM_FILE_SUFFIX);
-			$strp = strpos($base, '.');
-			$id = substr($base, 0, $strp);
-			$category = substr($base, $strp+1);
-
-			$xml = getXML($file);
-
-			$item = new Item($category);
-
-			$item->categoryid = (int) $category;
-			$item->id = (int) $id;
-			$item->file =  $file;
-			$item->filename = $base.IM_ITEM_FILE_SUFFIX;
-
-			$item->name = (string) $xml->name;
-			$item->label = (string) $xml->label;
-			$item->position = (int) $xml->position;
-			$item->active = (int) $xml->active;
-
-			$item->created = (int) $xml->created;
-			$item->updated = (int) $xml->updated;
-
-			foreach($fc->fields as $name => $obj)
-			{
-				$new_field = new Field($category);
-				// clone object because otherwise we'll lose the value data
-				$new_field = clone $obj;
-
-				foreach($xml->field as $fieldkey => $field)
-				{
-					if( $new_field->id == $field->id)
-					{
-						$inputClassName = 'Input'.ucfirst($new_field->type);
-						$InputType = new $inputClassName($fc->fields[$name]);
-						$output = $InputType->prepareOutput();
-
-						foreach($output as $outputkey => $outputvalue)
-						{
-							if(is_array($outputvalue))
-							{
-								$new_field->$outputkey = array();
-								$counter = 0;
-								foreach($field->$outputkey as $arrkey => $arrval)
-								{
-									$url = (($outputkey == 'imageurl' || $outputkey == 'imagefullurl') ? IM_SITE_URL : '');
-									$new_field->{$outputkey}[] = $url.(string)$field->{$outputkey}[$counter];
-									$counter++;
-								}
-							} else
-							{
-								$new_field->$outputkey = '';
-								$new_field->$outputkey = (string) $field->$outputkey;
-							}
-						}
-						if(empty($new_field->value) && !empty($new_field->default))
-						{
-							$new_field->value = (string) $new_field->default;
-						}
-					}
-				}
-
-				$item->fields->$name = $new_field;
-			}
-
-			$this->items[$item->id] = $item;
-		}
-		$this->total = count($this->items);
 	}
 
 
@@ -419,15 +144,6 @@ class ItemMapper
 	 */
 	public function countItems(array $items=array())
 	{return !empty($items) ? count($items) : count($this->items);}
-
-
-	/**
-	 * Count all items in a category, it is best to use this method, not init() then countItems()
-	 */
-	public function quickCount($catid)
-	{
-		return count(glob(IM_ITEM_DIR.'*.'.$catid.IM_ITEM_FILE_SUFFIX, GLOB_NOSORT));
-	}
 
 
 	/**
@@ -1219,7 +935,4 @@ class ItemMapper
 		return $tpl->render($tpls['wrapper'], array('value' => $output), true);
 	}
 
-	protected function install($path) {
-		if(!mkdir(dirname($path), $this->chmodDir, true)) echo 'Unable to create path: '.dirname($path);
-	}
 }

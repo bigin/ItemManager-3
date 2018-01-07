@@ -7,13 +7,21 @@ $i18n = array(
 	'err_field_name_maxlength' => 'Length for the field name is limited to [[count]] characters.',
 	'err_multiple_upload_fields' => 'One upload field is allowed for each category.',
 	'err_reserved_field_name' => '"[[fieldname]]" field name is a reserved - The field is renamed to "[[newname]]"',
-  	'err_fields_unique_names' => 'The field names must be unique. The duplicates have been removed.',
+	'err_fields_unique_names' => 'The field names must be unique. The duplicates have been removed.',
 	'err_field_save_failed' => 'The field could not be saved.',
 	'err_backup' => 'Error creating a backup file (Please make sure that backup directory is existing: [[backup]])',
 	'err_field_deleting' => 'Error deleting the field "[[fieldname]]"',
- 	'fields_successful_saved' => 'Fields successfully saved',
- 	'err_field_id' => 'The entered field id does not exist'
-
+	'fields_successful_saved' => 'Fields successfully saved',
+	'err_field_id' => 'The entered field id does not exist',
+	'err_cat_id_unknown' => 'The entered category id is unknown',
+	'err_fieldtype' => 'Illegal field type',
+	'err_fieldname' => 'Illegal field name',
+	'err_duplicate_fieldname' => 'Field name already exists',
+	'err_reserved_fieldname' => 'Field name [[name]] is internally reserved',
+	'err_fieldname_exists' => 'Field name does not exists',
+ 	'err_empty_required_field_value' => 'Field value [[name]] required',
+	'err_min_length_field_value' => 'The minimum length of the [[name]] field value is [[length]] characters',
+	'err_max_length_field_value' => 'The maximum length of the [[name]] field value is [[length]] characters',
 
 
 

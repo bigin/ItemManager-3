@@ -17,12 +17,6 @@ class CategoryMapper extends Mapper
 	public $path = null;
 
 
-	protected $chmodFile = 0666;
-
-
-	protected $chmodDir = 0755;
-
-
 	public function &__get($param)
 	{
 		if($param == 'categories')
@@ -39,7 +33,7 @@ class CategoryMapper extends Mapper
 	{
 		$this->path = IM_BUFFERPATH.'/categories/categories.php';
 		if(!file_exists(dirname($this->path))) {
-			$this->install($this->path);
+			Util::install($this->path);
 		}
 		if(file_exists($this->path)) {
 			$this->categories = include($this->path);
@@ -570,9 +564,9 @@ class CategoryMapper extends Mapper
 		return $tpl->render($tpls['wrapper'], array('value' => $output), true);
 	}
 
-	protected function install($path)
+	/*protected function install($path)
 	{
-		/*$value = "# apache < 2.3\r\n";
+		$value = "# apache < 2.3\r\n";
 		$value .= "<IfModule !mod_authz_core.c>\r\n";
 		$value .= "Deny from all\r\n";
 		$value .= "</IfModule>\r\n\r\n";
@@ -585,10 +579,10 @@ class CategoryMapper extends Mapper
 		$value .= "<IfModule !mod_access_compat.c>\r\n";
 		$value .= "Require all denied\r\n";
 		$value .= "</IfModule>\r\n\r\n";
-		$value .= "</IfModule>\r\n";*/
+		$value .= "</IfModule>\r\n";
 		if(!mkdir(dirname($path), $this->chmodDir, true)) echo 'Unable to create path: '.dirname($path);
 		//if(!$handle = fopen(dirname($path).'/.htaccess', 'w')) return false;
 		//fwrite($handle, $value);
 		//fclose($handle);
-	}
+	}*/
 }

@@ -14,10 +14,10 @@ define('IM_SECTIONSCACHEPATH', IM_CACHEPATH.'sections/');
 define('IM_UPLOADPATH', IM_DATAPATH.'uploads/');
 define('IM_TEMPLATEPATH', IM_ROOTPATH.'imanager/tpl/');
 define('IM_BACKUPPATH', IM_DATAPATH.'backups/');
-define('IM_FIELDS_SUFFIX', '.fields.xml');
-define('IM_CATEGORY_SUFFIX', '.cat.xml');
+//define('IM_FIELDS_SUFFIX', '.fields.xml');
+//define('IM_CATEGORY_SUFFIX', '.cat.xml');
 define('IM_TEMPLATE_SUFFIX', '.tpl');
-define('IM_ITEM_SUFFIX', '.item.xml');
+//define('IM_ITEM_SUFFIX', '.item.xml');
 
 define('IM_VERSION', 300);
 define('IM_VERSION_HUMAN', '3.0.0');

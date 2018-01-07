@@ -1,6 +1,6 @@
 <?php namespace Imanager;
 
-class FieldMapper
+class FieldMapper extends Mapper
 {
 	/**
 	 * @var array of the objects of type Field
@@ -18,16 +18,6 @@ class FieldMapper
 	public $path = null;
 
 	/**
-	 * @var int access permissions for new files
-	 */
-	protected $chmodFile = 0666;
-
-	/**
-	 * @var int access permissions for new directories
-	 */
-	protected $chmodDir = 0755;
-
-	/**
 	 * Init fields of a category
 	 *
 	 * @since 3.0
@@ -37,39 +27,25 @@ class FieldMapper
 	 */
 	public function init($category_id)
 	{
-		$base = basename(IM_FIELDSPATH.(int) $category_id.IM_FIELDS_SUFFIX);
+		$this->path = IM_BUFFERPATH.'fields/'.(int) $category_id.'.fields.php';
 
-		$strp = strpos($base, '.');
-		$file_id = substr($base, 0, $strp);
-
-		$xml = null;
-		if(file_exists(IM_FIELDSPATH.(int) $category_id.IM_FIELDS_SUFFIX)) {
-			$xml = simplexml_load_file(IM_FIELDSPATH.(int) $category_id.IM_FIELDS_SUFFIX);
+		if(!file_exists(dirname($this->path))) {
+			Util::install($this->path);
 		}
-		if(!$xml) return $this->fields;
-
-		$i = 0;
-		foreach($xml->field as $field)
-		{
-			$f = new Field($category_id);
-			$f->options = array();
-			$f->confirmed = false;
-			foreach($field as $key => $val)
-			{
-				if(is_numeric($val)) $f->{$key} = (int) $val;
-				elseif($key == 'option') $f->options[] = (string) $val;
-				elseif($key == 'configs') $f->configs = $val;
-				else $f->{$key} = (string) $val;
-			}
-			$i++;
-
-			$this->fields[$f->name] = $f;
+		if(file_exists($this->path)) {
+			$this->fields = include($this->path);
+			$this->total = count($this->fields);
+			return true;
 		}
+		unset($this->fields);
+		$this->fields = null;
+		$this->total = 0;
+
+		return false;
 	}
 
 	/**
 	 *
-	 * @since 3.0
 	 * @param $stat
 	 * @param array $fields
 	 *
@@ -167,12 +143,12 @@ class FieldMapper
 
 
 	/**
-	 * Checks fields file exist on the basis of category id and create them if they don't
+	 * Checks fields file exist on the basis of category and create them if they don't
 	 */
 	public function createFields($id)
 	{
 		if(!file_exists(IM_FIELDSPATH.(int) $id.IM_FIELDS_SUFFIX) &&
-			file_exists(IM_CATEGORYPATH.(int) $id.IM_CATEGORY_SUFFIX)) {
+			file_exists(IM_BUFFERPATH.'/categories/categories.php')) {
 			$field = new Field($id);
 			return $field->save();
 		}
@@ -238,7 +214,7 @@ class FieldMapper
 	}
 
 
-	public function getFieldsSaveInfo($catid, $sort=false)
+	public function getFieldsSaveInfo($catid)
 	{
 		$data = array();
 		$xml = simplexml_load_file(IM_FIELDSPATH.(int) $catid.IM_FIELDS_SUFFIX);

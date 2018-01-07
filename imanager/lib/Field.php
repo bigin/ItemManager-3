@@ -3,7 +3,6 @@
 class Field
 {
 	public $categoryid = null;
-	public $file = null;
 	public $id = null;
 	public $name = null;
 	public $label = null;
@@ -23,8 +22,6 @@ class Field
 	public function __construct($category_id)
 	{
 		$this->categoryid = (int) $category_id;
-		$this->file = IM_FIELDSPATH.$this->categoryid.IM_FIELDS_SUFFIX;
-		$this->configs = new \stdClass();
 
 		settype($this->id, 'integer');
 		settype($this->position, 'integer');
@@ -35,12 +32,40 @@ class Field
 		settype($this->updated, 'integer');
 	}
 
+	public static function __set_state($an_array)
+	{
+		$_instance = new Field($an_array['categoryid']);
+		foreach($an_array as $key => $val) {
+			if(is_array($val)) $_instance->{$key} = $val;
+			else $_instance->{$key} = $val;
+		}
+		//$_instance->configs = new \stdClass();
+		$_instance->configs = array();
+		return $_instance;
+	}
+
 	/**
 	 * Retrives field attributes array
 	 */
 	protected function getAttributes() {
-		return array('categoryid', 'file', 'id', 'name', 'label', 'type', 'position', 'default', 'options',
+		return array('categoryid', 'id', 'name', 'label', 'type', 'position', 'default', 'options',
 			'info', 'required', 'minimum', 'maximum', 'cssclass', 'configs', 'created', 'updated');
+	}
+
+	/**
+	 * Returns maximal field id
+	 *
+	 * @return integer
+	 */
+	private function getMaxFieldId()
+	{
+		$fm = imanager()->getFieldMapper();
+		$fm->init($this->categoryid);
+		$ids = array();
+		foreach($fm->fields as $field) {
+			$ids[] = $field->id;
+		}
+		return max($ids);
 	}
 
 	public function set($key, $val, $sanitize=true)
@@ -52,13 +77,13 @@ class Field
 		if(!in_array($key, $this->getAttributes())) { return false; }
 
 		// save data depending on data type
-		if($key == 'file' || $key == 'name' || $key == 'label' || $key == 'type' || $key == 'default'
+		if($key == 'name' || $key == 'label' || $key == 'type' || $key == 'default'
 			|| $key == 'info' || $key == 'areaclass' || $key == 'labelclass' || $key == 'fieldclass') {
-			$this->{$key} = ($sanitizer) ? $sanitizer->text($val) : $val;
+			$this->{$key} = ($sanitize) ? $sanitizer->text($val) : $val;
 		} elseif($key == 'options') {
-			$this->options[] = ($sanitizer) ? $sanitizer->text($val) : $val;
+			$this->options[] = ($sanitize) ? $sanitizer->text($val) : $val;
 		} else {
-			$this->{$key} = ($sanitizer) ? (int) $val : $val;
+			$this->{$key} = ($sanitize) ? (int) $val : $val;
 		}
 	}
 
@@ -69,179 +94,116 @@ class Field
 	/**
 	 * Returns maximum field id
 	 */
-	public function getMaximumId($xml)
+	private function getNextId()
 	{
-		$ids = array_map('intval', $xml->xpath('//fields/field/id'));
-		return !empty($ids) ? max($ids) : 0;
+		// no category is selected, return false
+		if(!$this->categoryid) return null;
+
+		$ids = array();
+		$maxid = 1;
+		if(file_exists(IM_BUFFERPATH.'fields/'.(int) $this->categoryid.'.fields.php')) {
+			$fields = include(IM_BUFFERPATH.'fields/'.(int) $this->categoryid.'.fields.php');
+			if(is_array($fields)) { $maxid = ($this->getMaxFieldId()+1);}
+		}
+		return $maxid;
 	}
 
-
-	public function save()
+	/**
+	 * Check required field attributes
+	 *
+	 * @return bool
+	 */
+	private function checkRequired()
 	{
 		$sanitizer = imanager('sanitizer');
 
-		// new file
-		if(!file_exists(IM_FIELDSPATH.(int) $this->categoryid.IM_FIELDS_SUFFIX))
-		{
-			$newXML = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><fields><categoryid></categoryid></fields>');
-			$res = $newXML->asXml(IM_FIELDSPATH.(int) $this->categoryid.IM_FIELDS_SUFFIX);
-			if(empty($this->name)) return $res;
+		$catid = (int) $this->categoryid;
+		$mapper = imanager()->getCategoryMapper();
+		$mapper->init();
+		$cat = $mapper->getCategory($catid);
+		if(!$cat) {
+			MsgReporter::setError('err_cat_id_unknown');
+			return false;
+		}
+		$this->categoryid = $cat->id;
+
+		$this->type = $sanitizer->fieldName($this->type);
+		if(!$this->type) {
+			MsgReporter::setError('err_fieldtype');
+			return false;
 		}
 
-		if(!$this->id && !empty($this->name))
-		{
-			$xml = simplexml_load_file($this->file);
-
-			$xml->categoryid = (int)$this->categoryid;
-
-			$id = ((int) $this->getMaximumId($xml) + 1);
-
-			$xmlfield = $xml->addChild('field');
-
-			$xmlfield->id = $id;
-			$xmlfield->name = $sanitizer->pageName($this->name);
-			$xmlfield->label = $sanitizer->text($this->label);
-			$xmlfield->type = $sanitizer->text($this->type);
-			$xmlfield->position = ($this->position) ? (int) $this->position : $id;
-			$xmlfield->default = $this->default;
-
-			if(!empty($this->options))
-			{
-				unset($xmlfield->option);
-				foreach($this->options as $option) $xmlfield->option[] = $option;
-			} else {
-				$this->option = '';
-			}
-
-			$xmlfield->info = $this->info;
-			$xmlfield->required = (boolean) $this->required;
-			$xmlfield->minimum = (int) $this->minimum;
-			$xmlfield->maximum = (int) $this->maximum;
-			$xmlfield->cssclass = $sanitizer->text($this->cssclass);
-			if(!empty($this->configs))
-			{
-				unset($xmlfield->configs);
-				foreach($this->configs as $key => $config) $xmlfield->configs->{$key} = (string) $config;
-			}
-			$xmlfield->created = time();
-			$xmlfield->updated = $xmlfield->created;
-
-			return $xml->asXml(IM_FIELDSPATH.(int)$this->categoryid.IM_FIELDS_SUFFIX);
-
-		} elseif(!empty($this->name))
-		{
-			$xml = simplexml_load_file($this->file);
-
-			foreach($xml as $fieldkey => $field)
-			{
-				// check id exists
-				foreach($field as $k => $v)
-				{
-					if($k == 'id' && (int) $v == (int) $this->id)
-					{
-						$field->name =  $sanitizer->pageName($this->name);
-						$field->label =  $sanitizer->text($this->label);
-						$field->type =  $sanitizer->text($this->type);
-						$field->position = ($this->position) ? (int)$this->position : (int)$this->id;
-						$field->default = $this->default;
-						if(!empty($this->options))
-						{
-							unset($field->option);
-							foreach($this->options as $option) $field->option[] = $option;
-						} else {
-							$this->option = '';
-						}
-
-						$field->info = $this->info;
-						$field->required = (boolean) $this->required;
-						$field->minimum = (int) $this->minimum;
-						$field->maximum = (int) $this->maximum;
-						$field->cssclass = $sanitizer->text($this->cssclass);
-						if(!empty($this->configs))
-						{
-							unset($field->configs);
-							foreach($this->configs as $key => $config) $field->configs->{$key} = (string) $config;
-						}
-						$field->created = (int) $this->created;
-						$field->updated = time();
-					}
-				}
-			}
-
-			return $xml->asXml(IM_FIELDSPATH.(int) $this->categoryid.IM_FIELDS_SUFFIX);
+		$this->name = $sanitizer->fieldName($this->name);
+		if(!$this->name) {
+			MsgReporter::setError('err_fieldname');
+			return false;
 		}
+
+		return true;
 	}
 
-
-	public function delete()
+	/**
+	 * Check field name duplicates
+	 *
+	 * @return bool
+	 */
+	private function checkNameDuplicates()
 	{
-		if(!$this->id) return false;
-
-		$params = array();
-		$newXML = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><fields><categoryid></categoryid></fields>');
-		$xml = simplexml_load_file($this->file);
-
-		$newXML->categoryid = $this->categoryid;
-
-		foreach($xml as $fieldkey => $field)
-		{
-			// loop through the ids to except deletion fields
-			foreach($field as $k => $v)
-			{
-				if($k == 'id' && (int) $v != (int) $this->id)
-				{
-					$xmlfield = $newXML->addChild('field');
-
-					$xmlfield->id = $field->id;
-					$xmlfield->name = $field->name;
-					$xmlfield->label = $field->label;
-					$xmlfield->type = $field->type;
-					$xmlfield->position = ($field->position) ? $field->position : $field->id;
-					$xmlfield->default = $field->default;
-					if(!empty($field->option))
-					{
-						foreach($field->option as $option) $xmlfield->option[] = $option;
-					} else {
-						$xmlfield->option = '';
-					}
-
-					$xmlfield->info = $field->info;
-					$xmlfield->required = $field->required;
-					$xmlfield->minimum = $field->minimum;
-					$xmlfield->created = $field->maximum;
-					$xmlfield->cssclass = $field->cssclass;
-					if(!empty($field->configs)) {
-						foreach($field->configs as $key => $config) $xmlfield->configs->{$key} = (string) $config;
-					}
-					$xmlfield->created = $field->created;
-					$xmlfield->updated = $field->updated;
-
-				}
-			}
+		$fm = imanager()->getFieldMapper();
+		$fm->init($this->categoryid);
+		$existed = $fm->getField('name='.$this->name);
+		if($existed && ((int) $existed->id !== (int) $this->id)) {
+			MsgReporter::setError('err_duplicate_fieldname');
+			return false;
 		}
-		unset($xml);
-		return $newXML->asXml(IM_FIELDSPATH.(int) $this->categoryid.IM_FIELDS_SUFFIX);
+
+		return true;
 	}
 
-
-	function __destruct()
+	/**
+	 * Search for reserved names
+	 *
+	 * @return bool
+	 */
+	private function checkReservedNames()
 	{
-		unset($this->categoryid);
-		unset($this->file);
-		unset($this->filename);
-		unset($this->id);
-		unset($this->name);
-		unset($this->label);
-		unset($this->type);
-		unset($this->position);
-		unset($this->default);
-		unset($this->options);
-		unset($this->info);
-		unset($this->required);
-		unset($this->minimum);
-		unset($this->maximum);
-		unset($this->cssclass);
-		unset($this->created);
-		unset($this->updated);
+		if(in_array($this->name, $this->getAttributes())) {
+			MsgReporter::setError('err_reserved_fieldname', array('name' => $this->name));
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Save field
+	 *
+	 * @return bool
+	 */
+	public function save()
+	{
+		$sanitizer = imanager('sanitizer');
+		$now = time();
+
+		if(!$this->checkRequired()) return false;
+
+		$this->id = (!$this->id) ? $this->getNextId() : (int) $this->id;
+
+		if(!$this->created) $this->created = $now;
+		$this->updated = $now;
+		if(!$this->position) $this->position = (int) $this->id;
+
+		// check field name unique
+		if(!$this->checkNameDuplicates()) return false;
+		// check reserved name
+		if(!$this->checkReservedNames()) return false;
+
+		$fm = imanager()->getFieldMapper();
+		$fm->init($this->categoryid);
+		$fm->fields[$this->name] = $this;
+
+		$export = var_export($fm->fields, true);
+		file_put_contents($fm->path, '<?php return ' . $export . '; ?>');
+		return true;
 	}
 }

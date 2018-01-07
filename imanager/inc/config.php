@@ -17,7 +17,10 @@ $config->maxFieldNameLength = 30;
 $config->backupFields = false;
 
 
-
+/**
+ *	Permissions for wew directories
+ */
+$config->chmodDir = 0755;
 
 
 

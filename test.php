@@ -2,12 +2,12 @@
 
 include 'index.php';
 
-//var_dump($imanager->config);
+var_dump($imanager->config);
 
 // Creating new categories
 /*$category = new \Imanager\Category();
-$category->set('name', 'My Second Category');
-$category->set('slug', 'My Second Category');
+$category->set('name', 'My First Category');
+$category->set('slug', 'My First Category');
 $category->save();*/
 
 //var_dump($category);
@@ -15,79 +15,58 @@ $category->save();*/
 // Get an existing category by id
 /*$catMapper = imanager()->getCategoryMapper();
 $catMapper->init();
-$secondCategory = $catMapper->getCategory(1);*/
+$secondCategory = $catMapper->getCategory(1);
+Imanager\Util::preformat($secondCategory);*/
 
 // Update an existing category
 /*$imanager = imanager();
 $catMapper = imanager()->getCategoryMapper();
 $catMapper->init();
-$secondCategory = $catMapper->getCategory(1);
-$secondCategory->name = 'My First Category Updated';
+$secondCategory = $catMapper->getCategory(2);
+$secondCategory->name = 'My Second Category Updated';
 $secondCategory->save();*/
 
 
-// Create fields for a category
+// Create a single fields for a category
 /*$imanager = imanager();
 $catMapper = imanager()->getCategoryMapper();
 $catMapper->init();
-$secondCategory = $catMapper->getCategory(1);
+$category = $catMapper->getCategory(1);
+$newField = new \Imanager\Field($category->id);
+$newField->set('type', 'text');
+$newField->set('name', 'text');
+$newField->set('label', 'Text field');
+$newField->save();
+Imanager\Util::preformat($newField);*/
 
-$fields = array(
 
-	'cat' => $secondCategory->id,
+/**
+ * Working with items
+ */
+// Create an item
+/*$item = new \Imanager\Item(1);
+$item->data = 'This is the item data to save';
+$item->save();*/
 
-	'cf_0_key'   => 'data',
-	'cf_0_label' => 'Data field',
-	'cf_0_type'  => 'text',
-	'cf_0_options' => '',
-	'cf_0_value' => ''
-);
-// Create fields
-if($imanager->createFields($fields) !== true) {
-	$msgs = \Imanager\MsgReporter::getMessages();
-	if($msgs) {
-		echo '<ul>';
-		foreach($msgs as $msg) {
-			echo $msg->text;
-		}
-		echo '</ul>';
+// Load an item
+/*$mapper = imanager()->getItemMapper();
+$mapper->init(1);
+$item = imanager()->getItemMapper()->getItem(1);
+Imanager\Util::preformat($item);*/
+
+// Update item
+/*$mapper = imanager()->getItemMapper();
+$mapper->init(1);
+$item = imanager()->getItemMapper()->getItem(1);
+$item->set('data', 'Data wurde aktualisiert '.time());
+$item->set('text', 'Das ist Itemtext-Value '.time());
+$item->save();
+$msgs = \Imanager\MsgReporter::getMessages();
+if($msgs) {
+	echo '<ul>';
+	foreach($msgs as $msg) {
+		echo $msg->text;
 	}
-} else {
-	// Set category field data
-	$fieldsdata = array(
-		array(
-			'field' => 1,
-			'default' => '',
-			'info' => 'Please never change or delete this data!',
-			'required' => true,
-			'min_field_input' => 0,
-			'max_field_input' => 0,
-			'cssclass' => 'readonly'
-		)
-	);
-
-	// Set field data
-	if($imanager->setFiedData($secondCategory->id, $fieldsdata) !== true) {
-		$msgs = \Imanager\MsgReporter::getMessages();
-		if($msgs) {
-			echo '<ul>';
-			foreach($msgs as $msg) {
-				echo $msg->text;
-			}
-			echo '</ul>';
-		}
-	} else {
-		$msgs = \Imanager\MsgReporter::getMessages();
-		if($msgs) {
-			echo '<ul>';
-			foreach($msgs as $msg) {
-				echo $msg->text;
-			}
-			echo '</ul>';
-		}
-	}
-}*/
-
-
-
-Imanager\Util::preformat($secondCategory);
+	echo '</ul>';
+}
+Imanager\Util::preformat($item);*/

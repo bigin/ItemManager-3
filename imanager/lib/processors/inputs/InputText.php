@@ -1,46 +1,49 @@
-<?php
+<?php namespace Imanager;
+
 class InputText implements InputInterface
 {
-	protected $values;
+	public $value;
+
 	protected $field;
-	protected $error = array();
 
 	public function __construct(Field $field)
 	{
 		$this->field = $field;
-		$this->values = new stdClass();
-		$this->values->value = null;
+		$this->value = '';
 	}
 
-	/* */
-	public function prepareInput($value, $sanitize=false)
+	public function prepareInput($value, $sanitize = false)
 	{
-		$this->values->value = empty($sanitize) ? $value : $this->sanitize($value);
+		$this->value = ($sanitize) ? $this->sanitize($value) : $value;
 
 		// check input required
-		if(!empty($this->field->required) && $this->field->required == 1)
-		{
-
-			if(empty($this->values->value))
-				return self::ERR_REQUIRED;
+		if($this->field->required && empty($this->value)) {
+			MsgReporter::setError('err_empty_required_field_value', array('name' => $this->field->name));
+			return false;
 		}
-		// check min value
-		if(!empty($this->field->minimum) && $this->field->minimum > 0)
-		{
-			if(strlen($this->values->value) < intval($this->field->minimum))
-				return self::ERR_MIN_VALUE;
+		// check min value length
+		if(!empty($this->field->minimum) && mb_strlen($this->value, 'UTF-8') < (int) $this->field->minimum) {
+			MsgReporter::setError('err_min_length_field_value', array(
+				'name' => $this->field->name,
+				'length' => $this->field->minimum)
+			);
+			return false;
 		}
 		// check input max value
-		if(!empty($this->field->maximum) && $this->field->maximum > 0)
-		{
-			if(strlen($this->values->value) > intval($this->field->maximum))
-				return self::ERR_MAX_VALUE;
+		if(!empty($this->field->maximum) && mb_strlen($this->values->value, 'UTF-8') > (int) $this->field->maximum) {
+			MsgReporter::setError('err_max_length_field_value', array(
+					'name' => $this->field->name,
+					'length' => $this->field->maximum)
+			);
+			return false;
 		}
 
-		return $this->values;
+		return true;
 	}
 
-	public function prepareOutput(){return $this->values;}
+	public function prepareOutput($sanitize = false) {
+		return ($sanitize) ? $this->sanitize($this->value) : $this->value;
+	}
 
 	protected function sanitize($value){return imanager('sanitizer')->text($value);}
 }

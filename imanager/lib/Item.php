@@ -12,17 +12,13 @@ class Item extends FieldMapper
 	 */
 	public $id = null;
 
-	/**
-	 * @var string|null - Item real file
-	 */
-	public $file = null;
-
 	public $name = null;
 	public $label = null;
 	public $position = null;
 	public $active = null;
 	public $created = null;
 	public $updated = null;
+
 	public $fields = array();
 
 
@@ -37,13 +33,10 @@ class Item extends FieldMapper
 		settype($this->created, 'integer');
 		settype($this->updated, 'integer');
 
-		// field arts object array
-		//$fm = new FieldMapper();
-		//$fm->init($this->categoryid);
+		unset($this->fields);
+		unset($this->total);
 
-		$this->init($this->categoryid);
-		//foreach($fc->fields as $name => $value) $this->fields->$name = $value;
-
+		parent::init($this->categoryid);
 	}
 
 
@@ -55,374 +48,108 @@ class Item extends FieldMapper
 			else $_instance->{$key} = $val;
 		}
 		return $_instance;
-
-		/*$obj = new Item($an_array['categoryid']);
-		foreach($an_array as $key => $val) {
-			if($key != 'fields') $obj->var1 = $an_array[$key];
-		}
-		return $obj;*/
 	}
 
+	/**
+	 * Retrives item attributes array
+	 */
+	private function getAttributes() {
+		return array('categoryid', 'id', 'name', 'label', 'position', 'active', 'options', 'created', 'updated');
+	}
 
-	public function getNextId()
+	/**
+	 * Returns next available id
+	 *
+	 * @return int
+	 */
+	private function getNextId()
 	{
-		// no category is selected, return false
-		if(!$this->categoryid) return false;
-
 		$ids = array();
-
-		$im =
-		init($category_id);
-
-
-		// check item file exists return back
-		if(file_exists(IM_BUFFERPATH.'items/'.(int) $this->categoryid.'.items.php'))
-		{
-			include(IM_BUFFERPATH.'items/'.(int) $this->categoryid.'.items.php');
-
-
-			foreach (glob(IM_ITEM_DIR.'*.'.$this->categoryid.IM_ITEM_FILE_SUFFIX) as $file)
-			{
-				$base = basename($file, IM_ITEM_FILE_SUFFIX);
-				$strp = strpos($base, '.');
-				$ids[] = substr($base, 0, $strp);
-			}
-			return !empty($ids) ? max($ids)+1 : false;
+		$maxid = 1;
+		if(file_exists(IM_BUFFERPATH.'items/'.(int) $this->categoryid.'.items.php')) {
+			$items = include(IM_BUFFERPATH.'items/'.(int) $this->categoryid.'.items.php');
+			if(is_array($items)) { $maxid = (max(array_keys($items))+1);}
 		}
-		// ok this may the first item for this category
-		if(!file_exists(IM_ITEM_DIR.'1.'.$this->categoryid.IM_ITEM_FILE_SUFFIX))
-			return 1;
-
-
-
-		/*$ids = array();
-		// check item file exists return back
-		if(glob(IM_ITEM_DIR.'*.'.$this->categoryid.IM_ITEM_FILE_SUFFIX))
-		{
-			foreach (glob(IM_ITEM_DIR.'*.'.$this->categoryid.IM_ITEM_FILE_SUFFIX) as $file)
-			{
-				$base = basename($file, IM_ITEM_FILE_SUFFIX);
-				$strp = strpos($base, '.');
-				$ids[] = substr($base, 0, $strp);
-			}
-			return !empty($ids) ? max($ids)+1 : false;
-		}
-		// ok this may the first item for this category
-		if(!file_exists(IM_ITEM_DIR.'1.'.$this->categoryid.IM_ITEM_FILE_SUFFIX))
-			return 1;*/
+		return $maxid;
 	}
 
-
-	public function set($key, $val){ $this->$key = $val; }
-
-
-	public function setFieldValue($fieldname, $value, $sanitize=true)
+	/**
+	 * A secure method to set the value of a field
+	 *
+	 * @param string $fieldname
+	 * @param int|string|boolean|array $value
+	 * @param bool $sanitize
+	 *
+	 * @return bool
+	 */
+	public function set($fieldname, $value, $sanitize=true)
 	{
-		if(empty($this->fields->$fieldname))
-		{
-			MsgReporter::setCode(6);
+		if(!isset($this->fields[$fieldname])) {
+			MsgReporter::setError('err_fieldname_exists');
 			return false;
 		}
-		$field = $this->fields->$fieldname;
+		$field = $this->fields[$fieldname];
 
-		$inputClassName = 'Input'.ucfirst($field->type);
+		$inputClassName = __NAMESPACE__.'\Input'.ucfirst($field->type);
 		$Input = new $inputClassName($field);
-		if(!is_array($value))
-		{
-			if(!$sanitize)
-			{
-				$fieldvalue =  $Input->prepareInput($value);
-				if(empty($fieldvalue) || is_int($fieldvalue))
-				{
-					MsgReporter::setCode($fieldvalue);
-					return false;
-				}
-				$this->fields->{$fieldname}->value = $fieldvalue->value;
-			} else {
-				$fieldvalue = $Input->prepareInput($value, true);
-				if(empty($fieldvalue) || is_int($fieldvalue))
-				{
-					MsgReporter::setCode($fieldvalue);
-					return false;
-				}
-				$this->fields->{$fieldname}->value = $fieldvalue->value;
-			}
-			return true;
-
-		} else
-		{
-			foreach($value as $key => $val)
-			{
-				if($key != 'value')
-					$Input->$key = $val;
-				elseif($key == 'value')
-					$inputval = $val;
-			}
-			if(isset($inputval))
-			{
-				if(!$sanitize)
-					$resultinput = $Input->prepareInput($inputval);
-				else
-					$resultinput = $Input->prepareInput($inputval, true);
-
-				if(!empty($resultinput) && !is_int($resultinput))
-				{
-					foreach($resultinput as $inputputkey => $inputvalue)
-						$this->fields->{$fieldname}->$inputputkey = $inputvalue;
-					return true;
-				}
-				MsgReporter::setCode($resultinput);
-				return false;
-			}
-			MsgReporter::setCode(6);
-			return false;
+		//if(!is_array($value)) {
+		if(!$sanitize) {
+			if(false === $Input->prepareInput($value)) { return false; }
+			$this->{$fieldname} = $Input->value;
+		} else {
+			if(false === $Input->prepareInput($value, true)) {return false; }
+			$this->{$fieldname} = $Input->value;
 		}
+		return true;
 	}
 
+	/**
+	 * Returns any item attribut
+	 *
+	 * @param $key
+	 *
+	 * @return null
+	 */
+	public function get($key) { return (isset($this->$key)) ? $this->$key : null;}
 
-	public function get($key)
-	{
-		if(isset($this->$key)) return $this->$key;
-
-		return false;
-	}
-
-
+	/**
+	 * Save item
+	 *
+	 * @return bool
+	 */
 	public function save()
 	{
-		// new file
-		if(is_null($this->id) && !file_exists(IM_ITEM_DIR.$this->id.'.'.$this->categoryid.IM_ITEM_FILE_SUFFIX))
-		{
-			$this->id = $this->getNextId();
-			$this->file = IM_ITEM_DIR.$this->id.'.'.$this->categoryid.IM_ITEM_FILE_SUFFIX;
-			$this->filename = $this->id.'.'.$this->categoryid.IM_ITEM_FILE_SUFFIX;
+		$sanitizer = imanager('sanitizer');
+		$now = time();
 
-			$xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><item></item>');
+		$this->id = (!$this->id) ? $this->getNextId() : (int) $this->id;
 
-			$xml->categoryid = $this->categoryid;
-			$xml->id = $this->id;
-			$xml->name = $this->name;
-			$xml->label = $this->label;
-			$xml->position = !is_null($this->position) ? $this->position : $this->id;
-			$this->position = (int)$xml->position;
-			$xml->active = $this->active;
-			$xml->created = $this->created;
-			$xml->updated = $this->updated;
+		if(!$this->created) $this->created = $now;
+		$this->updated = $now;
+		if(!$this->position) $this->position = (int) $this->id;
 
-			$data = $this->getFieldsDataToSave();
-
-			if(!empty($data['ids']))
-			{
-				foreach($data['ids'] as $key => $val)
-				{
-					$xml->field[$key]->id = $val;
-
-					if(!empty($this->fields->{$data['names'][$key]}->value))
-					{
-						$inputClassName = 'Input'.ucfirst($data['types'][$key]);
-						$InputType = new $inputClassName($this->fields->{$data['names'][$key]});
-
-						//$input = $InputType->prepareInput($this->fields->$data['names'][$key]->value);
-						$output = $InputType->prepareOutput();
-						$input = new stdClass();
-
-						foreach ($output as $inputkey => $inputval)
-							$input->$inputkey = $this->fields->{$data['names'][$key]}->$inputkey;
-
-						foreach($input as $inputkey => $inputvalue)
-						{
-							if(!is_array($inputvalue))
-							{
-								$xml->field[$key]->$inputkey = $inputvalue;
-							} else
-							{
-								foreach($inputvalue as $inputvalue_key => $inputvalue_value)
-								{
-									$xml->field[$key]->{$inputkey}[] = $inputvalue_value;
-								}
-							}
-						}
-					}
-				}
-			} else
-				$xml->field = '';
-
-			return $xml->asXml($this->file);
-
-		// overwrite file
-		} elseif(!is_null($this->id))
-		{
-			$xml = simplexml_load_file($this->file);
-
-			$xml->categoryid = $this->categoryid;
-			$xml->id = $this->id;
-			$xml->name = $this->name;
-			$xml->label = $this->label;
-			$xml->position = !is_null($this->position) ? $this->position : $this->id;
-			$this->position = (int)$xml->position;
-			$xml->active = $this->active;
-
-			$xml->created = $this->created;
-			// simple check if item has been updated by another process
-			if((int)$this->updated != (int)$xml->updated)
-			{
-				MsgReporter::setClause('err_updated_by_process', array(), true);
-				MsgReporter::setCode(12);
-				return false;
+		// Set empty values to null
+		foreach($this->fields as $key => $field) {
+			if(!isset($this->{$field->name}) || !$this->{$field->name}) $this->{$field->name} = $field->default;
+		}
+		// Remove any other item attributes
+		foreach($this as $key => $value) {
+			if($key != 'fields' && !in_array($key, $this->getAttributes()) && !array_key_exists($key, $this->fields)) {
+				unset($this->$key);
 			}
-			$xml->updated = time();
-
-			$data = $this->getFieldsDataToSave();
-
-			if(!empty($data['ids']))
-			{
-				$xmlbackup = clone $xml->field;
-				unset($xml->field);
-				foreach($data['ids'] as $key => $val)
-				{
-					$xml->field[$key]->id = $val;
-
-					// first, check whether field exists (quickInit)
-					//var_dump($this->fields->{$data['names'][$key]}->value);
-					if(!isset($this->fields->{$data['names'][$key]}->value) && !empty($xmlbackup[$key]->value))
-					{
-						foreach($xmlbackup[$key] as $xmbackupkey => $xmlbackupvalue)
-						{
-							if(!is_array($xmlbackupvalue))
-							{
-								$xml->field[$key]->$xmbackupkey = $xmlbackupvalue;
-							} else
-							{
-								foreach($xmlbackupvalue as $xmlbackupvalue_key => $xmlbackupvalue_value)
-								{
-									$xml->field[$key]->{$xmbackupkey}[] = $xmlbackupvalue_value;
-								}
-							}
-						}
-					}
-
-					if(!empty($this->fields->{$data['names'][$key]}->value))
-					{
-						$inputClassName = 'Input'.ucfirst($data['types'][$key]);
-						$InputType = new $inputClassName($this->fields->{$data['names'][$key]});
-
-						$output = $InputType->prepareOutput();
-						$input = new stdClass();
-
-						foreach ($output as $inputkey => $inputval)
-						{
-							$input->$inputkey = $this->fields->{$data['names'][$key]}->$inputkey;
-						}
-
-						foreach($input as $inputkey => $inputvalue)
-						{
-							if(!is_array($inputvalue))
-							{
-								$xml->field[$key]->$inputkey = $inputvalue;
-							} else
-							{
-								foreach($inputvalue as $inputvalue_key => $inputvalue_value)
-								{
-									$xml->field[$key]->{$inputkey}[] = $inputvalue_value;
-								}
-							}
-						}
-					}
-				}
-			} else
-				$xml->fields = '';
-
-			return $xml->asXml($this->file);
-
 		}
 
-		return false;
+		$im = imanager()->getItemMapper();
+		$im->init($this->categoryid);
+
+		$bufferedFields = $this->fields;
+		unset($this->fields);
+		$im->items[$this->id] = $this;
+
+		$export = var_export($im->items, true);
+		file_put_contents($im->path, '<?php return ' . $export . '; ?>');
+		$this->fields = $bufferedFields;
+		return true;
 	}
 
-
-	public function forcedSave()
-	{
-		if(empty($this->id)) return false;
-		$this->file = IM_ITEM_DIR.$this->id.'.'.$this->categoryid.IM_ITEM_FILE_SUFFIX;
-		if(file_exists($this->file)) return $this->save();
-		$this->filename = $this->id.'.'.$this->categoryid.IM_ITEM_FILE_SUFFIX;
-		$xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><item></item>');
-		$xml->categoryid = $this->categoryid;
-		$xml->id = $this->id;
-		$xml->name = $this->name;
-		$xml->label = $this->label;
-		$xml->position = !is_null($this->position) ? $this->position : $this->id;
-		$this->position = (int)$xml->position;
-		$xml->active = $this->active;
-		$xml->created = $this->created;
-		$xml->updated = $this->updated;
-		$data = $this->getFieldsDataToSave();
-
-		if(!empty($data['ids']))
-		{
-			foreach($data['ids'] as $key => $val)
-			{
-				$xml->field[$key]->id = $val;
-
-				if(!empty($this->fields->{$data['names'][$key]}->value))
-				{
-					$inputClassName = 'Input'.ucfirst($data['types'][$key]);
-					$InputType = new $inputClassName($this->fields->{$data['names'][$key]});
-
-					//$input = $InputType->prepareInput($this->fields->$data['names'][$key]->value);
-					$output = $InputType->prepareOutput();
-					$input = new stdClass();
-
-					foreach ($output as $inputkey => $inputval)
-						$input->$inputkey = $this->fields->{$data['names'][$key]}->$inputkey;
-
-					foreach($input as $inputkey => $inputvalue)
-					{
-						if(!is_array($inputvalue))
-						{
-							$xml->field[$key]->$inputkey = $inputvalue;
-						} else
-						{
-							foreach($inputvalue as $inputvalue_key => $inputvalue_value)
-							{
-								$xml->field[$key]->{$inputkey}[] = $inputvalue_value;
-							}
-						}
-					}
-				}
-			}
-		} else $xml->field = '';
-		return $xml->asXml($this->file);
-	}
-
-	public function join($catids)
-	{
-
-		$imapper = imanager()->getItemMapper();
-		if(!is_array($catids))
-		{
-			$imapper->limitedInit($catids, $this->id);
-			$this->linked_categoryids[] = (int) $catids;
-			$this->linked_fields[(int) $catids] = (!empty($imapper->items[$this->id]->fields) ?
-				$imapper->items[$this->id]->fields : null);
-		} else
-		{
-			foreach($catids as $catid)
-			{
-				$imapper->limitedInit($catid, $this->id);
-				$this->linked_categoryids[] = (int) $catid;
-				$this->linked_fields[(int) $catid] = $imapper->items[$this->id]->fields;
-			}
-		}
-	}
-
-	public function getFieldValue($fielname)
-	{
-		return ($this->fields->{$fielname}->value) ? $this->fields->{$fielname}->value : '';
-	}
-
-	protected function getFieldsDataToSave()
-	{
-		return FieldMapper::getFieldsSaveInfo($this->categoryid);
-	}
 }
