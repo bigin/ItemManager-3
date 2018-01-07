@@ -16,6 +16,11 @@ $config->maxFieldNameLength = 30;
  */
 $config->backupFields = false;
 
+/**
+ * Filter by field attribute
+ */
+$config->filterByFields = 'position';
+
 
 /**
  *	Permissions for wew directories

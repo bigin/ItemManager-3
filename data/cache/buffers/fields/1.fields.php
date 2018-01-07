@@ -11,7 +11,7 @@
      'options' => 
     array (
     ),
-     'info' => NULL,
+     'info' => 'Just a simple field info',
      'required' => false,
      'minimum' => 0,
      'maximum' => 0,
@@ -20,8 +20,7 @@
     array (
     ),
      'created' => 1515326979,
-     'updated' => 1515326979,
-     'file' => NULL,
+     'updated' => 1515358870,
   )),
   'test_field' => 
   Imanager\Field::__set_state(array(
@@ -63,7 +62,9 @@
      'minimum' => 0,
      'maximum' => 0,
      'cssclass' => NULL,
-     'configs' => NULL,
+     'configs' => 
+    array (
+    ),
      'created' => 1515339099,
      'updated' => 1515339099,
   )),

@@ -2,7 +2,7 @@
 
 include 'index.php';
 
-var_dump($imanager->config);
+//var_dump($imanager->config);
 
 // Creating new categories
 /*$category = new \Imanager\Category();
@@ -27,6 +27,9 @@ $secondCategory->name = 'My Second Category Updated';
 $secondCategory->save();*/
 
 
+/**
+ * Working with fields
+ */
 // Create a single fields for a category
 /*$imanager = imanager();
 $catMapper = imanager()->getCategoryMapper();
@@ -38,6 +41,28 @@ $newField->set('name', 'text');
 $newField->set('label', 'Text field');
 $newField->save();
 Imanager\Util::preformat($newField);*/
+
+// Load fields of a category
+/*$catMapper = $imanager->getCategoryMapper();
+$catMapper->init();
+$category = $catMapper->getCategory(1);
+$fieldMapper = $imanager->getFieldMapper();
+$fieldMapper->init(1);*/
+
+// Update field
+/*$catMapper = $imanager->getCategoryMapper();
+$catMapper->init();
+$category = $catMapper->getCategory(1);
+$fieldMapper = $imanager->getFieldMapper();
+$fieldMapper->init(1);
+$field = $fieldMapper->getField(1);
+$field->position = 1;
+$field->info = 'Just a simple field info';
+$field->save();*/
+
+
+Imanager\Util::preformat($fieldMapper->fields);
+
 
 
 /**

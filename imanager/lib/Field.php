@@ -202,6 +202,8 @@ class Field
 		$fm->init($this->categoryid);
 		$fm->fields[$this->name] = $this;
 
+		$fm->sort();
+
 		$export = var_export($fm->fields, true);
 		file_put_contents($fm->path, '<?php return ' . $export . '; ?>');
 		return true;
