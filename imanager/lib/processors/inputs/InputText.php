@@ -45,5 +45,5 @@ class InputText implements InputInterface
 		return ($sanitize) ? $this->sanitize($this->value) : $this->value;
 	}
 
-	protected function sanitize($value){return imanager('sanitizer')->text($value);}
+	protected function sanitize($value) { return imanager('sanitizer')->text($value); }
 }

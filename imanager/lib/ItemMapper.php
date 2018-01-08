@@ -12,8 +12,14 @@ class ItemMapper extends Mapper
 	 */
 	private $fieldflag = false;
 
+	/**
+	 * @var int - Total number of items
+	 */
 	public $total = 0;
 
+	/**
+	 * @var null|string - Path to the items file
+	 */
 	public $path = null;
 
 	/**

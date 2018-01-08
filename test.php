@@ -2,7 +2,11 @@
 
 include 'index.php';
 
+/**
+ * Working with config
+ */
 //var_dump($imanager->config);
+//echo imanager('config')->maxFieldNameLength;
 
 // Creating new categories
 /*$category = new \Imanager\Category();
@@ -47,7 +51,8 @@ Imanager\Util::preformat($newField);*/
 $catMapper->init();
 $category = $catMapper->getCategory(1);
 $fieldMapper = $imanager->getFieldMapper();
-$fieldMapper->init(1);*/
+$fieldMapper->init(1);
+Imanager\Util::preformat($fieldMapper->fields);*/
 
 // Update field
 /*$catMapper = $imanager->getCategoryMapper();
@@ -58,10 +63,8 @@ $fieldMapper->init(1);
 $field = $fieldMapper->getField(1);
 $field->position = 1;
 $field->info = 'Just a simple field info';
-$field->save();*/
-
-
-Imanager\Util::preformat($fieldMapper->fields);
+$field->save();
+Imanager\Util::preformat($fieldMapper->fields);*/
 
 
 
@@ -74,10 +77,10 @@ $item->data = 'This is the item data to save';
 $item->save();*/
 
 // Load an item
-/*$mapper = imanager()->getItemMapper();
+$mapper = imanager()->getItemMapper();
 $mapper->init(1);
 $item = imanager()->getItemMapper()->getItem(1);
-Imanager\Util::preformat($item);*/
+Imanager\Util::preformat($item);
 
 // Update item
 /*$mapper = imanager()->getItemMapper();

@@ -11,7 +11,7 @@ class Util
 	{
 		$config = new Config();
 		include(IM_ROOTPATH.'imanager/inc/config.php');
-		if(file_exists(IM_ROOTPATH.'imanager/inc/custom.config.php')) { include(IM_ROOTPATH.'imanager/inc/custom.config.php'); }
+		if(file_exists(IM_SETTINGSPATH.'custom.config.php')) { include(IM_SETTINGSPATH.'custom.config.php'); }
 		return $config;
 	}
 
@@ -25,7 +25,7 @@ class Util
 		if(file_exists(IM_ROOTPATH.'imanager/lang/'.$language)) { include(IM_ROOTPATH.'imanager/lang/'.$language); }
 	}
 
-	public static function dataLog($data, $file = '')
+	/*public static function dataLog($data, $file = '')
 	{
 		$filename = empty($file) ? GSDATAOTHERPATH.'logs/imlog_'.date('Ym').'.txt' : GSDATAOTHERPATH.'logs/'.$file.'.txt';
 		if (!$handle = fopen($filename, 'a+'))
@@ -37,7 +37,7 @@ class Util
 			return;
 		}
 		fclose($handle);
-	}
+	}*/
 
 	public static function preformat($data){echo '<pre>'.print_r($data, true).'</pre>';}
 
@@ -45,9 +45,6 @@ class Util
 	public static function install($path) {
 		if(!mkdir(dirname($path), imanager('config')->chmodDir, true)) echo 'Unable to create path: '.dirname($path);
 	}
-
-	// TODO: Wird diese hier benutzt?
-	public static function isTimestamp($string){return (1 === preg_match( '~^[1-9][0-9]*$~', $string ));}
 
 	/**
 	 * Check the PHP_INT_SIZE constant. It'll vary based on the size of the register (i.e. 32-bit vs 64-bit)
@@ -96,30 +93,16 @@ class Util
 	{
 		if(!file_exists($path.$file.$suffix)) return false;
 		$stamp = time();
-		if(!copy($path.$file.$suffix, IM_BACKUPPATH.'backup_'.$stamp.'_'.$file.$suffix)) return false;
-		self::deleteOutdatedBackups($suffix);
+		if(!copy($path.$file.$suffix, IM_BACKUPPATH.'backup_'.$stamp.'_'.$file)) return false;
+		self::deleteOutdatedBackups();
 		return true;
 	}
 
 
-	public static function deleteOutdatedBackups($suffix)
+	public static function deleteOutdatedBackups()
 	{
-		switch ($suffix)
-		{
-			case IM_FIELDS_SUFFIX:
-				$token = 'field';
-				break;
-			case IM_CATEGORY_SUFFIX:
-				$token = 'cat';
-				break;
-			case IM_ITEM_SUFFIX:
-				$token = 'item';
-				break;
-			default:
-				return false;
-		}
 		$min_days = (int) imanager('config')->minBackupTimePeriod;
-		foreach(glob(IM_BACKUPPATH.'backup_*_*'.$suffix) as $file) {
+		foreach(glob(IM_BACKUPPATH.'backup_*_*') as $file) {
 			if(self::isCacheFileExpired($file, $min_days)) { self::removeFilename($file);}
 		}
 	}
@@ -142,7 +125,7 @@ class Util
 
 
 	/**
-	 * Removes just the given file
+	 * Removes the given file
 	 */
 	protected static function removeFilename($filename){@unlink($filename);}
 }

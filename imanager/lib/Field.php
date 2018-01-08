@@ -68,7 +68,16 @@ class Field
 		return max($ids);
 	}
 
-	public function set($key, $val, $sanitize=true)
+	/**
+	 * Set any attribute value depending on the data type
+	 *
+	 * @param $key
+	 * @param $val
+	 * @param bool $sanitize
+	 *
+	 * @return bool
+	 */
+	public function set($key, $val, $sanitize = true)
 	{
 		$sanitizer = imanager('sanitizer');
 
@@ -76,10 +85,16 @@ class Field
 
 		if(!in_array($key, $this->getAttributes())) { return false; }
 
-		// save data depending on data type
-		if($key == 'name' || $key == 'label' || $key == 'type' || $key == 'default'
-			|| $key == 'info' || $key == 'areaclass' || $key == 'labelclass' || $key == 'fieldclass') {
-			$this->{$key} = ($sanitize) ? $sanitizer->text($val) : $val;
+		$literals = array('name', 'label', 'type', 'default', 'info', 'areaclass', 'labelclass', 'fieldclass');
+
+		if(in_array($key, $literals)) {
+			if($key == 'name') {
+				$this->{$key} = $sanitizer->fieldName($val, false, imanager('config')->maxFieldNameLength);
+			} elseif($key == 'type') {
+				$this->{$key} = $sanitizer->fieldName($val);
+			} else {
+				$this->{$key} = ($sanitize) ? $sanitizer->text($val) : $val;
+			}
 		} elseif($key == 'options') {
 			$this->options[] = ($sanitize) ? $sanitizer->text($val) : $val;
 		} else {
@@ -87,7 +102,13 @@ class Field
 		}
 	}
 
-
+	/**
+	 * Retrieve a field attribute
+	 *
+	 * @param $key
+	 *
+	 * @return null
+	 */
 	public function get($key){ return isset($this->{$key}) ? $this->{$key} : null; }
 
 
@@ -133,7 +154,7 @@ class Field
 			return false;
 		}
 
-		$this->name = $sanitizer->fieldName($this->name);
+		$this->name = $sanitizer->fieldName($this->name, false, imanager('config')->maxFieldNameLength);
 		if(!$this->name) {
 			MsgReporter::setError('err_fieldname');
 			return false;
@@ -203,6 +224,11 @@ class Field
 		$fm->fields[$this->name] = $this;
 
 		$fm->sort();
+
+		// Create a backup if necessary
+		if(imanager('config')->backupFields) {
+			Util::createBackup(dirname($fm->path).'/', basename($fm->path, '.php'), '.php');
+		}
 
 		$export = var_export($fm->fields, true);
 		file_put_contents($fm->path, '<?php return ' . $export . '; ?>');

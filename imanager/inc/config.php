@@ -2,19 +2,19 @@
 
 
 /**
- * Backup files in days
- */
-$config->minBackupTimePeriod = 2;
-
-/**
  * Max length for the fieds names
  */
 $config->maxFieldNameLength = 30;
 
 /**
- * Create field backups?
+ * Create field backups when saving or editing fields
  */
-$config->backupFields = false;
+$config->backupFields = true;
+
+/**
+ * Backup files in days
+ */
+$config->minBackupTimePeriod = 2;
 
 /**
  * Filter by field attribute
