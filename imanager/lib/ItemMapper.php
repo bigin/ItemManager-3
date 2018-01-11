@@ -34,6 +34,7 @@ class ItemMapper extends Mapper
 	 */
 	public function init($category_id)
 	{
+		parent::___init();
 		$this->path = IM_BUFFERPATH.'items/'.(int) $category_id.'.items.php';
 
 		if(!file_exists(dirname($this->path))) {
@@ -59,85 +60,7 @@ class ItemMapper extends Mapper
 	 */
 	public function initAll()
 	{
-		// initialize categories
-		$c = new ImCategory();
-		$c->init();
-		$this->items = array();
-		foreach($c->categories as $catid => $catvalue)
-		{
-			// nitialize the fields class
-			$fc = new FieldMapper();
-			$fc->init($catid);
-			foreach(glob(IM_ITEM_DIR.'*.'.$catid.IM_ITEM_FILE_SUFFIX) as $file)
-			{
-				$base = basename($file, IM_ITEM_FILE_SUFFIX);
-				$strp = strpos($base, '.');
-				$id = substr($base, 0, $strp);
-				$category = substr($base, $strp+1);
 
-				$xml = getXML($file);
-
-				$item = new Item($category);
-
-				$item->set('categoryid', $category);
-				$item->set('id', $id);
-				$item->set('file', $file);
-				$item->set('filename',$base.IM_ITEM_FILE_SUFFIX);
-
-				$item->name = (string) $xml->name;
-				$item->label = (string) $xml->label;
-				$item->position = (int) $xml->position;
-				$item->active = (int) $xml->active;
-
-				$item->created = (int) $xml->created;
-				$item->updated = (int) $xml->updated;
-
-				foreach($fc->fields as $name => $obj)
-				{
-					$new_field = new Field($category);
-					// clone object because otherwise we'll lose the value data
-					$new_field = clone $obj;
-
-					foreach($xml->field as $fieldkey => $field)
-					{
-						if( $new_field->id == $field->id)
-						{
-							$inputClassName = 'Input'.ucfirst($new_field->type);
-							$InputType = new $inputClassName($fc->fields[$name]);
-							$output = $InputType->prepareOutput();
-
-							foreach($output as $outputkey => $outputvalue)
-							{
-								if(is_array($outputvalue))
-								{
-									$new_field->$outputkey = array();
-									$counter = 0;
-									foreach($field->$outputkey as $arrkey => $arrval)
-									{
-										$new_field->{$outputkey}[] = (string) $field->{$outputkey}[$counter];
-										$counter++;
-									}
-								} else
-								{
-									$new_field->$outputkey = '';
-									$new_field->$outputkey = (string) $field->$outputkey;
-								}
-							}
-
-							if(empty($new_field->value) && !empty($new_field->default))
-							{
-								$new_field->value = (string) $new_field->default;
-							}
-						}
-					}
-
-					$item->fields->$name = $new_field;
-				}
-
-				$this->items[$catid][$item->id] = $item;
-			}
-		}
-		$this->total = count($this->items);
 	}
 
 
@@ -162,51 +85,29 @@ class ItemMapper extends Mapper
 	 */
 	public function getItem($stat, array $items=array())
 	{
-		$locitems = !empty($items) ? $items : $this->items;
-
-		// nothing to select
-		if(empty($items)) { if(!$this->countItems() || $this->countItems() <= 0) return false;}
-
-		// just id was entered
-		if(is_numeric($stat)) return !empty($locitems[$stat]) ? $locitems[$stat] : false;
-
-		// all parameter have to match the data
-		$treads = array();
-		if(false !== strpos($stat, '&&'))
-		{
-			$treads = explode('&&', $stat, 2);
-			$parts[] = trim($treads[0]);
-			$parts[] = trim($treads[1]);
-
-			$sepitems = array();
-			foreach($parts as $part)
-			{
-				$sepitems[] = $this->separateItems($locitems, $part);
-			}
-
-			if(!empty($sepitems[0]) && !empty($sepitems[1]))
-			{
-				$arr = array_map('unserialize', array_intersect(array_map('serialize', $sepitems[0]), array_map('serialize', $sepitems[1])));
-
-				return !empty($arr) ? reset($arr) : false;
-			}
-			// only one parameter have to match the data
-		} elseif(false !== strpos($stat, '||'))
-		{
-			$treads = explode('||', $stat, 2);
-			$parts[] = trim($treads[0]);
-			$parts[] = trim($treads[1]);
-
-			$sepitems = array();
-			foreach($parts as $part)
-			{
-				if($res = $this->separateItem($locitems, $part))
-					return $res;
-			}
-			// $stat contains just one command
-		} else
-		{
-			return $this->separateItem($locitems, $stat);
+		if($items) $this->items = $items;
+		// No items selected
+		if(empty($this->items)) return false;
+		// A nummeric value, id was entered?
+		if(is_numeric($stat)) return !empty($this->items[$stat]) ? $this->items[$stat] : false;
+		// Separate selector
+		$data = explode('=', $stat, 2);
+		$key = strtolower(trim($data[0]));
+		$val = trim($data[1]);
+		$num = substr_count($val, '%');
+		$pat = false;
+		if($num == 1) {
+			$pos = mb_strpos($val, '%');
+			if($pos == 0) { $pat = '/'.strtolower(trim(str_replace('%', '', $val))).'$/';}
+			elseif($pos == mb_strlen($val)-1) {$pat = '/^'.strtolower(trim(str_replace('%', '', $val))).'/';}
+		} elseif($num == 2) {
+			$pat = '/'.strtolower(trim(str_replace('%', '', $val))).'/';
+		}
+		if(false !== strpos($key, ' ')) return false;
+		// Searching for entered value
+		foreach($this->items as $itemkey => $item) {
+			if(!$pat && strtolower($item->{$key}) == strtolower($val)) return $item;
+			elseif($pat && preg_match($pat, strtolower($item->{$key}))) return $item;
 		}
 		return false;
 	}
@@ -315,56 +216,32 @@ class ItemMapper extends Mapper
 		return (!empty($allItems) ? $allItems : false);
 	}
 
-
-
-	public function getItems($stat, $offset=0, $length=0, array $items=array())
+	/**
+	 * Select method for multiple items
+	 *
+	 * @param $stat
+	 * @param int $offset
+	 * @param int $length
+	 * @param array $items
+	 *
+	 * @return array|bool
+	 */
+	public function getItems($stat, $offset = 0, $length = 0, array $items = array())
 	{
+		settype($offset, 'integer');
+		settype($length, 'integer');
 		// reset offset
 		$offset = ($offset > 0) ? $offset-1 : $offset;
 
-		if($offset > 0 && $length > 0 && $offset >= $length)
-			return false;
+		//if($offset > 0 && $length > 0 && $offset >= $length) return false;
 
-		$locitems = !empty($items) ? $items : $this->items;
+		if(!$items) $items = $this->items;
 
 		// nothing to select
-		if(empty($items)) if(!$this->countItems() || $this->countItems() <= 0) return false;
+		if(empty($items)) return false;
 
-		// just id was entered
-		if(is_numeric($stat)) return !empty($locitems[(int) $stat]) ? $locitems[(int) $stat] : false;
-
-
-		// all parameter have to match the data
 		$treads = array();
-
-
-		// ***** HIER FÄNGT DER TESTBEREICH AN *****
-
-//		if(false !== strpos($stat, '||') || false !== strpos($stat, '&&'))
-//		{
-//			$parts = preg_split('/\s*(&&|\|\|)\s*/', $stat);
-//			$strop = preg_replace('/[^\|\|&&]/', '', $stat);
-//			$strops = str_split($strop, 2);
-//
-//		} else { $parts[] = $stat; }
-//
-//		$i = 0;
-//		//$arr = array();
-//		$sepitems = array();
-//		foreach($parts as $part) {
-//			$buff = $this->separateItems($locitems, $part);
-//			if(!empty($buff)) {
-//				//array_map('serialize', $buff);
-//				$sepitems[] = array_map('serialize', $buff);
-//			}
-//		}
-//		call_user_func_array('array_intersect', $sepitems);
-//		$ret = array_map('unserialize', end($sepitems));
-//		Util::preformat($ret);
-
-		// ***** HIER ENDET DER TESTBEREICH *****
-
-
+		// All parameter have to match the data
 		if(false !== strpos($stat, '&&'))
 		{
 			$treads = explode('&&', $stat, 2);
@@ -372,21 +249,19 @@ class ItemMapper extends Mapper
 			$parts[] = trim($treads[1]);
 
 			$sepitems = array();
-			foreach($parts as $part)
-			{
-				$sepitems[] = $this->separateItems($locitems, $part);
+			foreach($parts as $part) {
+				$sepitems[] = $this->separateItems($items, $part);
 			}
 			if(!empty($sepitems[0]) && !empty($sepitems[1]))
 			{
 				$arr = array_map('unserialize', array_intersect(array_map('serialize', $sepitems[0]), array_map('serialize', $sepitems[1])));
 
 				// limited output
-				if(!empty($arr) && ((int) $offset > 0 || (int) $length > 0))
-				{
-					if((int) $length == 0) $len = null;
-					$arr = array_slice($arr, (int) $offset, (int) $length, true);
+				if(!empty($arr) && ($offset > 0 || $length > 0)) {
+					//if($length == 0) $len = null;
+					$arr = array_slice($arr, $offset, $length, true);
 				}
-				return $arr;
+				return $this->reviseItemIds($arr);
 			}
 			// only one parameter have to match the data
 		} elseif(false !== strpos($stat, '||'))
@@ -398,212 +273,109 @@ class ItemMapper extends Mapper
 			$sepitems = array();
 			foreach($parts as $part)
 			{
-				$sepitems[] = $this->separateItems($locitems, $part);
+				$sepitems[] = $this->separateItems($items, $part);
 			}
 			if(!empty($sepitems[0]) || !empty($sepitems[1]))
 			{
 				if(is_array($sepitems[0]) && is_array($sepitems[1]))
 				{
 					// limited output
-					if(!empty($sepitems[0]) && ((int) $offset > 0 || (int) $length > 0))
-					{
-						if((int) $length == 0) $len = null;
-						$sepitems[0] = array_slice($sepitems[0], (int) $offset, (int) $length, true);
-						$sepitems[1] = array_slice($sepitems[1], (int) $offset, (int) $length, true);
+					if(!empty($sepitems[0]) && ($offset > 0 || $length > 0)) {
+						//if($length == 0) $len = null;
+						$sepitems[0] = array_slice($sepitems[0], $offset, $length, true);
+						$sepitems[1] = array_slice($sepitems[1], $offset, $length, true);
 						$return = array_merge($sepitems[0], $sepitems[1]);
-						return array_slice($return, (int) $offset, (int) $length, true);
+						return $this->reviseItemIds(array_slice($return, $offset, $length, true));
 					}
-					return array_merge($sepitems[0], $sepitems[1]);
+					return $this->reviseItemIds(array_merge($sepitems[0], $sepitems[1]));
 
 				} elseif(is_array($sepitems[0]) && !is_array($sepitems[1]))
 				{
 					// limited output
-					if(!empty($sepitems[0]) && ((int) $offset > 0 || (int) $length > 0))
-					{
-						if((int) $length == 0) $len = null;
-						$sepitems[0] = array_slice($sepitems[0], (int) $offset, (int) $length, true);
+					if(!empty($sepitems[0]) && ($offset > 0 || $length > 0)) {
+						//if($length == 0) $len = null;
+						$sepitems[0] = array_slice($sepitems[0], $offset, $length, true);
 					}
-					return $sepitems[0];
+					return $this->reviseItemIds($sepitems[0]);
 				} else
 				{
 					// limited output
-					if(!empty($sepitems[1]) && ((int) $offset > 0 || (int) $length > 0))
-					{
-						if((int) $length == 0) $len = null;
-						$sepitems[1] = array_slice($sepitems[1], (int) $offset, (int) $length, true);
+					if(!empty($sepitems[1]) && ($offset > 0 || $length > 0)) {
+						//if($length == 0) $len = null;
+						$sepitems[1] = array_slice($sepitems[1], $offset, $length, true);
 					}
-					return $sepitems[1];
+					return $this->reviseItemIds($sepitems[1]);
 				}
 			}
-
-		// run this if $stat contains just one command
+			// If $stat contains only one or empty selector
 		} else
 		{
-			$arr = $this->separateItems($locitems, $stat);
-
+			if(!empty($stat)) $arr = $this->separateItems($items, $stat);
+			else $arr = $items;
 			// limited output
-			if(!empty($arr) && ((int) $offset > 0 || (int) $length > 0))
-			{
-				if((int) $length == 0) $len = null;
-				$arr = array_slice($arr, (int) $offset, (int) $length, true);
+			if(!empty($arr) && ($offset > 0 || $length > 0)) {
+				//if($length == 0) $len = null;
+				$arr = array_slice($arr, $offset, $length, true);
 			}
 
-			return $arr;
+			return $this->reviseItemIds($arr);
 		}
 		return false;
 	}
 
 
 	/**
-	 * Returns the array of objects of the type Item, sorted by any node your choice
-	 * NOTE: If no $items argument is passed to the function, the fields
-	 * must already be in the buffer: ImItem::$items. Call the ImItem::init($category_id)
-	 * method before to assign the fields to the buffer.
+	 * A public method for sorting the items
 	 *
-	 * You can sort items by using any node
-	 * Sample sortng by "position":
-	 * ImItem::filterItems('position', 'DESC', $your_items_array)
+	 * You can sort items by using any attribute
+	 * Default sortng attribute is "position":
+	 * FieldMapper::sort('position', 'DESC', $offset, $length, $your_items_array)
 	 *
 	 * @param string $filterby
-	 * @param string $key
+	 * @param string $order
 	 * @param array $items
-	 * @return boolean|array of objects of type Item
+	 *
+	 * @return boolean|array of Field objects
 	 */
-	public function filterItems($filterby='position', $option='asc',  $offset=0, $length=0, array $items=array())
+	public function sort($filterby = null, $order = 'asc',  $offset = 0, $length = 0, array $items = array())
 	{
-		// reset offset
+		settype($offset, 'integer');
+		settype($length, 'integer');
 		$offset = ($offset > 0) ? $offset-1 : $offset;
 
-		$locitems = !empty($items) ? $items : $this->items;
-		if(empty($locitems))
+		$localItems = !empty($items) ? $items : $this->items;
+
+		if(empty($localItems)) return false;
+
+		$this->filterby = ($filterby) ? $filterby : $this->imanager->config->filterByItems;
+
+		usort($localItems, array($this, 'sortObjects'));
+		// sort DESCENDING
+		if(strtolower($order) != 'asc') $localItems = $this->reverseItems($localItems);
+		$localItems = $this->reviseItemIds($localItems);
+
+		// Limiting item number
+		if(!empty($localItems) && ($offset > 0 || $length > 0))
 		{
-			if(!$this->countItems() || $this->countItems() <= 0)
-				return false;
+			//if($length == 0) $len = null;
+			$localItems = array_slice($localItems, $offset, $length, true);
 		}
 
-		$itemcontainer = array();
+		if(!empty($items)) return $localItems;
 
-		if($filterby == 'id' || $filterby == 'position' || $filterby == 'name' || $filterby == 'label' || $filterby == 'active'
-			|| $filterby == 'created' || $filterby == 'updated')
-		{
-			if(empty($locitems)) return false;
-
-			foreach($locitems as $item_id => $i)
-			{
-				if(!isset($i->$filterby)) continue;
-				$itemcontainer[$item_id] = $locitems[$item_id];
-			}
-		} else
-		{
-			// filtering for complex value types
-			foreach($locitems as $itemkey => $item)
-			{
-				foreach($item->fields as $fieldkey => $fieldval)
-				{
-					if($fieldkey != $filterby) continue;
-					$itemcontainer[$itemkey] = $locitems[$itemkey];
-					$this->fieldflag = true;
-					break;
-				}
-			}
-		}
-
-		if(!empty($itemcontainer))
-		{
-			$this->filterby = $filterby;
-			usort($itemcontainer, array($this, 'sortObjects'));
-			// sort DESCENDING
-			if(strtolower($option) != 'asc') $itemcontainer = $this->reverseItems($itemcontainer);
-			$itemcontainer = $this->reviseItemIds($itemcontainer);
-
-			// limited output
-			if(!empty($itemcontainer) && ((int) $offset > 0 || (int) $length > 0))
-			{
-				if((int) $length == 0) $len = null;
-				$itemcontainer = array_slice($itemcontainer, (int) $offset, (int) $length, true);
-			}
-
-			if(!empty($items))
-				return $itemcontainer;
-			$this->items = $itemcontainer;
-			return $this->items;
-		}
-
-		return false;
+		$this->items = $localItems;
+		return $this->items;
 	}
-
-
 
 	/**
-	 * Deletes an item
+	 * Separate item search selectors and
+	 * compare these values
 	 *
-	 * @param Item $item
-	 * @param reinitialize flag $re
-	 * @return bool
+	 * @param array $items
+	 * @param $stat
+	 *
+	 * @return array|bool
 	 */
-	public function destroyItem(Item $item, $re = false)
-	{
-		if(file_exists(IM_ITEM_DIR.$item->id.'.'.$item->categoryid.IM_ITEM_FILE_SUFFIX))
-		{
-			unlink(IM_ITEM_DIR.$item->id.'.'.$item->categoryid.IM_ITEM_FILE_SUFFIX);
-			// reinitialize items
-			if($re) $this->init($item->categoryid);
-			return true;
-		}
-		return false;
-	}
-
-
-
-	protected function separateItem(array $items, $stat)
-	{
-		if (false !== strpos($stat, '='))
-		{
-			$data = explode('=', $stat, 2);
-			$key = strtolower(trim($data[0]));
-			$val = trim($data[1]);
-
-			$num = substr_count($val, '%');
-
-			$pat = false;
-			if($num == 1) {
-				$pos = strpos($val, '%');
-				if($pos == 0) {
-					$pat = '/'.strtolower(trim(str_replace('%', '', $val))).'$/';
-				} elseif($pos == strlen($val)) {
-					$pat = '/^'.strtolower(trim(str_replace('%', '', $val))).'/';
-				}
-			} elseif($num == 2) {
-				$pat = '/'.strtolower(trim(str_replace('%', '', $val))).'/';
-			}
-
-			if(false !== strpos($key, ' ')) return false;
-
-			// Searching for the name and other simple attributs
-			if($key == 'id' || $key == 'name' || $key == 'label' || $key == 'position' || $key == 'active'
-				|| $key == 'created' || $key == 'updated')
-			{
-				foreach($items as $itemkey => $item)
-				{
-					if(!$pat && strtolower($item->{$key}) == strtolower($val)) return $item;
-					elseif($pat && preg_match($pat, strtolower($item->{$key}))) return $item;
-				}
-				return false;
-			}
-			// searching for field in complex value types
-			foreach($items as $itemkey => $item)
-			{
-				foreach($item->fields as $fieldkey => $fieldval)
-				{
-					if(!empty($fieldval->value) && $fieldkey == $key && $fieldval->value == $val) return $item;
-					elseif(!empty($fieldval->value) && $pat && preg_match($pat, strtolower($fieldval->value))) return $item;
-				}
-			}
-		}
-		return false;
-	}
-
-
 	protected function separateItems(array $items, $stat)
 	{
 		$res = array();
@@ -611,334 +383,94 @@ class ItemMapper extends Mapper
 
 		foreach($pattern as $pkey => $pval)
 		{
-			if(false !== strpos($stat, $pval))
-			{
-				$data = explode($pval, $stat, 2);
-				$key = strtolower(trim($data[0]));
-				$val = trim($data[1]);
-				if(false !== strpos($key, ' '))
-					return false;
+			if(false === strpos($stat, $pval)) continue;
 
-				$num = substr_count($val, '%');
-				$pat = false;
-				if($num == 1) {
-					$pos = strpos($val, '%');
-					if($pos == 0) {
-						$pat = '/'.strtolower(trim(str_replace('%', '', $val))).'$/';
-					} elseif($pos == (strlen($val)-1)) {
-						$pat = '/^'.strtolower(trim(str_replace('%', '', $val))).'/';
-					}
-				} elseif($num == 2) {
-					$pat = '/'.strtolower(trim(str_replace('%', '', $val))).'/';
+			$data = explode($pval, $stat, 2);
+			$key = strtolower(trim($data[0]));
+			$val = trim($data[1]);
+			if(false !== strpos($key, ' ')) return false;
 
+			$num = substr_count($val, '%');
+			$pat = false;
+			if($num == 1) {
+				$pos = mb_strpos($val, '%');
+				if($pos == 0) {
+					$pat = '/'.strtolower(trim(str_replace('%', '', $val))).'$/';
+				} elseif($pos == (mb_strlen($val)-1)) {
+					$pat = '/^'.strtolower(trim(str_replace('%', '', $val))).'/';
 				}
-
-				// Searching for value in item attributes
-				if($key == 'name' || $key == 'label' || $key == 'position' || $key == 'active'
-					|| $key == 'created' || $key == 'updated')
-				{
-					foreach($items as $itemkey => $item)
-					{
-						if(!isset($item->{$key})) continue;
-
-						if($pkey == 0)
-						{
-							if($item->{$key} < $val) continue;
-						} elseif($pkey == 1)
-						{
-							if($item->{$key} > $val) continue;
-						} elseif($pkey == 2)
-						{
-							if($item->{$key} == $val) continue;
-						} elseif($pkey == 3)
-						{
-							if($item->{$key} <= $val) continue;
-						} elseif($pkey == 4)
-						{
-							if($item->{$key} >= $val) continue;
-						} elseif($pkey == 5)
-						{
-							if($item->{$key} != $val && !$pat) {
-
-								continue;
-							}
-							elseif($pat && !preg_match($pat, strtolower($item->{$key}))){
-								continue;
-							}
-						}
-
-						$res[$item->id] = $item;
-					}
-
-				// Searching for the value in complex field types
-				} else
-				{
-					foreach($items as $itemkey => $item)
-					{
-						foreach($item->fields as $fieldkey => $fieldval)
-						{
-							if(!isset($item->fields->{$key}->value)) continue;
-
-							if($pkey == 0)
-							{
-								if($item->fields->{$key}->value < $val) continue;
-							} elseif($pkey == 1)
-							{
-								if($item->fields->{$key}->value > $val) continue;
-							} elseif($pkey == 2)
-							{
-								if($item->fields->{$key}->value == $val) continue;
-							} elseif($pkey == 3)
-							{
-								if($item->fields->{$key}->value <= $val) continue;
-							} elseif($pkey == 4)
-							{
-								if($item->fields->{$key}->value >= $val) continue;
-							}elseif($pkey == 5)
-							{
-								if(!$pat && $item->fields->{$key}->value != $val) continue;
-								elseif($pat && !preg_match($pat, strtolower($item->fields->{$key}->value))) continue;
-							}
-
-							$res[$item->id] = $item;
-
-						}
-					}
-				}
-				if(!empty($res)) return $res;
-
-				return false;
+			} elseif($num == 2) {
+				$pat = '/'.strtolower(trim(str_replace('%', '', $val))).'/';
 			}
-		}
 
+			foreach($items as $itemkey => $item)
+			{
+				//if(!array_key_exists($key, $item)) { continue; }
+				if($pkey == 0) {
+					if($item->$key < $val) continue;
+				} elseif($pkey == 1) {
+					if($item->$key > $val) continue;
+				} elseif($pkey == 2) {
+					if($item->$key == $val) continue;
+				} elseif($pkey == 3) {
+					if($item->$key <= $val) continue;
+				} elseif($pkey == 4) {
+					if($item->$key >= $val) continue;
+				} elseif($pkey == 5) {
+					if($item->$key != $val && !$pat) { continue; }
+					elseif($pat && !preg_match($pat, strtolower($item->$key))){ continue; }
+				}
+				$res[$item->id] = $item;
+			}
+
+			if(!empty($res)) return $res;
+			return false;
+		}
 		return false;
 	}
 
-
 	/**
-	 * Sorts the objects
+	 * Sorts the item objects
 	 *
 	 * @param $a $b objects to be sorted
 	 * @return boolean
 	 */
 	protected function sortObjects($a, $b)
 	{
-		if(!$this->fieldflag)
-		{
-			$a = $a->{$this->filterby};
-			$b = $b->{$this->filterby};
-			if(is_numeric($a))
-			{
-				if($a == $b) {return 0;}
-				else
-				{
-					if($b > $a) {return -1;}
-					else {return 1;}
-				}
-			} else {return strcasecmp($a, $b);}
-
-		} else
-		{
-			$a = $a->fields->{$this->filterby}->value;
-			$b = $b->fields->{$this->filterby}->value;
-			if(is_numeric($a))
-			{
-				if($a == $b) {return 0;}
-				else
-				{
-					if($b > $a) {return -1;}
-					else {return 1;}
-				}
-			} else {return strcasecmp($a, $b);}
-		}
+		$a = $a->{$this->filterby};
+		$b = $b->{$this->filterby};
+		if(is_numeric($a)) {
+			if($a == $b) {return 0;}
+			else {
+				if($b > $a) {return -1;}
+				else {return 1;}
+			}
+		} else {return strcasecmp($a, $b);}
 	}
-
 
 	/**
 	 * Reverse the array of items
 	 *
-	 * @param array $itemcontainer An array of objects
+	 * @param array $itemsContainer An array of objects
 	 * @return boolean|array
 	 */
-	public function reverseItems($itemcontainer)
+	public function reverseItems($itemsContainer)
 	{
-		if(!is_array($itemcontainer)) return false;
-		return array_reverse($itemcontainer);
+		if(!is_array($itemsContainer)) return false;
+		return array_reverse($itemsContainer);
 	}
-
 
 	/**
 	 * Revise keys of the array of items and changes these into real item id's
 	 *
-	 * @param array $itemcontainer An array of objects
+	 * @param array $itemsContainer An array of objects
 	 * @return boolean|array
 	 */
-	public function reviseItemIds($itemcontainer)
+	public function reviseItemIds($itemsContainer)
 	{
-		if(!is_array($itemcontainer)) return false;
+		if(!is_array($itemsContainer)) return false;
 		$result = array();
-		foreach($itemcontainer as $val)
-			$result[$val->id] = $val;
+		foreach($itemsContainer as $val) { $result[$val->id] = $val; }
 		return $result;
 	}
-
-	/**
-	 * Used to check if max number of item files for a category is exceeded
-	 * We don't want to fill up the disk
-	 */
-	public function maxItemsExceeded($catid, $max_files = 800)
-	{
-		return ((count(glob(IM_ITEM_DIR.'*.'.$catid.IM_ITEM_FILE_SUFFIX, GLOB_NOSORT))) > $max_files ? false : true);
-	}
-
-	public function pagination(array $params = array(), $argtpls = array())
-	{
-
-		$tpl = imanager()->getTemplateEngine();
-		if(is_null($tpl->templates)) $tpl->init();
-		$config = imanager('config');
-		$pagination = $tpl->getTemplates('pagination');
-		$tpls['wrapper'] = !empty($argtpls['wrapper']) ? $argtpls['wrapper'] : $tpl->getTemplate('wrapper', $pagination);
-		$tpls['prev'] = !empty($argtpls['prev']) ? $argtpls['prev'] : $tpl->getTemplate('prev', $pagination);
-		$tpls['prev_inactive'] = !empty($argtpls['prev_inactive']) ? $argtpls['prev_inactive'] : $tpl->getTemplate('prev_inactive', $pagination);
-		$tpls['central'] = !empty($argtpls['central']) ? $argtpls['central'] : $tpl->getTemplate('central', $pagination);
-		$tpls['central_inactive'] = !empty($argtpls['central_inactive']) ? $argtpls['central_inactive'] : $tpl->getTemplate('central_inactive', $pagination);
-		$tpls['next'] = !empty($argtpls['next']) ? $argtpls['next'] : $tpl->getTemplate('next', $pagination);
-		$tpls['next_inactive'] = !empty($argtpls['next_inactive']) ? $argtpls['next_inactive'] : $tpl->getTemplate('next_inactive', $pagination);
-		$tpls['ellipsis'] = !empty($argtpls['ellipsis']) ? $argtpls['ellipsis'] : $tpl->getTemplate('ellipsis', $pagination);
-		$tpls['secondlast'] = !empty($argtpls['secondlast']) ? $argtpls['secondlast'] : $tpl->getTemplate('secondlast', $pagination);
-		$tpls['second'] = !empty($argtpls['second']) ? $argtpls['second'] : $tpl->getTemplate('second', $pagination);
-		$tpls['last'] = !empty($argtpls['last']) ? $argtpls['last'] : $tpl->getTemplate('last', $pagination);
-		$tpls['first'] = !empty($argtpls['first']) ? $argtpls['first'] : $tpl->getTemplate('first', $pagination);
-
-		$page = (!empty($params['page']) ? $params['page'] : (isset($_GET['page']) ? (int) $_GET['page'] : 1));
-		$params['items'] = !empty($params['count']) ? $params['count'] : $this->total;
-
-		$pageurl = !empty($params['pageurl']) ? $params['pageurl'] : '?page=';
-		$start = !empty($params['start']) ? $params['start'] : 1; // todo: remove it
-
-		$maxitemperpage = ((int) $config->backend->maxitemperpage > 0) ? $config->backend->maxitemperpage : 20;
-		$limit = !empty($params['limit']) ? $params['limit'] : $config->backend->maxitemperpage;
-		$adjacents = !empty($params['adjacents']) ? $params['adjacents'] : 3;
-		$lastpage = !empty($params['lastpage']) ? $params['lastpage'] : ceil($params['items'] / $limit);
-
-		$next = ($page+1);
-		$prev = ($page-1);
-
-		//$tpl->init();
-		// only one page to show
-		if($lastpage <= 1)
-			return $tpl->render($tpls['wrapper'], array('value' => ''), true);
-
-		$output = '';
-		// $pageurl . '1'
-		if($page > 1)
-			$output .= $tpl->render($tpls['prev'], array('href' => $pageurl . '1'), true);
-		else
-			$output .= $tpl->render($tpls['prev_inactive'], array(), true);
-
-		// not enough pages to bother breaking it up
-		if($lastpage < 7 + ($adjacents * 2))
-		{
-			for($counter = 1; $counter <= $lastpage; $counter++)
-			{
-				if($counter == $page)
-				{
-					$output .= $tpl->render($tpls['central_inactive'], array('counter' => $counter), true);
-				} else
-				{
-					// $pageurl . '1'
-					$output .= $tpl->render($tpls['central'], array(
-							'href' => ($counter > 1) ? $pageurl . $counter : $pageurl . '1', 'counter' => $counter), true
-					);
-				}
-			}
-		// enough pages to hide some
-		} elseif($lastpage > 5 + ($adjacents * 2))
-		{
-			// vclose to beginning; only hide later pages
-			if($page < 1 + ($adjacents * 2))
-			{
-				for($counter = 1; $counter < 4 + ($adjacents * 2); $counter++)
-				{
-					if($counter == $page)
-					{
-						$output .= $tpl->render($tpls['central_inactive'], array('counter' => $counter), true);
-					} else
-					{
-						$output .= $tpl->render($tpls['central'], array('href' => $pageurl . $counter,
-							'counter' => $counter), true);
-					}
-				}
-				// ...
-				$output .= $tpl->render($tpls['ellipsis']);
-				// sec last
-				$output .= $tpl->render($tpls['secondlast'], array('href' => $pageurl . ($lastpage - 1),
-					'counter' => ($lastpage - 1)), true);
-				// last
-				$output .= $tpl->render($tpls['last'], array('href' => $pageurl . $lastpage,
-					'counter' => $lastpage), true);
-			}
-			// middle pos; hide some front and some back
-			elseif($lastpage - ($adjacents * 2) > $page && $page > ($adjacents * 2))
-			{
-				// first
-				$output .= $tpl->render($tpls['first'], array('href' => $pageurl . '1'), true);
-				// second
-				$output .= $tpl->render($tpls['second'], array('href' => $pageurl . '2', 'counter' => '2'), true);
-				// ...
-				$output .= $tpl->render($tpls['ellipsis']);
-
-				for($counter = $page - $adjacents; $counter <= $page + $adjacents; $counter++)
-				{
-					if($counter == $page)
-					{
-						$output .= $tpl->render($tpls['central_inactive'], array('counter' => $counter), true);
-					} else
-					{
-						$output .= $tpl->render($tpls['central'], array('href' => $pageurl . $counter,
-							'counter' => $counter), true);
-					}
-				}
-				// ...
-				$output .= $tpl->render($tpls['ellipsis']);
-				// sec last
-				$output .= $tpl->render($tpls['secondlast'], array('href' => $pageurl . ($lastpage - 1),
-					'counter' => ($lastpage - 1)), true);
-				// last
-				$output .= $tpl->render($tpls['last'], array('href' => $pageurl . $lastpage,
-					'counter' => $lastpage), true);
-			}
-			//close to end; only hide early pages
-			else
-			{
-				// first ($pageurl . '1')
-				$output .= $tpl->render($tpls['first'], array('href' => $pageurl . '1'), true);
-				// second
-				$output .= $tpl->render($tpls['second'], array('href' => $pageurl . '2', 'counter' => '2'), true);
-				// ...
-				$output .= $tpl->render($tpls['ellipsis']);
-
-				for($counter = $lastpage - (2 + ($adjacents * 2)); $counter <= $lastpage; $counter++)
-				{
-					if($counter == $page)
-					{
-						$output .= $tpl->render($tpls['central_inactive'], array('counter' => $counter), true);
-					} else
-					{
-						$output .= $tpl->render($tpls['central'], array('href' => $pageurl . $counter,
-							'counter' => $counter), true);
-					}
-				}
-			}
-		}
-		//next link
-		if($page < $counter - 1)
-			$output .= $tpl->render($tpls['next'], array('href' => $pageurl . $next), true);
-		else
-			$output .= $tpl->render($tpls['next_inactive'], array(), true);
-
-		return $tpl->render($tpls['wrapper'], array('value' => $output), true);
-	}
-
 }

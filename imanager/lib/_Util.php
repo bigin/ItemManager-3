@@ -39,11 +39,38 @@ class Util
 		fclose($handle);
 	}*/
 
+	/**
+	 * Just a simple preformat method
+	 *
+	 * @param $data
+	 */
 	public static function preformat($data){echo '<pre>'.print_r($data, true).'</pre>';}
 
 
+	/**
+	 * Recursive creating directories
+	 *
+	 * @param $path
+	 */
 	public static function install($path) {
 		if(!mkdir(dirname($path), imanager('config')->chmodDir, true)) echo 'Unable to create path: '.dirname($path);
+	}
+
+	/**
+	 * Recursive deleting a directory
+	 *
+	 * @param $dir
+	 *
+	 * @return bool
+	 */
+	public static function delTree($dir)
+	{
+		if(!file_exists($dir)) {return false;}
+		$files = array_diff(scandir($dir), array('.','..'));
+		foreach ($files as $file) {
+			(is_dir("$dir/$file") && !is_link($dir)) ? self::delTree("$dir/$file") : unlink("$dir/$file");
+		}
+		return rmdir($dir);
 	}
 
 	/**
@@ -70,25 +97,28 @@ class Util
 		return $var;
 	}
 
-
+	/**
+	 * A method for performing various redirects
+	 *
+	 * @param $url
+	 * @param bool $flag
+	 * @param int $statusCode
+	 */
 	public static function redirect($url, $flag = true, $statusCode = 303)
 	{
 		header('Location: ' . htmlspecialchars($url), $flag, $statusCode);
 		die();
 	}
 
-	public static function exec_action($a)
-	{
-		global $plugins;
-
-		foreach ($plugins as $hook) {
-			if ($hook['hook'] == $a) {
-				call_user_func_array($hook['function'], $hook['args']);
-			}
-		}
-	}
-
-
+	/**
+	 * Just a simple method for creating backups of categories, fields and items
+	 *
+	 * @param $path
+	 * @param $file
+	 * @param $suffix
+	 *
+	 * @return bool
+	 */
 	public static function createBackup($path, $file, $suffix)
 	{
 		if(!file_exists($path.$file.$suffix)) return false;
@@ -98,7 +128,9 @@ class Util
 		return true;
 	}
 
-
+	/**
+	 * This method checks and deletes outdated backups
+	 */
 	public static function deleteOutdatedBackups()
 	{
 		$min_days = (int) imanager('config')->minBackupTimePeriod;
@@ -122,7 +154,6 @@ class Util
 		}
 		return false;
 	}
-
 
 	/**
 	 * Removes the given file

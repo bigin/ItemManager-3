@@ -8,127 +8,57 @@ class ItemManager extends Manager
 	public static $counter = 0;
 
 
-	public function __construct()
-	{
-		spl_autoload_register(array($this, 'loader'));
-
-		require_once(IM_SOURCEPATH.'processors/FieldInterface.php');
-		require_once(IM_SOURCEPATH.'processors/InputInterface.php');
-
+	public function __construct() {
 		self::$counter++;
 		parent::__construct();
 	}
 
-	/**
-	 * Autoload method
-	 * @param $lclass - Class pattern
-	 */
-	private function loader($lclass)
-	{
-		$classPattern = str_replace(__NAMESPACE__.'\\', '', $lclass);
-		$classPath = IM_SOURCEPATH . $classPattern . '.php';
-		$fieldsPath = IM_SOURCEPATH . 'processors/fields/' . $classPattern. '.php';
-		$inputsPath = IM_SOURCEPATH . 'processors/inputs/' . $classPattern . '.php';
-		if(file_exists($classPath)) include($classPath);
-		elseif(file_exists($fieldsPath)) include($fieldsPath);
-		elseif(file_exists($inputsPath)) include($inputsPath);
-	}
+
+	/*public function __get($name) {
+		return $this->_getImAPI($name);
+	}*/
 
 
-	public function getTemplateEngine($path='')
-	{
-		if(self::$templateEngine === null)
-			self::$templateEngine = new TemplateEngine($path);
+	/*public function getTemplateEngine($path = '') {
+		if(self::$templateEngine === null) self::$templateEngine = new TemplateEngine($path);
 		return self::$templateEngine;
-	}
+	}*/
 
 
-	public function getSectionCache($path='')
-	{
-		if(self::$sectionCache === null)
-			self::$sectionCache = new SectionCache($path);
+	/*public function getSectionCache($path = '') {
+		if(self::$sectionCache === null) self::$sectionCache = new SectionCache($path);
 		return self::$sectionCache;
-	}
+	}*/
 
 
-	public function getCategoryMapper()
-	{
-		if(self::$categoryMapper === null)
-			self::$categoryMapper = new CategoryMapper();
+	/*public function getCategoryMapper() {
+		if($this->categoryMapper === null) $this->categoryMapper = new CategoryMapper();
 		return self::$categoryMapper;
-	}
+	}*/
 
 
-	public function getItemMapper()
-	{
-		if(self::$itemMapper === null)
-			self::$itemMapper = new ItemMapper();
+	/*public function getItemMapper() {
+		if(self::$itemMapper === null) self::$itemMapper = new ItemMapper();
 		return self::$itemMapper;
-	}
+	}*/
 
-	public function getFieldMapper()
-	{
-		if(self::$fieldMapper === null)
-			self::$fieldMapper = new FieldMapper();
+
+	/*public function getFieldMapper() {
+		if(self::$fieldMapper === null) self::$fieldMapper = new FieldMapper();
 		return self::$fieldMapper;
-	}
+	}*/
 
-	public function getCategory($stat, array $categories=array())
-	{
-		return $this->getCategoryMapper()->getCategory($stat, $categories);
-	}
-
-
-	public function getItem($cat, $stat, array $items=array())
-	{
-		self::$itemMapper = $this->getItemMapper();
-		if(is_numeric($cat) && (is_numeric($stat) || preg_match('/^id=\d*$/', $stat, $tar)))
-		{
-			self::$itemMapper->limitedInit((int) $cat, !empty($tar[2]) ? (int) $tar[2] : (int) $stat);
-			return self::$itemMapper->items[!empty($tar[2]) ? (int) $tar[2] : (int) $stat];
-		} elseif(is_numeric($cat)) {
-			self::$itemMapper->init((int) $cat);
-			return self::$itemMapper->getItem($stat);
-		} elseif(!is_numeric($cat)) {
-			self::$categoryMapper = $this->getCategoryMapper();
-			$tarCat = self::$categoryMapper->getCategory($cat);
-			self::$itemMapper->init((int) $tarCat->id);
-			return self::$itemMapper->getItem($stat);
+	public function getCategories($selector, $offset = 0, $length = 0, array $categories = array()) {
+		if(empty($this->categoryMapper->categories) && !$categories) {
+			$this->categoryMapper->init();
 		}
+		return $this->categoryMapper->getCategories($selector, $offset, $length, $categories);
 	}
 
-	public function getItems($cat, $stat='', $offset=0, $length=0, array $items=array())
-	{
-		self::$itemMapper = $this->getItemMapper();
-		if(is_numeric($cat)) {
-			self::$itemMapper->init((int) $cat);
-			if(empty($stat)) return self::$itemMapper->items;
-			return self::$itemMapper->getItems($stat, $offset, $length, $items);
-		} else {
-			self::$categoryMapper = $this->getCategoryMapper();
-			$tarCat = self::$categoryMapper->getCategory($cat);
-			self::$itemMapper->init((int)$tarCat->id);
-			//if(empty($stat)) return self::$itemMapper->items;
-			return self::$itemMapper->getItems($stat, $offset, $length, $items);
+	public function getCategory($selector, array $categories = array()) {
+		if(empty($this->categoryMapper->categories) && !$categories) {
+			$this->categoryMapper->init();
 		}
+		return $this->categoryMapper->getCategory($selector, $categories);
 	}
-
-
-	public function filter(array $itemArray, $filterby, $option = 'asc',  $offset=0, $length=0)
-	{
-		self::$itemMapper = $this->getItemMapper();
-		return self::$itemMapper->filterItems($filterby, $option, $offset=0, $length=0, $itemArray);
-	}
-
-	/**
-	 * Some deprecated accessor calls, just for backward compatibility reasons.
-	 * Please do not use these any more.
-	 */
-	public function newTemplate($name=''){return new Template($name='');}
-	public function getCategoryClass(){return $this->getCategoryMapper();}
-	public function newCategory(){return new Category();}
-	public function getFieldsClass(){return new FieldMapper();}
-	public function newField($catid){return new Field($catid);}
-	public function getItemClass(){return $this->getItemMapper();}
-	public function newItem($catid){return new Item($catid);}
 }

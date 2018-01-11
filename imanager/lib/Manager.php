@@ -2,8 +2,11 @@
 
 class Manager
 {
-	protected static $categoryMapper = null;
-	protected static $itemMapper = null;
+
+	//protected $categoryMapper = null;
+	//protected $itemMapper = null;
+	//protected static $categoryMapper = null;
+	//protected static $itemMapper = null;
 	protected static $fieldMapper = null;
 	protected static $templateEngine = null;
 	protected static $sectionCache = null;
@@ -18,21 +21,80 @@ class Manager
 
 	public $admin = null;
 
+	/**
+	 * v 3.0
+	 * Manager constructor.
+	 */
 	public function __construct()
 	{
+		spl_autoload_register(array($this, 'loader'));
+
+		require_once(IM_SOURCEPATH.'processors/FieldInterface.php');
+		require_once(IM_SOURCEPATH.'processors/InputInterface.php');
+
 		$this->config = Util::buildConfig();
 		$this->sanitizer = new Sanitizer();
 		Util::buildLanguage();
 		$this->setActions();
 	}
 
+	/**
+	 * @return null
+	 */
+	public function __get($name)
+	{
+		if(!isset($this->$name)) {
+			$funcName = '_im' . ucfirst($name);
+			if(method_exists($this, $funcName)) {
+				$this->$name = $this->$funcName();
+				return $this->$name;
+			}
+			return null;
+		} else {
+			return $this->$name;
+		}
+	}
+	/**
+	 * v 3.0
+	 * Autoload
+	 * @param $lclass - Class pattern
+	 */
+	private function loader($lclass)
+	{
+		$classPattern = str_replace(__NAMESPACE__.'\\', '', $lclass);
+		$classPath = IM_SOURCEPATH . $classPattern . '.php';
+		$fieldsPath = IM_SOURCEPATH . 'processors/fields/' . $classPattern. '.php';
+		$inputsPath = IM_SOURCEPATH . 'processors/inputs/' . $classPattern . '.php';
+		if(file_exists($classPath)) include($classPath);
+		elseif(file_exists($fieldsPath)) include($fieldsPath);
+		elseif(file_exists($inputsPath)) include($inputsPath);
+	}
 
+	/**
+	 * Auto-Callable
+	 *
+	 * @return CategoryMapper
+	 */
+	protected function _imCategoryMapper() { return new CategoryMapper(); }
+
+
+	/**
+	 * Auto-Callable
+	 *
+	 * @return ItemMapper
+	 */
+	protected function _imItemMapper() { return new ItemMapper(); }
+
+
+
+
+	// Todo: check is used in 3.0?
 	public function setAdmin($admin)
 	{
 		$this->admin = $admin;
 	}
 
-
+	// Todo: check is used in 3.0?
 	// Set Actions
 	public function setActions()
 	{
@@ -43,6 +105,10 @@ class Manager
 
 
 
+
+
+
+	// Todo: check is used in 3.0?
 	public function renameTmpDir($item)
 	{
 		$err = false;
@@ -74,7 +140,7 @@ class Manager
 		return false;
 	}
 
-
+	// Todo: check is used in 3.0?
 	/**
 	 * Delete chached image files that starting with *_filename.* for example
 	 *
@@ -101,7 +167,7 @@ class Manager
 		}
 	}
 
-
+	// Todo: check is used in 3.0?
 	public function cleanUpTempContainers($datatyp)
 	{
 		if($datatyp == 'imageupload' || $datatyp == 'fileupload')
@@ -129,18 +195,5 @@ class Manager
 			}
 			return true;
 		}
-	}
-
-
-	protected function delTree($dir)
-	{
-		if(!file_exists($dir))
-			return false;
-		$files = array_diff(scandir($dir), array('.','..'));
-		foreach ($files as $file)
-		{
-			(is_dir("$dir/$file") && !is_link($dir)) ? $this->delTree("$dir/$file") : unlink("$dir/$file");
-		}
-		return rmdir($dir);
 	}
 }

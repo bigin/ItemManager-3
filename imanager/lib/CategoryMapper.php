@@ -13,24 +13,17 @@ class CategoryMapper extends Mapper
 	 */
 	public $total = 0;
 
-
+	/**
+	 * @var null|string - Category file path
+	 */
 	public $path = null;
-
-
-	public function &__get($param)
-	{
-		if($param == 'categories')
-		{
-			if(!$this->categories) $this->init();
-			return $this->categories;
-		}
-	}
 
 	/**
 	 * Initializes all the categories and made them available in ImCategory::$categories buffer
 	 */
 	public function init()
 	{
+		parent::___init();
 		$this->path = IM_BUFFERPATH.'/categories/categories.php';
 		if(!file_exists(dirname($this->path))) {
 			Util::install($this->path);
@@ -46,33 +39,6 @@ class CategoryMapper extends Mapper
 		return false;
 	}
 
-	private function initRaw()
-	{
-		$this->rawCategories = array();
-		foreach(glob(IM_CATEGORYPATH . '*' . IM_CATEGORY_SUFFIX) as $file)
-		{
-			$cat = new RawCategory();
-
-			$base = basename($file);
-			$strp = strpos($base, '.');
-
-			$cat->id = (int)substr($base, 0, $strp);
-			$cat->file = IM_CATEGORYPATH . $cat->id . IM_CATEGORY_SUFFIX;
-
-			if(!$cat->id) continue;
-
-			$xml = simplexml_load_file($file);
-			$cat->name = (string)$xml->name;
-			$cat->slug = (string)$xml->slug;
-			$cat->position = (int)$xml->position;
-			$cat->created = (string)$xml->created;
-			$cat->updated = (string)$xml->updated;
-
-			$this->rawCategories[$cat->id] = $cat;
-		}
-		$this->total = count($this->rawCategories);
-	}
-
 
 	/**
 	 * Returns the number of categories
@@ -80,8 +46,9 @@ class CategoryMapper extends Mapper
 	 * @param array $categories
 	 * @return int
 	 */
-	public function countCategories(array $categories=array())
-	{return count($cat = !empty($categories) ? $categories : $this->categories);}
+	public function countCategories(array $categories=array()) {
+		return count(!empty($categories) ? $categories : $this->categories);
+	}
 
 
 	/**
@@ -99,11 +66,11 @@ class CategoryMapper extends Mapper
 	 */
 	public function getCategory($stat, array $categories=array())
 	{
-		if($categories) $this->categories = $categories;
+		if(!$categories)  $categories = $this->categories;
 		// No items selected
-		if(empty($this->categories)) return null;
+		if(empty($categories)) return null;
 		// A nummeric value, id was entered?
-		if(is_numeric($stat)) return !empty($this->categories[$stat]) ? $this->categories[$stat] : null;
+		if(is_numeric($stat)) return !empty($categories[$stat]) ? $categories[$stat] : null;
 		// Separate selector
 		$data = explode('=', $stat, 2);
 		$key = strtolower(trim($data[0]));
@@ -111,15 +78,19 @@ class CategoryMapper extends Mapper
 		$num = substr_count($val, '%');
 		$pat = false;
 		if($num == 1) {
-			$pos = strpos($val, '%');
-			if($pos == 0) { $pat = '/'.strtolower(trim(str_replace('%', '', $val))).'$/';}
-			elseif($pos == strlen($val)) {$pat = '/^'.strtolower(trim(str_replace('%', '', $val))).'/';}
+			$pos = mb_strpos($val, '%');
+			if($pos == 0) {
+				$pat = '/'.strtolower(trim(str_replace('%', '', $val))).'$/';
+			}
+			elseif($pos == mb_strlen($val)-1) {
+				$pat = '/^'.strtolower(trim(str_replace('%', '', $val))).'/';
+			}
 		} elseif($num == 2) {
 			$pat = '/'.strtolower(trim(str_replace('%', '', $val))).'/';
 		}
 		if(false !== strpos($key, ' ')) return null;
 		// Searching for entered value
-		foreach($this->categories as $itemkey => $item) {
+		foreach($categories as $itemkey => $item) {
 			if(!$pat && strtolower($item->{$key}) == strtolower($val)) return $item;
 			elseif($pat && preg_match($pat, strtolower($item->{$key}))) return $item;
 		}
@@ -128,7 +99,7 @@ class CategoryMapper extends Mapper
 
 
 	/**
-	 * Returns the array of objects of the type Category, by a comparison of values
+	 * Returns the array of objects type Category, by a comparison of values
 	 * NOTE: However if no $categories argument is passed to the function, the categories
 	 * must already be in the buffer: ImCategory::$categories. Call the ImCategory::init()
 	 * method before to assign the categories to the buffer.
@@ -142,45 +113,41 @@ class CategoryMapper extends Mapper
 	 * @param array $categories
 	 * @return boolean|array
 	 */
-	public function getCategories($stat, $offset=0, $length=0, array $categories=array())
+	public function getCategories($stat, $offset = 0, $length = 0, array $categories=array())
 	{
+		settype($offset, 'integer');
+		settype($length, 'integer');
 		// reset offset
 		$offset = ($offset > 0) ? $offset-1 : $offset;
 
 		if($offset > 0 && $length > 0 && $offset >= $length) return null;
 
-		if($categories) $this->categories = $categories;
+		if(!$categories) $categories = $this->categories;
 
 		// nothing to select
-		if(empty($this->categories)) return null;
+		if(empty($categories)) return null;
 
-		// all parameter have to match the data
 		$treads = array();
-
-		if(false !== strpos($stat, '&&'))
-		{
+		// All parameter have to match selector
+		if(false !== strpos($stat, '&&')) {
 			$treads = explode('&&', $stat, 2);
 			$parts[] = trim($treads[0]);
 			$parts[] = trim($treads[1]);
 
 			$sepitems = array();
-			foreach($parts as $part)
-			{
-				$sepitems[] = $this->separateCategories($this->categories, $part);
+			foreach($parts as $part) {
+				$sepitems[] = $this->separateCategories($categories, $part);
 			}
-			if(!empty($sepitems[0]) && !empty($sepitems[1]))
-			{
+			if(!empty($sepitems[0]) && !empty($sepitems[1])) {
 				$arr = array_map('unserialize', array_intersect(array_map('serialize', $sepitems[0]), array_map('serialize', $sepitems[1])));
-
 				// limited output
-				if(!empty($arr) && ((int) $offset > 0 || (int) $length > 0))
-				{
-					if((int) $length == 0) $len = null;
-					$arr = array_slice($arr, (int) $offset, (int) $length, true);
+				if(!empty($arr) && ( $offset > 0 ||  $length > 0)) {
+					//if( $length == 0) $len = null;
+					$arr = array_slice($arr, $offset, $length, true);
 				}
 				return $arr;
 			}
-			// only one parameter have to match the data
+		// Only one parameter have to match the data
 		} elseif(false !== strpos($stat, '||'))
 		{
 			$treads = explode('||', $stat, 2);
@@ -190,53 +157,47 @@ class CategoryMapper extends Mapper
 			$sepitems = array();
 			foreach($parts as $part)
 			{
-				$sepitems[] = $this->separateCategories($this->categories, $part);
+				$sepitems[] = $this->separateCategories($categories, $part);
 			}
 			if(!empty($sepitems[0]) || !empty($sepitems[1]))
 			{
-				if(is_array($sepitems[0]) && is_array($sepitems[1]))
-				{
+				if(is_array($sepitems[0]) && is_array($sepitems[1])) {
 					// limited output
-					if(!empty($sepitems[0]) && ((int) $offset > 0 || (int) $length > 0))
-					{
-						if((int) $length == 0) $len = null;
-						$sepitems[0] = array_slice($sepitems[0], (int) $offset, (int) $length, true);
-						$sepitems[1] = array_slice($sepitems[1], (int) $offset, (int) $length, true);
+					if(!empty($sepitems[0]) && ( $offset > 0 ||  $length > 0)) {
+						//if( $length == 0) $len = null;
+						$sepitems[0] = array_slice($sepitems[0], $offset, $length, true);
+						$sepitems[1] = array_slice($sepitems[1], $offset, $length, true);
 						$return = array_merge($sepitems[0], $sepitems[1]);
-						return array_slice($return, (int) $offset, (int) $length, true);
+						return array_slice($return, $offset, $length, true);
 					}
 					return array_merge($sepitems[0], $sepitems[1]);
 
-				} elseif(is_array($sepitems[0]) && !is_array($sepitems[1]))
-				{
+				} elseif(is_array($sepitems[0]) && !is_array($sepitems[1])) {
 					// limited output
-					if(!empty($sepitems[0]) && ((int) $offset > 0 || (int) $length > 0))
-					{
-						if((int) $length == 0) $len = null;
-						$sepitems[0] = array_slice($sepitems[0], (int) $offset, (int) $length, true);
+					if(!empty($sepitems[0]) && ($offset > 0 || $length > 0)) {
+						//if( $length == 0) $len = null;
+						$sepitems[0] = array_slice($sepitems[0],  $offset,  $length, true);
 					}
 					return $sepitems[0];
 				} else
 				{
 					// limited output
-					if(!empty($sepitems[1]) && ((int) $offset > 0 || (int) $length > 0))
-					{
-						if((int) $length == 0) $len = null;
-						$sepitems[1] = array_slice($sepitems[1], (int) $offset, (int) $length, true);
+					if(!empty($sepitems[1]) && ( $offset > 0 ||  $length > 0)) {
+						//if( $length == 0) $len = null;
+						$sepitems[1] = array_slice($sepitems[1], $offset, $length, true);
 					}
 					return $sepitems[1];
 				}
 			}
-			// If $stat contains only one or empty selector
+		// If $stat contains only one or empty selector
 		} else
 		{
-			if(!empty($stat)) $arr = $this->separateCategories($this->categories, $stat);
-			else $arr = $this->categories;
+			if(!empty($stat)) $arr = $this->separateCategories($categories, $stat);
+			else $arr = $categories;
 			// limited output
-			if(!empty($arr) && ((int) $offset > 0 || (int) $length > 0))
-			{
-				if((int) $length == 0) $len = null;
-				$arr = array_slice($arr, (int) $offset, (int) $length, true);
+			if(!empty($arr) && ($offset > 0 || $length > 0)) {
+				//if( $length == 0) $len = null;
+				$arr = array_slice($arr, $offset, $length, true);
 			}
 
 			return $arr;
@@ -244,7 +205,15 @@ class CategoryMapper extends Mapper
 		return null;
 	}
 
-
+	/**
+	 * Separate categories search selectors and
+	 * compare these values.
+	 *
+	 * @param array $items - An array of categories to be processed
+	 * @param $stat - Selector
+	 *
+	 * @return array|bool
+	 */
 	protected function separateCategories(array $items, $stat)
 	{
 		$res = array();
@@ -262,10 +231,10 @@ class CategoryMapper extends Mapper
 			$num = substr_count($val, '%');
 			$pat = false;
 			if($num == 1) {
-				$pos = strpos($val, '%');
+				$pos = mb_strpos($val, '%');
 				if($pos == 0) {
 					$pat = '/'.strtolower(trim(str_replace('%', '', $val))).'$/';
-				} elseif($pos == (strlen($val)-1)) {
+				} elseif($pos == (mb_strlen($val)-1)) {
 					$pat = '/^'.strtolower(trim(str_replace('%', '', $val))).'/';
 				}
 			} elseif($num == 2) {
@@ -274,7 +243,7 @@ class CategoryMapper extends Mapper
 
 			foreach($items as $itemkey => $item)
 			{
-				if(!isset($item->$key)) { continue; }
+				//if(!array_key_exists($key, $item)) { continue; }
 				if($pkey == 0) {
 					if($item->$key < $val) continue;
 				} elseif($pkey == 1) {
@@ -298,54 +267,47 @@ class CategoryMapper extends Mapper
 		return false;
 	}
 
-
 	/**
-	 * Returns the array of objects of the type Category, sorted by any node
-	 * NOTE: However if no $categories argument is passed to the function, the categories
-	 * must already be in the buffer: ImCategory::$categories. Call the ImCategory::init()
-	 * method before to assign the categories to the buffer.
+	 * A public method for sorting the categories
 	 *
-	 * You can sort categories by using any node
-	 * Sample sortng by "position":
-	 * ImCategory::filterCategories('position', 'DESC', $your_categories_array)
+	 * You can sort items by using any attribute
+	 * Default sortng attribute is "position":
+	 * FieldMapper::sort('position', 'DESC', $offset, $length, $your_items_array)
 	 *
 	 * @param string $filterby
-	 * @param array $categories
-	 * @return boolean|array of objects of the type Category
+	 * @param string $order
+	 * @param array $items
+	 *
+	 * @return boolean|array of Field objects
 	 */
-	public function filterCategories($filterby='id', $option='asc', $offset=0, $length=0, array $items=array())
+	public function sort($filterby = null, $order = 'asc',  $offset = 0, $length = 0, array $items = array())
 	{
-		// reset offset
+		settype($offset, 'integer');
+		settype($length, 'integer');
+
 		$offset = ($offset > 0) ? $offset-1 : $offset;
 
-		$locitems = !empty($items) ? $items : $this->categories;
+		$localItems = !empty($items) ? $items : $this->categories;
 
-		if(empty($locitems) || count($locitems) <= 0) return false;
+		if(empty($localItems)) return false;
 
-		$itemcontainer = array();
+		$this->filterby = ($filterby) ? $filterby : $this->imanager->config->filterByCategories;
 
-		foreach($locitems as $item_id => $i) {
-			//if(!isset($i->$filterby)) continue;
-			$itemcontainer[$item_id] = $locitems[$item_id];
-		}
-
-		if(empty($itemcontainer)) return false;
-
-		$this->filterby = $filterby;
-		usort($itemcontainer, array($this, 'sortObjects'));
+		usort($localItems, array($this, 'sortObjects'));
 		// sort DESCENDING
-		if(strtolower($option) != 'asc') $itemcontainer = $this->reverseItems($itemcontainer);
-		$itemcontainer = $this->reviseItemIds($itemcontainer);
+		if(strtolower($order) != 'asc') $localItems = $this->reverseItems($localItems);
+		$localItems = $this->reviseItemIds($localItems);
 
-		// limited output
-		if(!empty($itemcontainer) && ((int) $offset > 0 || (int) $length > 0))
+		// Limiting item number
+		if(!empty($localItems) && ($offset > 0 || $length > 0))
 		{
-			if((int) $length == 0) $len = null;
-			$itemcontainer = array_slice($itemcontainer, (int) $offset, (int) $length, true);
+			//if($length == 0) $len = null;
+			$localItems = array_slice($localItems, $offset, $length, true);
 		}
 
-		if(!empty($items)) return $itemcontainer;
-		$this->categories = $itemcontainer;
+		if(!empty($items)) return $localItems;
+
+		$this->categories = $localItems;
 		return $this->categories;
 	}
 
@@ -356,46 +318,45 @@ class CategoryMapper extends Mapper
 	 * @param Category $cat
 	 * @return bool
 	 */
-	public function destroyCategory(Category $cat)
+	/*public function destroyCategory(Category $cat)
 	{
 		if(file_exists(IM_CATEGORYPATH . $cat->id . IM_CATEGORY_SUFFIX))
 			return unlink(IM_CATEGORYPATH . $cat->id . IM_CATEGORY_SUFFIX);
 		return false;
-	}
+	}*/
 
 
 	/**
 	 * Reverse the array of items
 	 *
-	 * @param array $itemcontainer An array of objects
+	 * @param array $itemContainer An array of objects
 	 * @return boolean|array
 	 */
-	public function reverseItems($itemcontainer)
+	public function reverseItems($itemContainer)
 	{
-		if(!is_array($itemcontainer)) return false;
-		return array_reverse($itemcontainer);
+		if(!is_array($itemContainer)) return false;
+		return array_reverse($itemContainer);
 	}
 
 
 	/**
-	 * Revise keys of the array of items and changes these into real item id's
+	 * Revise keys of the array of categories and changes these into real item id's
 	 *
 	 * @param array $itemcontainer An array of objects
 	 * @return boolean|array
 	 */
-	public function reviseItemIds($itemcontainer)
+	public function reviseItemIds($itemContainer)
 	{
-		if(!is_array($itemcontainer)) return false;
+		if(!is_array($itemContainer)) return false;
 		$result = array();
-		foreach($itemcontainer as $val)
-			$result[$val->id] = $val;
+		foreach($itemContainer as $val) { $result[$val->id] = $val; }
 		return $result;
 	}
 
 
 
 	/**
-	 * Sorts the objects
+	 * Sorts the category objects
 	 *
 	 * @param $a $b objects to be sorted
 	 * @return boolean
@@ -404,8 +365,7 @@ class CategoryMapper extends Mapper
 	{
 		$a = $a->{$this->filterby};
 		$b = $b->{$this->filterby};
-		if(is_numeric($a))
-		{
+		if(is_numeric($a)) {
 			if($a == $b) {return 0;}
 			else{
 				if($b > $a) {return -1;}
@@ -415,7 +375,7 @@ class CategoryMapper extends Mapper
 	}
 
 
-	public function pagination(array $params, $argtpls = array())
+	public function pagination(array $params = array(), $argtpls = array())
 	{
 
 		$tpl = $this->imanager->getTemplateEngine();
@@ -563,26 +523,4 @@ class CategoryMapper extends Mapper
 
 		return $tpl->render($tpls['wrapper'], array('value' => $output), true);
 	}
-
-	/*protected function install($path)
-	{
-		$value = "# apache < 2.3\r\n";
-		$value .= "<IfModule !mod_authz_core.c>\r\n";
-		$value .= "Deny from all\r\n";
-		$value .= "</IfModule>\r\n\r\n";
-		$value .= "# apache > 2.3 with mod_access_compat\r\n";
-		$value .= "<IfModule mod_access_compat.c>\r\n";
-		$value .= "Deny from all\r\n";
-		$value .= "</IfModule>\r\n\r\n";
-		$value .= "# apache > 2.3 without mod_access_compat\r\n";
-		$value .= "<IfModule mod_authz_core.c>\r\n\r\n";
-		$value .= "<IfModule !mod_access_compat.c>\r\n";
-		$value .= "Require all denied\r\n";
-		$value .= "</IfModule>\r\n\r\n";
-		$value .= "</IfModule>\r\n";
-		if(!mkdir(dirname($path), $this->chmodDir, true)) echo 'Unable to create path: '.dirname($path);
-		//if(!$handle = fopen(dirname($path).'/.htaccess', 'w')) return false;
-		//fwrite($handle, $value);
-		//fclose($handle);
-	}*/
 }

@@ -27,6 +27,7 @@ class FieldMapper extends Mapper
 	 */
 	public function init($category_id)
 	{
+		parent::___init();
 		$this->path = IM_BUFFERPATH.'fields/'.(int) $category_id.'.fields.php';
 
 		if(!file_exists(dirname($this->path))) {
@@ -151,8 +152,7 @@ class FieldMapper extends Mapper
 	{
 		if(!is_array($fieldcontainer)) return false;
 		$result = array();
-		foreach($fieldcontainer as $val)
-			$result[$val->name] = $val;
+		foreach($fieldcontainer as $val) { $result[$val->name] = $val; }
 		return $result;
 	}
 

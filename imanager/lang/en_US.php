@@ -22,6 +22,7 @@ $i18n = array(
  	'err_empty_required_field_value' => 'Field value [[name]] required',
 	'err_min_length_field_value' => 'The minimum length of the [[name]] field value is [[length]] characters',
 	'err_max_length_field_value' => 'The maximum length of the [[name]] field value is [[length]] characters',
+ 	'err_setting_attribute' => 'Error setting the [[attribute]] attribute',
 
 
 

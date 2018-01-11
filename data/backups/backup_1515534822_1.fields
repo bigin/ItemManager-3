@@ -11,7 +11,7 @@
      'options' => 
     array (
     ),
-     'info' => 'Just a simple field info 1515570796',
+     'info' => 'Just a simple field info 1515534737',
      'required' => false,
      'minimum' => 0,
      'maximum' => 0,
@@ -20,7 +20,7 @@
     array (
     ),
      'created' => 1515326979,
-     'updated' => 1515570796,
+     'updated' => 1515534737,
   )),
   'test_field' => 
   Imanager\Field::__set_state(array(

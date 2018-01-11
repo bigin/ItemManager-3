@@ -1,4 +1,4 @@
-<?php
+<?php namespace Imanager;
 /**
  * A simple way to cache segments of markup in your themes
  */
@@ -34,7 +34,7 @@ class SectionCache {
 	 *
 	 */
 	public function __construct($path='') {
-		$this->path = empty($path) ? IM_SECTIONS_CACHE_DIR : $path;
+		$this->path = empty($path) ? IM_SECTIONSCACHEPATH : $path;
 	}
 
 	/**

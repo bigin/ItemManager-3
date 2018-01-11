@@ -11,7 +11,7 @@
      'options' => 
     array (
     ),
-     'info' => 'Just a simple field info',
+     'info' => 'Just a simple field info 1515521101',
      'required' => false,
      'minimum' => 0,
      'maximum' => 0,
@@ -20,7 +20,7 @@
     array (
     ),
      'created' => 1515326979,
-     'updated' => 1515399064,
+     'updated' => 1515521101,
   )),
   'test_field' => 
   Imanager\Field::__set_state(array(
@@ -44,6 +44,7 @@
     ),
      'created' => 1515334508,
      'updated' => 1515334508,
+     'imanager' => NULL,
   )),
   'text' => 
   Imanager\Field::__set_state(array(
@@ -67,5 +68,6 @@
     ),
      'created' => 1515339099,
      'updated' => 1515339099,
+     'imanager' => NULL,
   )),
 ); ?>
