@@ -30,8 +30,14 @@ class TemplateParser
 	 */
 	protected $runtimeCacheKey = null;
 
+	/**
+	 * TemplateParser constructor.
+	 */
 	public function __construct() { $this->imanager = imanager(); }
 
+	/**
+	 * @param string $tplpath
+	 */
 	public function init($tplpath = '')
 	{
 		if(empty($tplpath)) {
@@ -40,8 +46,6 @@ class TemplateParser
 			$this->path = $tplpath;
 		}
 	}
-
-
 
 	/**
 	 * @tpl - official template file path or string
@@ -53,8 +57,9 @@ class TemplateParser
 		if($this->runtimeCacheKey != $tpl)
 		{
 			$this->runtimeCacheKey = $tpl;
-			if(file_exists($this->path.$tpl.'.tpl')){$this->output = file_get_contents($this->path.$tpl.'.tpl');}
-			else{$this->output = $tpl;}
+			if(file_exists($this->path.$tpl.'.tpl')){
+				$this->output = file_get_contents($this->path.$tpl.'.tpl');
+			} else{$this->output = $tpl;}
 		}
 
 		$output = $this->output;
@@ -71,7 +76,7 @@ class TemplateParser
 	public function renderPagination($items, array $params = array(), $argtpls = array())
 	{
 		$config = $this->imanager->config;
-		//$pagination = $this->getTemplates('pagination');
+
 		$tpls['wrapper'] = !empty($argtpls['wrapper']) ? $argtpls['wrapper'] : 'pagination/wrapper';
 		$tpls['prev'] = !empty($argtpls['prev']) ? $argtpls['prev'] : 'pagination/prev';
 		$tpls['prev_inactive'] = !empty($argtpls['prev_inactive']) ? $argtpls['prev_inactive'] : 'pagination/prev_inactive';
@@ -87,25 +92,14 @@ class TemplateParser
 
 		// Determine start position (current page number)
 		if(!empty($params['page'])) {
-			$page = $params['page'];
 			//$page = (!empty($params['page']) ? $params['page'] : (isset($_GET['page']) ? (int) $_GET['page'] : 1));
-		} elseif($config->fancyPageNumbersUrl) {
-
-			$config->pageNumbersUrlSegment;
-
-			$pageurl = !empty($params['pageurl']) ? $params['pageurl'] : '?page=';
-
-
+			$page = $params['page'];
 		} else {
-			$pageurl = $config->pageNumbersUrlSegment;
+			$page = ($this->imanager->input->pageNumber) ? $this->imanager->input->pageNumber : 1;
 		}
-
+		$pageurl = !empty($params['pageurl']) ? $params['pageurl'] : $config->pageNumbersUrlSegment;
 		$params['count'] = !empty($params['count']) ? $params['count'] : count($items);
 
-
-		$start = !empty($params['start']) ? $params['start'] : 1;
-
-		//$maxitemperpage = (int) $config->maxItemsPerPage;
 		$limit = !empty($params['limit']) ? $params['limit'] : (int) $config->maxItemsPerPage;
 		$adjacents = !empty($params['adjacents']) ? $params['adjacents'] : 3;
 		$lastpage = !empty($params['lastpage']) ? $params['lastpage'] : ceil($params['count'] / $limit);
@@ -120,21 +114,17 @@ class TemplateParser
 
 		$output = '';
 		// $pageurl . '1'
-		if($page > 1)
-			$output .= $this->render($tpls['prev'], array('href' => $pageurl . $prev), true);
-		else
-			$output .= $this->render($tpls['prev_inactive'], array(), true);
+		if($page > 1) { $output .= $this->render($tpls['prev'], array('href' => $pageurl . $prev), true); }
+		else { $output .= $this->render($tpls['prev_inactive'], array(), true); }
 
 		// not enough pages to bother breaking it up
 		if($lastpage < 7 + ($adjacents * 2))
 		{
 			for($counter = 1; $counter <= $lastpage; $counter++)
 			{
-				if($counter == $page)
-				{
+				if($counter == $page) {
 					$output .= $this->render($tpls['central_inactive'], array('counter' => $counter), true);
-				} else
-				{
+				} else {
 					// $pageurl . '1'
 					$output .= $this->render($tpls['central'], array(
 						'href' => ($counter > 1) ? $pageurl . $counter : $pageurl . '1', 'counter' => $counter), true
@@ -168,7 +158,7 @@ class TemplateParser
 					'counter' => $lastpage), true);
 			}
 			// middle pos; hide some front and some back
-			elseif($lastpage - ($adjacents * 2) > $page && $page > ($adjacents * 2))
+			elseif(($lastpage - ($adjacents * 2) > $page) && ($page > ($adjacents * 2)))
 			{
 				// first
 				$output .= $this->render($tpls['first'], array('href' => $pageurl . '1'), true);

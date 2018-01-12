@@ -19,6 +19,11 @@ $config->maxItemsPerPage = 10;
 /**
  * Create field backups when saving or editing fields
  */
+$config->backupCategories = true;
+
+/**
+ * Create field backups when saving or editing fields
+ */
 $config->backupFields = true;
 
 /**
@@ -27,7 +32,7 @@ $config->backupFields = true;
 $config->backupItems = false;
 
 /**
- * Backup files in days
+ * Backup file lifetime
  */
 $config->minBackupTimePeriod = 2;
 
@@ -51,11 +56,9 @@ $config->filterByItems = 'position';
  */
 $config->chmodDir = 0755;
 
-$config->fancyPageNumbersUrl = true;
-$config->pageNumbersUrlSegment = '/page';
 
+$config->pageNumbersUrlSegment = 'page';
 
-$config->string2 = 'string2';
 
 //$this->checkInstalled = true;
 

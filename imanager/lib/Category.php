@@ -102,11 +102,11 @@ class Category extends Object
 		return $this->imanager->itemMapper->getItem($stat, $items);
 	}
 
-	public function getItems($stat, $offset = 0, $length = 0, array $items = array())
+	public function getItems($stat, $length = 0, array $items = array())
 	{
 		$this->init();
 		$this->imanager->itemMapper->init($this->id);
-		return $this->imanager->itemMapper->getItems($stat, $offset, $length, $items);
+		return $this->imanager->itemMapper->getItems($stat, $length, $items);
 	}
 
 	public function sort($filterby = 'position', $order = 'asc',  $offset = 0, $length = 0, array $items = array())
@@ -177,7 +177,7 @@ class Category extends Object
 		$this->updated = $now;
 		if(!$this->position) $this->position = (int) $this->id;
 
-		// Clean-up category object by removing redundant category object attributes
+		// Clean-up category object by removing redundant object attributes
 		$this->declutter();
 
 		$cm->categories[$this->id] = $this;

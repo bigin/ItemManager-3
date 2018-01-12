@@ -2,27 +2,26 @@
 
 class Manager
 {
-
-	//protected $categoryMapper = null;
-	//protected $itemMapper = null;
-	//protected static $categoryMapper = null;
-	//protected static $itemMapper = null;
-	protected static $fieldMapper = null;
-	protected static $templateEngine = null;
-	protected static $sectionCache = null;
-	protected $actionsProcessor = null;
-
+	/**
+	 * @var Sanitizer|null - Sanitizer instance
+	 */
 	public $sanitizer = null;
-	// Configuration Class
-	public $config;
-
-	// is ItemManager installed
-	public static $installed;
-
-	public $admin = null;
 
 	/**
-	 * v 3.0
+	 * @var Config|null - Configuration class instance
+	 */
+	public $config = null;
+
+
+	//public $admin = null;
+
+	/**
+	 * @var Input|null - Input class instance
+	 */
+	public $input = null;
+
+	/**
+	 * @since v 3.0
 	 * Manager constructor.
 	 */
 	public function __construct()
@@ -34,6 +33,7 @@ class Manager
 
 		$this->config = Util::buildConfig();
 		$this->sanitizer = new Sanitizer();
+		$this->input = new Input($this->config, $this->sanitizer);
 		Util::buildLanguage();
 		$this->setActions();
 	}
@@ -54,9 +54,11 @@ class Manager
 			return $this->$name;
 		}
 	}
+
 	/**
-	 * v 3.0
-	 * Autoload
+	 * Autoload method
+	 *
+	 * @since v 3.0
 	 * @param $lclass - Class pattern
 	 */
 	private function loader($lclass)
@@ -73,20 +75,48 @@ class Manager
 	/**
 	 * Auto-Callable
 	 *
+	 * @since v 3.0
 	 * @return CategoryMapper
 	 */
 	protected function _imCategoryMapper() { return new CategoryMapper(); }
 
+	/**
+	 * Auto-Callable
+	 *
+	 * @since v 3.0
+	 * @return FieldMapper
+	 */
+	protected function _imFieldMapper() { return new FieldMapper(); }
 
 	/**
 	 * Auto-Callable
 	 *
+	 * @since v 3.0
 	 * @return ItemMapper
 	 */
 	protected function _imItemMapper() { return new ItemMapper(); }
 
 
+	/**
+	 * Auto-Callable
+	 *
+	 * @since v 3.0
+	 * @return TemplateParser
+	 */
+	protected function _imTemplateParser()
+	{
+		$this->templateParser = new TemplateParser();
+		$this->templateParser->init();
+		return $this->templateParser;
+	}
 
+	/**
+	 * Auto-Callable
+	 *
+	 * @since v 3.0
+	 * @return SectionCache
+	 */
+	protected function _imSectionCache() { return new SectionCache(); }
 
 	// Todo: check is used in 3.0?
 	public function setAdmin($admin)
@@ -102,11 +132,6 @@ class Manager
 		$actions = array('ImActivated');
 		if(function_exists('exec_action')) exec_action('ImActivated');
 	}
-
-
-
-
-
 
 	// Todo: check is used in 3.0?
 	public function renameTmpDir($item)

@@ -1,0 +1,9 @@
+
+RewriteEngine On
+AddDefaultCharset UTF-8
+
+RewriteBase /gitlab-projects/
+RewriteRule ^(.*)$ index.php?id=$1 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} (^|/)manager/
+RewriteRule ^(.*)$ index.php?id=$1 [L,QSA]

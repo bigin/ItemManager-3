@@ -1,17 +1,24 @@
-<?php
+<?php namespace Imanager;
 
 class Input
 {
 	public $sanitizer;
+	public $post;
+	public $get;
+	public $pageNumber = 0;
 	public $urlSegments;
 
 	protected $config;
 
-	public function __construct($config) {
-		$this->sanitizer = new \Sanitizer();
+	public function __construct($config, $sanitizer) {
+		$this->sanitizer = $sanitizer;
 		$this->config = $config;
 		$this->urlSegments = new UrlSegments($this->sanitizer);
 		$this->parseUrl();
+		$this->post = new Post();
+		$this->get = new Get();
+		$this->whitelist = new Whitelist();
+		$this->buildSubmitedData();
 	}
 
 	private function parseUrl() {
@@ -25,16 +32,32 @@ class Input
 	private function buildSegments($url) {
 		$parseUrl = parse_url(trim($url));
 		if(isset($parseUrl['path'])) {
-			foreach(array_values(array_filter(array_map('trim', explode('/', $parseUrl['path'])))) as $key => $value) {
+			foreach(array_values(array_filter(array_map('trim',
+				explode('/', $parseUrl['path'])))) as $key => $value) {
 				$this->urlSegments->set($key, $value);
 				$this->urlSegments->total++;
 			}
+		}
+		if($this->urlSegments->total && (false !== strpos($this->urlSegments->getLast(),
+					$this->config->pageNumbersUrlSegment)) ) {
+			$this->pageNumber = (int)str_replace($this->config->pageNumbersUrlSegment, '',
+				$this->urlSegments->getLast());
 		}
 	}
 
 	private function getHost($address) {
 		$parseUrl = parse_url(trim($address));
-		return trim($parseUrl['host'] ? $parseUrl['host'] : array_shift(explode('/', $parseUrl['path'], 2)));
+		return trim($parseUrl['host'] ? $parseUrl['host'] :
+			array_shift(explode('/', $parseUrl['path'], 2)));
+	}
+
+	private function buildSubmitedData() {
+		foreach($_POST as $key => $value) { $this->post->{$key} = $value; }
+		foreach($_GET as $key => $value) { $this->get->{$key} = $value; }
+		if(!$this->pageNumber && isset($_GET[$this->config->pageNumbersUrlSegment]) &&
+			(int) $_GET[$this->config->pageNumbersUrlSegment] != 0) {
+			$this->pageNumber = (int) $_GET[$this->config->pageNumbersUrlSegment];
+		}
 	}
 
 }
@@ -56,4 +79,46 @@ class UrlSegments
 	public function getLast() {
 		return isset($this->segment{($this->total - 1)}) ? $this->segment{($this->total - 1)} : null;
 	}
+}
+
+class Post
+{
+	/**
+	 * Provides direct reference access to set values in the $data array
+	 *
+	 * @param string $key
+	 * @param mixed $value
+	 * return $this
+	 *
+	 */
+	public function __set($key, $value) { $this->{$key} = $value;}
+	public function __get($name) { return isset($this->{$name}) ? $this->{$name} : null;}
+}
+
+class Get
+{
+	/**
+	 * Provides direct reference access to set values in the $data array
+	 *
+	 * @param string $key
+	 * @param mixed $value
+	 * return $this
+	 *
+	 */
+	public function __set($key, $value) { $this->{$key} = $value; }
+	public function __get($name) { return isset($this->{$name}) ? $this->{$name} : null; }
+}
+
+class Whitelist
+{
+	/**
+	 * Provides direct reference access to set values in the $data array
+	 *
+	 * @param string $key
+	 * @param mixed $value
+	 * return $this
+	 *
+	 */
+	public function __set($key, $value) { $this->{$key} = $value; }
+	public function __get($name) { return isset($this->{$name}) ? $this->{$name} : null; }
 }

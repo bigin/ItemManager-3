@@ -219,16 +219,15 @@ class ItemMapper extends Mapper
 	/**
 	 * Select method for multiple items
 	 *
-	 * @param $stat
-	 * @param int $offset
-	 * @param int $length
-	 * @param array $items
+	 * @param $stat        - Selector
+	 * @param int $length  - A clause that is used to specify the number of records to return
+	 * @param array $items - Item array rekursion
 	 *
 	 * @return array|bool
 	 */
-	public function getItems($stat, $offset = 0, $length = 0, array $items = array())
+	public function getItems($stat, $length = 0, array $items = array())
 	{
-		settype($offset, 'integer');
+		$offset = 0;//($this->imanager->input->pageNumber) ? (($this->imanager->input->pageNumber -1) * $length +1) : 0;
 		settype($length, 'integer');
 		// reset offset
 		$offset = ($offset > 0) ? $offset-1 : $offset;
@@ -250,7 +249,7 @@ class ItemMapper extends Mapper
 
 			$sepitems = array();
 			foreach($parts as $part) {
-				$sepitems[] = $this->separateItems($items, $part);
+				$sepitems[] = $this->applySearchPattern($items, $part);
 			}
 			if(!empty($sepitems[0]) && !empty($sepitems[1]))
 			{
@@ -273,7 +272,7 @@ class ItemMapper extends Mapper
 			$sepitems = array();
 			foreach($parts as $part)
 			{
-				$sepitems[] = $this->separateItems($items, $part);
+				$sepitems[] = $this->applySearchPattern($items, $part);
 			}
 			if(!empty($sepitems[0]) || !empty($sepitems[1]))
 			{
@@ -310,7 +309,7 @@ class ItemMapper extends Mapper
 			// If $stat contains only one or empty selector
 		} else
 		{
-			if(!empty($stat)) $arr = $this->separateItems($items, $stat);
+			if(!empty($stat)) $arr = $this->applySearchPattern($items, $stat);
 			else $arr = $items;
 			// limited output
 			if(!empty($arr) && ($offset > 0 || $length > 0)) {
@@ -341,7 +340,12 @@ class ItemMapper extends Mapper
 	{
 		settype($offset, 'integer');
 		settype($length, 'integer');
-		$offset = ($offset > 0) ? $offset-1 : $offset;
+
+		$offset = ($offset) ? $offset :
+			(($this->imanager->input->pageNumber) ? (($this->imanager->input->pageNumber -1) * $length) : 0);
+
+		/*$offset = ($offset > 0) ? $offset-1 : (($this->imanager->input->pageNumber) ?
+			(($this->imanager->input->pageNumber -1) * $length +1) : 1);*/
 
 		$localItems = !empty($items) ? $items : $this->items;
 
@@ -368,15 +372,14 @@ class ItemMapper extends Mapper
 	}
 
 	/**
-	 * Separate item search selectors and
-	 * compare these values
+	 * Select items by using several search patterns
 	 *
-	 * @param array $items
-	 * @param $stat
+	 * @param array $items - An array of categories to be processed
+	 * @param $stat - Selector
 	 *
 	 * @return array|bool
 	 */
-	protected function separateItems(array $items, $stat)
+	protected function applySearchPattern(array $items, $stat)
 	{
 		$res = array();
 		$pattern = array(0 => '>=', 1 => '<=', 2 => '!=', 3 => '>', 4 => '<', 5 => '=');
