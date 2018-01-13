@@ -85,24 +85,44 @@ class Category extends Object
 			$mapper = $this->imanager->itemMapper;
 			$mapper->init($this->id);
 			return $mapper->items;
+		} else if($name == 'fields' && $this->id) {
+			$this->init();
+			$this->imanager->fieldMapper->init($this->id);
+			return $this->imanager->fieldMapper->fields;
 		}
 		return null;
 	}
 
 	/**
-	 * @param $stat
+	 * Get the Item matching the given selector string without exclusions. Returns an Item, or a NULL if not found.
+	 *
+	 * * This method is a part of category wrapper methods for handling child objects *
+	 *
+	 * @param $selector
 	 * @param array $items
 	 *
 	 * @return mixed
 	 */
-	public function getItem($stat, array $items = array())
+	public function getItem($selector, array $items = array())
 	{
 		$this->init();
 		$this->imanager->itemMapper->init($this->id);
-		return $this->imanager->itemMapper->getItem($stat, $items);
+		return $this->imanager->itemMapper->getItem($selector, $items);
 	}
 
-	public function getItems($stat, $length = 0, array $items = array())
+	/**
+	 * Get all Items matching the given selector string without exclusions. Returns one or several Items,
+	 * or a NULL if not found.
+	 *
+	 * * This method is a part of category wrapper methods for handling child objects *
+	 *
+	 * @param $selector
+	 * @param int $length
+	 * @param array $items
+	 *
+	 * @return mixed
+	 */
+	public function getItems($selector, $length = 0, array $items = array())
 	{
 		$this->init();
 		$this->imanager->itemMapper->init($this->id);
@@ -114,6 +134,37 @@ class Category extends Object
 		$this->init();
 		$this->imanager->itemMapper->init($this->id);
 		return $this->imanager->itemMapper->sort($filterby, $order, $offset, $length, $items);
+	}
+
+	public function remove(& $obj)
+	{
+		$this->init();
+
+		if($obj instanceof Item) {
+			return $this->imanager->itemMapper->remove($obj);
+		} elseif($obj instanceof Field) {
+			return $this->imanager->fieldMapper->remove($obj);
+		}
+		throw new \ErrorException('Object type is unknown');
+		return false;
+	}
+
+	/**
+	 * Get a Field matching the given selector string without exclusions. Returns one Field object,
+	 * or a NULL if not found.
+	 *
+	 * * This method is a part of category wrapper methods for handling child objects *
+	 *
+	 * @param $selector
+	 * @param array $fields
+	 *
+	 * @return mixed
+	 */
+	public function getField($selector, array $fields = array())
+	{
+		$this->init();
+		$this->imanager->fieldMapper->init($this->id);
+		return $this->imanager->fieldMapper->getField($selector, $fields);
 	}
 
 	/**
@@ -144,7 +195,9 @@ class Category extends Object
 	}
 
 	/**
-	 * Removes redundant category object attributes
+	 * Removes redundant Category object attributes.
+	 *
+	 * This method is used to prepare category objects for saving.
 	 */
 	public function declutter()
 	{
@@ -156,7 +209,9 @@ class Category extends Object
 	}
 
 	/**
-	 * Save category
+	 * Save Category
+	 *
+	 * Clean-up Category object by removing redundant object attributes
 	 *
 	 * @return bool
 	 */
@@ -177,10 +232,13 @@ class Category extends Object
 		$this->updated = $now;
 		if(!$this->position) $this->position = (int) $this->id;
 
-		// Clean-up category object by removing redundant object attributes
 		$this->declutter();
 
 		$cm->categories[$this->id] = $this;
+		// Create a backup if necessary
+		if($cm->imanager->config->backupCategories) {
+			Util::createBackup(dirname($cm->path).'/', basename($cm->path, '.php'), '.php');
+		}
 		$export = var_export($cm->categories, true);
 		file_put_contents($cm->path, '<?php return ' . $export . '; ?>');
 

@@ -3,10 +3,10 @@
   Imanager\Category::__set_state(array(
      'id' => 1,
      'position' => 1,
-     'name' => 'Ja gerade geändert1515662883',
+     'name' => 'Ja gerade geändert 1515791145',
      'slug' => 'my-first-category',
      'created' => 1515272903,
-     'updated' => 1515662883,
+     'updated' => 1515791145,
   )),
   2 => 
   Imanager\Category::__set_state(array(

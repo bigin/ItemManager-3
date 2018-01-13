@@ -29,7 +29,7 @@ for($i = 0; $i < $number; $i++) {
 //var_dump($category);
 
 // Get an existing category by id and related items
-/*$catMapper = imanager()->getCategoryMapper();
+/*$catMapper = $imanager->categoryMapper;
 $catMapper->init();
 $secondCategory = $catMapper->getCategory(1);
 $items = $secondCategory->getItems('test_field=');
@@ -41,7 +41,6 @@ $catMapper->init();
 $secondCategory = $catMapper->getCategory(3);
 $secondCategory->name = 'My Third Category';
 $secondCategory->save();*/
-
 
 /**
  * Working with fields
@@ -153,6 +152,30 @@ foreach($result as $item) {
 $pagination = $imanager->paginate($items);
 echo $pagination;*/
 
+// Remove an item with throwing an Exception
+/*$category = $imanager->getCategory(1);
+$item = $category->getItem(179);
+if($item) {
+	try {
+		$category->remove($item);
+	} catch (Exception $e) {
+		echo 'Caught exception: ',  $e->getMessage(), "\n";
+	}
+	\Imanager\Util::preformat($item);
+}*/
+
+// Remove a field of the category 1, with throwing an Exception
+/*$category = $imanager->getCategory(1);
+$field = $category->getField('name=test_field');
+if($field) {
+	try {
+		$category->remove($field);
+	} catch (Exception $e) {
+		echo 'Caught exception: ',  $e->getMessage(), "\n";
+	}
+	\Imanager\Util::preformat($field);
+}*/
+
 // Markup Cache is used for caching specific parts of your templates
 /*if(!$output = $imanager->sectionCache->get('index')) {
 	$category = $imanager->getCategory(1);
@@ -165,3 +188,4 @@ echo $pagination;*/
 	$imanager->sectionCache->save($output);
 }
 echo $output;*/
+

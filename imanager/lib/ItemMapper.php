@@ -51,6 +51,34 @@ class ItemMapper extends Mapper
 		return false;
 	}
 
+	/**
+	 * Method deletes the respective Item object.
+	 *
+	 * Before that, it checks whether this element exists.
+	 *
+	 * @param Item $item
+	 *
+	 * @return bool
+	 */
+	public function remove(Item & $item)
+	{
+		$this->init($item->categoryid);
+		if(!isset($this->items[$item->id])) return false;
+
+		unset($this->items[$item->id]);
+		// Create a backup if necessary
+		if($this->imanager->config->backupItems){
+			Util::createBackup(dirname($this->path).'/', basename($this->path, '.php'), '.php');
+		}
+		$export = var_export($this->items, true);
+		if(false !== file_put_contents($this->path, '<?php return ' . $export . '; ?>')) {
+			$item = null;
+			unset($item);
+			return true;
+		}
+		trigger_error('Item object could not be deleted', E_USER_WARNING);
+		return false;
+	}
 
 	/**
 	 * Initializes all items and made them available in ImItem::$items array
@@ -63,7 +91,6 @@ class ItemMapper extends Mapper
 
 	}
 
-
 	/**
 	 * Returns a total number of given items
 	 *
@@ -74,9 +101,8 @@ class ItemMapper extends Mapper
 	public function countItems(array $items=array())
 	{return !empty($items) ? count($items) : count($this->items);}
 
-
 	/**
-	 * Get single item
+	 * Get the Item matching the given selector string without exclusions. Returns an Item, or a NULL if not found.
 	 *
 	 * @param $stat - Selector
 	 * @param array $items
@@ -99,7 +125,8 @@ class ItemMapper extends Mapper
 		if($num == 1) {
 			$pos = mb_strpos($val, '%');
 			if($pos == 0) { $pat = '/'.strtolower(trim(str_replace('%', '', $val))).'$/';}
-			elseif($pos == mb_strlen($val)-1) {$pat = '/^'.strtolower(trim(str_replace('%', '', $val))).'/';}
+			elseif($pos == mb_strlen($val)-1) {$pat = '/^'.
+				strtolower(trim(str_replace('%', '', $val))).'/';}
 		} elseif($num == 2) {
 			$pat = '/'.strtolower(trim(str_replace('%', '', $val))).'/';
 		}
@@ -111,7 +138,6 @@ class ItemMapper extends Mapper
 		}
 		return false;
 	}
-
 
 	/**
 	 * Find matching item - Finds an item belonging to one category (returns exactly one result)
@@ -146,7 +172,6 @@ class ItemMapper extends Mapper
 		return false;
 	}
 
-
 	/**
 	 * Find matching items - Finds all items belonging to one category (returns matching items of a category)
 	 *
@@ -177,7 +202,6 @@ class ItemMapper extends Mapper
 		}
 		return false;
 	}
-
 
 	/**
 	 * Find all matching items - Finds all items of all categories (returns matching items of all categories)
@@ -253,7 +277,8 @@ class ItemMapper extends Mapper
 			}
 			if(!empty($sepitems[0]) && !empty($sepitems[1]))
 			{
-				$arr = array_map('unserialize', array_intersect(array_map('serialize', $sepitems[0]), array_map('serialize', $sepitems[1])));
+				$arr = array_map('unserialize', array_intersect(array_map('serialize', $sepitems[0]),
+					array_map('serialize', $sepitems[1])));
 
 				// limited output
 				if(!empty($arr) && ($offset > 0 || $length > 0)) {
@@ -326,15 +351,17 @@ class ItemMapper extends Mapper
 	/**
 	 * A public method for sorting the items
 	 *
-	 * You can sort items by using any attribute
+	 * You can sort items by using any attribute.
 	 * Default sortng attribute is "position":
-	 * FieldMapper::sort('position', 'DESC', $offset, $length, $your_items_array)
+	 * ItemMapper::sort('position', 'DESC', $offset, $length, $your_items_array)
 	 *
-	 * @param string $filterby
-	 * @param string $order
-	 * @param array $items
+	 * @param string $filterby - Filter by Item attribute
+	 * @param string $order    - The order in which Items are listed
+	 * @param int|null $offset - The first row to return
+	 * @param length $length   - Specifies the maximum number of rows to return
+	 * @param array $items     - Elements to search through or empty if the buffered Items shall be used instead
 	 *
-	 * @return boolean|array of Field objects
+	 * @return boolean|array   - An array of Item objects
 	 */
 	public function sort($filterby = null, $order = 'asc',  $offset = 0, $length = 0, array $items = array())
 	{
@@ -436,6 +463,7 @@ class ItemMapper extends Mapper
 	 * Sorts the item objects
 	 *
 	 * @param $a $b objects to be sorted
+	 *
 	 * @return boolean
 	 */
 	protected function sortObjects($a, $b)
@@ -455,6 +483,7 @@ class ItemMapper extends Mapper
 	 * Reverse the array of items
 	 *
 	 * @param array $itemsContainer An array of objects
+	 *
 	 * @return boolean|array
 	 */
 	public function reverseItems($itemsContainer)
@@ -467,6 +496,7 @@ class ItemMapper extends Mapper
 	 * Revise keys of the array of items and changes these into real item id's
 	 *
 	 * @param array $itemsContainer An array of objects
+	 *
 	 * @return boolean|array
 	 */
 	public function reviseItemIds($itemsContainer)
@@ -475,5 +505,28 @@ class ItemMapper extends Mapper
 		$result = array();
 		foreach($itemsContainer as $val) { $result[$val->id] = $val; }
 		return $result;
+	}
+
+	public function rebuild($category_id)
+	{
+		$this->init($category_id);
+		if($this->items) {
+			$items = array();
+			foreach($this->items as $item) {
+				$item->declutter();
+				$items[$item->id] = $item;
+			}
+			if($items) {
+				if($this->imanager->config->backupItems) {
+					Util::createBackup(dirname($this->path).'/', basename($this->path, '.php'), '.php');
+				}
+				$export = var_export($items, true);
+				file_put_contents($this->path, '<?php return ' . $export . '; ?>');
+
+				return true;
+			}
+		}
+		trigger_error('Items could not be rebuild', E_USER_WARNING);
+		return false;
 	}
 }

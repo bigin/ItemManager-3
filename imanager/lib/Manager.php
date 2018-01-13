@@ -36,6 +36,7 @@ class Manager
 		$this->input = new Input($this->config, $this->sanitizer);
 		Util::buildLanguage();
 		$this->setActions();
+		set_error_handler(__NAMESPACE__.'\Util::imErrorHandler');
 	}
 
 	/**
@@ -128,9 +129,9 @@ class Manager
 	// Set Actions
 	public function setActions()
 	{
-		global $plugins;
-		$actions = array('ImActivated');
-		if(function_exists('exec_action')) exec_action('ImActivated');
+		//global $plugins;
+		//$actions = array('imstart');
+		if(function_exists('exec_action')) exec_action('imstart');
 	}
 
 	// Todo: check is used in 3.0?

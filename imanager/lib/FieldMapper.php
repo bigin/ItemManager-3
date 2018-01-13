@@ -178,4 +178,39 @@ class FieldMapper extends Mapper
 		} else {return strcasecmp($a, $b);}
 	}
 
+	/**
+	 * Method deletes the respective Field object.
+	 *
+	 * Before that, it checks whether this element exists.
+	 *
+	 * @param Field $field
+	 *
+	 * @return bool
+	 */
+	public function remove(Field & $field)
+	{
+		$this->init($field->categoryid);
+		if(!isset($this->fields[$field->name])) {
+			trigger_error('Field object does not exist', E_USER_WARNING);
+			return false;
+		}
+
+		unset($this->fields[$field->name]);
+		// Create a backup if necessary
+		if($this->imanager->config->backupFields){
+			Util::createBackup(dirname($this->path).'/', basename($this->path, '.php'), '.php');
+		}
+
+		$categoryid = $field->categoryid;
+		$export = var_export($this->fields, true);
+		if(false !== file_put_contents($this->path, '<?php return ' . $export . '; ?>')) {
+			$field = null;
+			unset($field);
+			// Now, prepare and save all the items of this category
+			$this->imanager->itemMapper->rebuild($categoryid);
+			return true;
+		}
+		trigger_error('Field object could not be deleted', E_USER_WARNING);
+		return false;
+	}
 }

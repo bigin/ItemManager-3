@@ -189,13 +189,14 @@ class Item extends FieldMapper
 	 */
 	public function declutter()
 	{
+		$fields = $this->fields;
+		$attributes = $this->getAttributes();
 		// Remove any other item attributes
 		foreach($this as $key => $value) {
-			if($key != 'fields' && !in_array($key, $this->getAttributes()) && !array_key_exists($key, $this->fields)) {
+			if(!in_array($key, $attributes) && !array_key_exists($key, $fields)) {
 				unset($this->$key);
 			}
 		}
-		unset($this->fields);
 	}
 
 	/**

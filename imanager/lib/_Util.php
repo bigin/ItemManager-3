@@ -12,6 +12,8 @@ class Util
 		$config = new Config();
 		include(IM_ROOTPATH.'imanager/inc/config.php');
 		if(file_exists(IM_SETTINGSPATH.'custom.config.php')) { include(IM_SETTINGSPATH.'custom.config.php'); }
+		if($config->debug) { error_reporting(E_ALL); }
+		else { error_reporting(0); }
 		return $config;
 	}
 
@@ -19,32 +21,28 @@ class Util
 	 * @param null $path
 	 * @param string $language
 	 */
-	public static function buildLanguage($path=null, $language='en_US.php')
+	public static function buildLanguage($path = null, $language = 'en_US.php')
 	{
 		global $i18n;
 		if(file_exists(IM_ROOTPATH.'imanager/lang/'.$language)) { include(IM_ROOTPATH.'imanager/lang/'.$language); }
 	}
 
-	/*public static function dataLog($data, $file = '')
+	public static function dataLog($data, $file = '')
 	{
-		$filename = empty($file) ? GSDATAOTHERPATH.'logs/imlog_'.date('Ym').'.txt' : GSDATAOTHERPATH.'logs/'.$file.'.txt';
-		if (!$handle = fopen($filename, 'a+'))
-		{
-			return;
-		}
-		$datum = date('d.m.Y - H:i:s', time());
-		if (!fwrite($handle, '[ '.$datum.' ]'. ' ' . print_r($data, true) . "\r\n")) {
-			return;
-		}
+		$filename = empty($file) ? IM_LOGPATH.'imlog_'.date('Ym').'.txt' : IM_LOGPATH.$file.'.txt';
+		if(!file_exists($filename)) { self::install($filename);}
+		if(!$handle = fopen($filename, 'a+')) { return; }
+		$datum = date(imanager('config')->systemDateFormat, time());
+		if(!fwrite($handle, '[ '.$datum.' ]'. ' ' . print_r($data, true) . "\r\n")) { return; }
 		fclose($handle);
-	}*/
+	}
 
 	/**
 	 * Just a simple preformat method
 	 *
 	 * @param $data
 	 */
-	public static function preformat($data){echo '<pre>'.print_r($data, true).'</pre>';}
+	public static function preformat($data){ echo '<pre>'.print_r($data, true).'</pre>'; }
 
 
 	/**
@@ -159,4 +157,48 @@ class Util
 	 * Removes the given file
 	 */
 	protected static function removeFilename($filename){@unlink($filename);}
+
+	/**
+	 * ItemManager internal error handler
+	 *
+	 * @param $number
+	 * @param $string
+	 * @param $file
+	 * @param $line
+	 * @param $context
+	 *
+	 * @return bool
+	 */
+	public static function imErrorHandler($number, $string, $file, $line, $context)
+	{
+		// Determine if this error is one of the enabled ones in php config (php.ini, .htaccess, etc)
+		$error_is_enabled = (bool)($number & ini_get('error_reporting') );
+
+		// -- FATAL ERROR
+		// throw an Error Exception, to be handled by whatever Exception handling logic is available in this context
+		if(in_array($number, array(E_USER_ERROR, E_RECOVERABLE_ERROR)) && $error_is_enabled) {
+			throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+		}
+
+		// -- NON-FATAL ERROR/WARNING/NOTICE
+		// Log the error if it's enabled, otherwise just ignore it
+		else if($error_is_enabled) {
+			error_log($string, 0 );
+			self::dataLog($string);
+			return false;
+		}
+
+		// -- DISABLED ERRORS/WARNINGS, just write internal log
+		else {
+			self::dataLog($string);
+		}
+
+
+		/*
+		  E_USER_NOTICE             // Notice (default)
+		  E_USER_WARNING            // Warning
+		  E_USER_ERROR
+		*/
+		//trigger_error('Object type is unknown', E_USER_WARNING);
+	}
 }

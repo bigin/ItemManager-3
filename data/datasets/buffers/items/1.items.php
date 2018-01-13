@@ -8,10 +8,8 @@
      'position' => 1,
      'active' => true,
      'created' => 1515321399,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Data wurde aktualisiert 1515526427',
-     'test_field' => NULL,
-     'text' => 'Das ist Itemtext-Value 1515526427',
   )),
   2 => 
   Imanager\Item::__set_state(array(
@@ -22,10 +20,8 @@
      'position' => 2,
      'active' => true,
      'created' => 1515508607,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'This is the second item item 1515525577',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   3 => 
   Imanager\Item::__set_state(array(
@@ -36,10 +32,8 @@
      'position' => 3,
      'active' => true,
      'created' => 1515509173,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'This is the third item',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   4 => 
   Imanager\Item::__set_state(array(
@@ -50,10 +44,8 @@
      'position' => 4,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 400888',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   5 => 
   Imanager\Item::__set_state(array(
@@ -64,10 +56,8 @@
      'position' => 5,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 228277',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   6 => 
   Imanager\Item::__set_state(array(
@@ -78,10 +68,8 @@
      'position' => 6,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 385631',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   7 => 
   Imanager\Item::__set_state(array(
@@ -92,10 +80,8 @@
      'position' => 7,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 648715',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   8 => 
   Imanager\Item::__set_state(array(
@@ -106,10 +92,8 @@
      'position' => 8,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 310087',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   9 => 
   Imanager\Item::__set_state(array(
@@ -120,10 +104,8 @@
      'position' => 9,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 154361',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   10 => 
   Imanager\Item::__set_state(array(
@@ -134,10 +116,8 @@
      'position' => 10,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 339781',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   11 => 
   Imanager\Item::__set_state(array(
@@ -148,10 +128,8 @@
      'position' => 11,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 576819',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   12 => 
   Imanager\Item::__set_state(array(
@@ -162,10 +140,8 @@
      'position' => 12,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 36626',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   13 => 
   Imanager\Item::__set_state(array(
@@ -176,10 +152,8 @@
      'position' => 13,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 903236',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   14 => 
   Imanager\Item::__set_state(array(
@@ -190,10 +164,8 @@
      'position' => 14,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 65723',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   15 => 
   Imanager\Item::__set_state(array(
@@ -204,10 +176,8 @@
      'position' => 15,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 659195',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   16 => 
   Imanager\Item::__set_state(array(
@@ -218,10 +188,8 @@
      'position' => 16,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 902964',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   17 => 
   Imanager\Item::__set_state(array(
@@ -232,10 +200,8 @@
      'position' => 17,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 845982',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   18 => 
   Imanager\Item::__set_state(array(
@@ -246,10 +212,8 @@
      'position' => 18,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 552643',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   19 => 
   Imanager\Item::__set_state(array(
@@ -260,10 +224,8 @@
      'position' => 19,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 747105',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   20 => 
   Imanager\Item::__set_state(array(
@@ -274,10 +236,8 @@
      'position' => 20,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 600530',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   21 => 
   Imanager\Item::__set_state(array(
@@ -288,10 +248,8 @@
      'position' => 21,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 75411',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   22 => 
   Imanager\Item::__set_state(array(
@@ -302,10 +260,8 @@
      'position' => 22,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 677786',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   23 => 
   Imanager\Item::__set_state(array(
@@ -316,10 +272,8 @@
      'position' => 23,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 382526',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   24 => 
   Imanager\Item::__set_state(array(
@@ -330,10 +284,8 @@
      'position' => 24,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 980879',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   25 => 
   Imanager\Item::__set_state(array(
@@ -344,10 +296,8 @@
      'position' => 25,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 420363',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   26 => 
   Imanager\Item::__set_state(array(
@@ -358,10 +308,8 @@
      'position' => 26,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 635646',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   27 => 
   Imanager\Item::__set_state(array(
@@ -372,10 +320,8 @@
      'position' => 27,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 335858',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   28 => 
   Imanager\Item::__set_state(array(
@@ -386,10 +332,8 @@
      'position' => 28,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 765479',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   29 => 
   Imanager\Item::__set_state(array(
@@ -400,10 +344,8 @@
      'position' => 29,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 782293',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   30 => 
   Imanager\Item::__set_state(array(
@@ -414,10 +356,8 @@
      'position' => 30,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 803208',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   31 => 
   Imanager\Item::__set_state(array(
@@ -428,10 +368,8 @@
      'position' => 31,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 938686',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   32 => 
   Imanager\Item::__set_state(array(
@@ -442,10 +380,8 @@
      'position' => 32,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 801513',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   33 => 
   Imanager\Item::__set_state(array(
@@ -456,10 +392,8 @@
      'position' => 33,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 133269',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   34 => 
   Imanager\Item::__set_state(array(
@@ -470,10 +404,8 @@
      'position' => 34,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 74864',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   35 => 
   Imanager\Item::__set_state(array(
@@ -484,10 +416,8 @@
      'position' => 35,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855752,
      'data' => 'Automatically added data field value 606655',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   36 => 
   Imanager\Item::__set_state(array(
@@ -498,10 +428,8 @@
      'position' => 36,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 443865',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   37 => 
   Imanager\Item::__set_state(array(
@@ -512,10 +440,8 @@
      'position' => 37,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 956108',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   38 => 
   Imanager\Item::__set_state(array(
@@ -526,10 +452,8 @@
      'position' => 38,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 151765',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   39 => 
   Imanager\Item::__set_state(array(
@@ -540,10 +464,8 @@
      'position' => 39,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 500785',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   40 => 
   Imanager\Item::__set_state(array(
@@ -554,10 +476,8 @@
      'position' => 40,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 303636',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   41 => 
   Imanager\Item::__set_state(array(
@@ -568,10 +488,8 @@
      'position' => 41,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 920205',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   42 => 
   Imanager\Item::__set_state(array(
@@ -582,10 +500,8 @@
      'position' => 42,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 708871',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   43 => 
   Imanager\Item::__set_state(array(
@@ -596,10 +512,8 @@
      'position' => 43,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 248704',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   44 => 
   Imanager\Item::__set_state(array(
@@ -610,10 +524,8 @@
      'position' => 44,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 898177',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   45 => 
   Imanager\Item::__set_state(array(
@@ -624,10 +536,8 @@
      'position' => 45,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 237734',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   46 => 
   Imanager\Item::__set_state(array(
@@ -638,10 +548,8 @@
      'position' => 46,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 699496',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   47 => 
   Imanager\Item::__set_state(array(
@@ -652,10 +560,8 @@
      'position' => 47,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 962920',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   48 => 
   Imanager\Item::__set_state(array(
@@ -666,10 +572,8 @@
      'position' => 48,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 295344',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   49 => 
   Imanager\Item::__set_state(array(
@@ -680,10 +584,8 @@
      'position' => 49,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 834430',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   50 => 
   Imanager\Item::__set_state(array(
@@ -694,10 +596,8 @@
      'position' => 50,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 17241',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   51 => 
   Imanager\Item::__set_state(array(
@@ -708,10 +608,8 @@
      'position' => 51,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 272825',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   52 => 
   Imanager\Item::__set_state(array(
@@ -722,10 +620,8 @@
      'position' => 52,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 527491',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   53 => 
   Imanager\Item::__set_state(array(
@@ -736,10 +632,8 @@
      'position' => 53,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 417092',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   54 => 
   Imanager\Item::__set_state(array(
@@ -750,10 +644,8 @@
      'position' => 54,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 607033',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   55 => 
   Imanager\Item::__set_state(array(
@@ -764,10 +656,8 @@
      'position' => 55,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 299391',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   56 => 
   Imanager\Item::__set_state(array(
@@ -778,10 +668,8 @@
      'position' => 56,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 853383',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   57 => 
   Imanager\Item::__set_state(array(
@@ -792,10 +680,8 @@
      'position' => 57,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 376152',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   58 => 
   Imanager\Item::__set_state(array(
@@ -806,10 +692,8 @@
      'position' => 58,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 566574',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   59 => 
   Imanager\Item::__set_state(array(
@@ -820,10 +704,8 @@
      'position' => 59,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 293290',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   60 => 
   Imanager\Item::__set_state(array(
@@ -834,10 +716,8 @@
      'position' => 60,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 71087',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   61 => 
   Imanager\Item::__set_state(array(
@@ -848,10 +728,8 @@
      'position' => 61,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 857636',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   62 => 
   Imanager\Item::__set_state(array(
@@ -862,10 +740,8 @@
      'position' => 62,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 433625',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   63 => 
   Imanager\Item::__set_state(array(
@@ -876,10 +752,8 @@
      'position' => 63,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 998349',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   64 => 
   Imanager\Item::__set_state(array(
@@ -890,10 +764,8 @@
      'position' => 64,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 743332',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   65 => 
   Imanager\Item::__set_state(array(
@@ -904,10 +776,8 @@
      'position' => 65,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 918186',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   66 => 
   Imanager\Item::__set_state(array(
@@ -918,10 +788,8 @@
      'position' => 66,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 529829',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   67 => 
   Imanager\Item::__set_state(array(
@@ -932,10 +800,8 @@
      'position' => 67,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 579362',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   68 => 
   Imanager\Item::__set_state(array(
@@ -946,10 +812,8 @@
      'position' => 68,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 248388',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   69 => 
   Imanager\Item::__set_state(array(
@@ -960,10 +824,8 @@
      'position' => 69,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 989840',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   70 => 
   Imanager\Item::__set_state(array(
@@ -974,10 +836,8 @@
      'position' => 70,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 529376',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   71 => 
   Imanager\Item::__set_state(array(
@@ -988,10 +848,8 @@
      'position' => 71,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 36367',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   72 => 
   Imanager\Item::__set_state(array(
@@ -1002,10 +860,8 @@
      'position' => 72,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 103604',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   73 => 
   Imanager\Item::__set_state(array(
@@ -1016,10 +872,8 @@
      'position' => 73,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 303365',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   74 => 
   Imanager\Item::__set_state(array(
@@ -1030,10 +884,8 @@
      'position' => 74,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 861218',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   75 => 
   Imanager\Item::__set_state(array(
@@ -1044,10 +896,8 @@
      'position' => 75,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 960321',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   76 => 
   Imanager\Item::__set_state(array(
@@ -1058,10 +908,8 @@
      'position' => 76,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785631,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 353683',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   77 => 
   Imanager\Item::__set_state(array(
@@ -1072,10 +920,8 @@
      'position' => 77,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 780576',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   78 => 
   Imanager\Item::__set_state(array(
@@ -1086,10 +932,8 @@
      'position' => 78,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 832171',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   79 => 
   Imanager\Item::__set_state(array(
@@ -1100,10 +944,8 @@
      'position' => 79,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 936948',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   80 => 
   Imanager\Item::__set_state(array(
@@ -1114,10 +956,8 @@
      'position' => 80,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 922838',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   81 => 
   Imanager\Item::__set_state(array(
@@ -1128,10 +968,8 @@
      'position' => 81,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 877138',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   82 => 
   Imanager\Item::__set_state(array(
@@ -1142,10 +980,8 @@
      'position' => 82,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 24736',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   83 => 
   Imanager\Item::__set_state(array(
@@ -1156,10 +992,8 @@
      'position' => 83,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 485861',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   84 => 
   Imanager\Item::__set_state(array(
@@ -1170,10 +1004,8 @@
      'position' => 84,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 872629',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   85 => 
   Imanager\Item::__set_state(array(
@@ -1184,10 +1016,8 @@
      'position' => 85,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 194316',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   86 => 
   Imanager\Item::__set_state(array(
@@ -1198,10 +1028,8 @@
      'position' => 86,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 734961',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   87 => 
   Imanager\Item::__set_state(array(
@@ -1212,10 +1040,8 @@
      'position' => 87,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 26621',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   88 => 
   Imanager\Item::__set_state(array(
@@ -1226,10 +1052,8 @@
      'position' => 88,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 731113',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   89 => 
   Imanager\Item::__set_state(array(
@@ -1240,10 +1064,8 @@
      'position' => 89,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 700635',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   90 => 
   Imanager\Item::__set_state(array(
@@ -1254,10 +1076,8 @@
      'position' => 90,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 248328',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   91 => 
   Imanager\Item::__set_state(array(
@@ -1268,10 +1088,8 @@
      'position' => 91,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 452251',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   92 => 
   Imanager\Item::__set_state(array(
@@ -1282,10 +1100,8 @@
      'position' => 92,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 284159',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   93 => 
   Imanager\Item::__set_state(array(
@@ -1296,10 +1112,8 @@
      'position' => 93,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 169481',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   94 => 
   Imanager\Item::__set_state(array(
@@ -1310,10 +1124,8 @@
      'position' => 94,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 554754',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   95 => 
   Imanager\Item::__set_state(array(
@@ -1324,10 +1136,8 @@
      'position' => 95,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 969167',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   96 => 
   Imanager\Item::__set_state(array(
@@ -1338,10 +1148,8 @@
      'position' => 96,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 576524',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   97 => 
   Imanager\Item::__set_state(array(
@@ -1352,10 +1160,8 @@
      'position' => 97,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 4198',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   98 => 
   Imanager\Item::__set_state(array(
@@ -1366,10 +1172,8 @@
      'position' => 98,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 327901',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   99 => 
   Imanager\Item::__set_state(array(
@@ -1380,10 +1184,8 @@
      'position' => 99,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 318221',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   100 => 
   Imanager\Item::__set_state(array(
@@ -1394,10 +1196,8 @@
      'position' => 100,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 558004',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   101 => 
   Imanager\Item::__set_state(array(
@@ -1408,10 +1208,8 @@
      'position' => 101,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 559116',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   102 => 
   Imanager\Item::__set_state(array(
@@ -1422,10 +1220,8 @@
      'position' => 102,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 633597',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   103 => 
   Imanager\Item::__set_state(array(
@@ -1436,10 +1232,8 @@
      'position' => 103,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 651681',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   104 => 
   Imanager\Item::__set_state(array(
@@ -1450,10 +1244,8 @@
      'position' => 104,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 279535',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   105 => 
   Imanager\Item::__set_state(array(
@@ -1464,10 +1256,8 @@
      'position' => 105,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 244462',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   106 => 
   Imanager\Item::__set_state(array(
@@ -1478,10 +1268,8 @@
      'position' => 106,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 91165',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   107 => 
   Imanager\Item::__set_state(array(
@@ -1492,10 +1280,8 @@
      'position' => 107,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 457059',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   108 => 
   Imanager\Item::__set_state(array(
@@ -1506,10 +1292,8 @@
      'position' => 108,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 152162',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   109 => 
   Imanager\Item::__set_state(array(
@@ -1520,10 +1304,8 @@
      'position' => 109,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 601096',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   110 => 
   Imanager\Item::__set_state(array(
@@ -1534,10 +1316,8 @@
      'position' => 110,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 241184',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   111 => 
   Imanager\Item::__set_state(array(
@@ -1548,10 +1328,8 @@
      'position' => 111,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 177656',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   112 => 
   Imanager\Item::__set_state(array(
@@ -1562,10 +1340,8 @@
      'position' => 112,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 973832',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   113 => 
   Imanager\Item::__set_state(array(
@@ -1576,10 +1352,8 @@
      'position' => 113,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 116336',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   114 => 
   Imanager\Item::__set_state(array(
@@ -1590,10 +1364,8 @@
      'position' => 114,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855753,
      'data' => 'Automatically added data field value 507958',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   115 => 
   Imanager\Item::__set_state(array(
@@ -1604,10 +1376,8 @@
      'position' => 115,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 760509',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   116 => 
   Imanager\Item::__set_state(array(
@@ -1618,10 +1388,8 @@
      'position' => 116,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 400976',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   117 => 
   Imanager\Item::__set_state(array(
@@ -1632,10 +1400,8 @@
      'position' => 117,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 587999',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   118 => 
   Imanager\Item::__set_state(array(
@@ -1646,10 +1412,8 @@
      'position' => 118,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 592716',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   119 => 
   Imanager\Item::__set_state(array(
@@ -1660,10 +1424,8 @@
      'position' => 119,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 106657',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   120 => 
   Imanager\Item::__set_state(array(
@@ -1674,10 +1436,8 @@
      'position' => 120,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 168241',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   121 => 
   Imanager\Item::__set_state(array(
@@ -1688,10 +1448,8 @@
      'position' => 121,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 100305',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   122 => 
   Imanager\Item::__set_state(array(
@@ -1702,10 +1460,8 @@
      'position' => 122,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 414941',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   123 => 
   Imanager\Item::__set_state(array(
@@ -1716,10 +1472,8 @@
      'position' => 123,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 157390',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   124 => 
   Imanager\Item::__set_state(array(
@@ -1730,10 +1484,8 @@
      'position' => 124,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 55367',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   125 => 
   Imanager\Item::__set_state(array(
@@ -1744,10 +1496,8 @@
      'position' => 125,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 721003',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   126 => 
   Imanager\Item::__set_state(array(
@@ -1758,10 +1508,8 @@
      'position' => 126,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 599423',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   127 => 
   Imanager\Item::__set_state(array(
@@ -1772,10 +1520,8 @@
      'position' => 127,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 141391',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   128 => 
   Imanager\Item::__set_state(array(
@@ -1786,10 +1532,8 @@
      'position' => 128,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 269381',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   129 => 
   Imanager\Item::__set_state(array(
@@ -1800,10 +1544,8 @@
      'position' => 129,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 255663',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   130 => 
   Imanager\Item::__set_state(array(
@@ -1814,10 +1556,8 @@
      'position' => 130,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 632847',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   131 => 
   Imanager\Item::__set_state(array(
@@ -1828,10 +1568,8 @@
      'position' => 131,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 102037',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   132 => 
   Imanager\Item::__set_state(array(
@@ -1842,10 +1580,8 @@
      'position' => 132,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 759769',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   133 => 
   Imanager\Item::__set_state(array(
@@ -1856,10 +1592,8 @@
      'position' => 133,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 939273',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   134 => 
   Imanager\Item::__set_state(array(
@@ -1870,10 +1604,8 @@
      'position' => 134,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 317708',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   135 => 
   Imanager\Item::__set_state(array(
@@ -1884,10 +1616,8 @@
      'position' => 135,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 295135',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   136 => 
   Imanager\Item::__set_state(array(
@@ -1898,10 +1628,8 @@
      'position' => 136,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 840791',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   137 => 
   Imanager\Item::__set_state(array(
@@ -1912,10 +1640,8 @@
      'position' => 137,
      'active' => true,
      'created' => 1515674829,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 17694',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   138 => 
   Imanager\Item::__set_state(array(
@@ -1926,10 +1652,8 @@
      'position' => 138,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 185826',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   139 => 
   Imanager\Item::__set_state(array(
@@ -1940,10 +1664,8 @@
      'position' => 139,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 369476',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   140 => 
   Imanager\Item::__set_state(array(
@@ -1954,10 +1676,8 @@
      'position' => 140,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 178707',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   141 => 
   Imanager\Item::__set_state(array(
@@ -1968,10 +1688,8 @@
      'position' => 141,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 876801',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   142 => 
   Imanager\Item::__set_state(array(
@@ -1982,10 +1700,8 @@
      'position' => 142,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 433442',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   143 => 
   Imanager\Item::__set_state(array(
@@ -1996,10 +1712,8 @@
      'position' => 143,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 516282',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   144 => 
   Imanager\Item::__set_state(array(
@@ -2010,10 +1724,8 @@
      'position' => 144,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 775992',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   145 => 
   Imanager\Item::__set_state(array(
@@ -2024,10 +1736,8 @@
      'position' => 145,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 288985',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   146 => 
   Imanager\Item::__set_state(array(
@@ -2038,10 +1748,8 @@
      'position' => 146,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 374748',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   147 => 
   Imanager\Item::__set_state(array(
@@ -2052,10 +1760,8 @@
      'position' => 147,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 676519',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   148 => 
   Imanager\Item::__set_state(array(
@@ -2066,10 +1772,8 @@
      'position' => 148,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 451793',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   149 => 
   Imanager\Item::__set_state(array(
@@ -2080,10 +1784,8 @@
      'position' => 149,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 511891',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   150 => 
   Imanager\Item::__set_state(array(
@@ -2094,10 +1796,8 @@
      'position' => 150,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 293939',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   151 => 
   Imanager\Item::__set_state(array(
@@ -2108,10 +1808,8 @@
      'position' => 151,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 908597',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   152 => 
   Imanager\Item::__set_state(array(
@@ -2122,10 +1820,8 @@
      'position' => 152,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 812302',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   153 => 
   Imanager\Item::__set_state(array(
@@ -2136,10 +1832,8 @@
      'position' => 153,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 414210',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   154 => 
   Imanager\Item::__set_state(array(
@@ -2150,10 +1844,8 @@
      'position' => 154,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 151881',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   155 => 
   Imanager\Item::__set_state(array(
@@ -2164,10 +1856,8 @@
      'position' => 155,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 841051',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   156 => 
   Imanager\Item::__set_state(array(
@@ -2178,10 +1868,8 @@
      'position' => 156,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 110934',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   157 => 
   Imanager\Item::__set_state(array(
@@ -2192,10 +1880,8 @@
      'position' => 157,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 173454',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   158 => 
   Imanager\Item::__set_state(array(
@@ -2206,10 +1892,8 @@
      'position' => 158,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 126176',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   159 => 
   Imanager\Item::__set_state(array(
@@ -2220,10 +1904,8 @@
      'position' => 159,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 936076',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   160 => 
   Imanager\Item::__set_state(array(
@@ -2234,10 +1916,8 @@
      'position' => 160,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 865241',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   161 => 
   Imanager\Item::__set_state(array(
@@ -2248,10 +1928,8 @@
      'position' => 161,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 23866',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   162 => 
   Imanager\Item::__set_state(array(
@@ -2262,10 +1940,8 @@
      'position' => 162,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785632,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 848626',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   163 => 
   Imanager\Item::__set_state(array(
@@ -2276,10 +1952,8 @@
      'position' => 163,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 354730',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   164 => 
   Imanager\Item::__set_state(array(
@@ -2290,10 +1964,8 @@
      'position' => 164,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 597814',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   165 => 
   Imanager\Item::__set_state(array(
@@ -2304,10 +1976,8 @@
      'position' => 165,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 401205',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   166 => 
   Imanager\Item::__set_state(array(
@@ -2318,10 +1988,8 @@
      'position' => 166,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 465693',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   167 => 
   Imanager\Item::__set_state(array(
@@ -2332,10 +2000,8 @@
      'position' => 167,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 66281',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   168 => 
   Imanager\Item::__set_state(array(
@@ -2346,10 +2012,8 @@
      'position' => 168,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 186798',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   169 => 
   Imanager\Item::__set_state(array(
@@ -2360,10 +2024,8 @@
      'position' => 169,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 580724',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   170 => 
   Imanager\Item::__set_state(array(
@@ -2374,24 +2036,8 @@
      'position' => 170,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 103808',
-     'test_field' => NULL,
-     'text' => NULL,
-  )),
-  171 => 
-  Imanager\Item::__set_state(array(
-     'categoryid' => 1,
-     'id' => 171,
-     'name' => 'Automatically added item 565963',
-     'label' => 'Automatically added item 565963',
-     'position' => 171,
-     'active' => true,
-     'created' => 1515674830,
-     'updated' => 1515785633,
-     'data' => 'Automatically added data field value 565963',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   172 => 
   Imanager\Item::__set_state(array(
@@ -2402,10 +2048,8 @@
      'position' => 172,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 580235',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   173 => 
   Imanager\Item::__set_state(array(
@@ -2416,10 +2060,8 @@
      'position' => 173,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 513027',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   174 => 
   Imanager\Item::__set_state(array(
@@ -2430,10 +2072,8 @@
      'position' => 174,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515674830,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 68010',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   175 => 
   Imanager\Item::__set_state(array(
@@ -2444,10 +2084,8 @@
      'position' => 175,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 382116',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   176 => 
   Imanager\Item::__set_state(array(
@@ -2458,52 +2096,8 @@
      'position' => 176,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 809139',
-     'test_field' => NULL,
-     'text' => NULL,
-  )),
-  177 => 
-  Imanager\Item::__set_state(array(
-     'categoryid' => 1,
-     'id' => 177,
-     'name' => 'Automatically added item 345547',
-     'label' => 'Automatically added item 345547',
-     'position' => 177,
-     'active' => true,
-     'created' => 1515674830,
-     'updated' => 1515785633,
-     'data' => 'Automatically added data field value 345547',
-     'test_field' => NULL,
-     'text' => NULL,
-  )),
-  178 => 
-  Imanager\Item::__set_state(array(
-     'categoryid' => 1,
-     'id' => 178,
-     'name' => 'Automatically added item 767724',
-     'label' => 'Automatically added item 767724',
-     'position' => 178,
-     'active' => true,
-     'created' => 1515674830,
-     'updated' => 1515785633,
-     'data' => 'Automatically added data field value 767724',
-     'test_field' => NULL,
-     'text' => NULL,
-  )),
-  179 => 
-  Imanager\Item::__set_state(array(
-     'categoryid' => 1,
-     'id' => 179,
-     'name' => 'Automatically added item 911568',
-     'label' => 'Automatically added item 911568',
-     'position' => 179,
-     'active' => true,
-     'created' => 1515674830,
-     'updated' => 1515785633,
-     'data' => 'Automatically added data field value 911568',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   180 => 
   Imanager\Item::__set_state(array(
@@ -2514,10 +2108,8 @@
      'position' => 180,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 455798',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   181 => 
   Imanager\Item::__set_state(array(
@@ -2528,10 +2120,8 @@
      'position' => 181,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 703230',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   182 => 
   Imanager\Item::__set_state(array(
@@ -2542,10 +2132,8 @@
      'position' => 182,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 430776',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   183 => 
   Imanager\Item::__set_state(array(
@@ -2556,10 +2144,8 @@
      'position' => 183,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 908350',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   184 => 
   Imanager\Item::__set_state(array(
@@ -2570,10 +2156,8 @@
      'position' => 184,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 817149',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   185 => 
   Imanager\Item::__set_state(array(
@@ -2584,10 +2168,8 @@
      'position' => 185,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 848313',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   186 => 
   Imanager\Item::__set_state(array(
@@ -2598,10 +2180,8 @@
      'position' => 186,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 164784',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   187 => 
   Imanager\Item::__set_state(array(
@@ -2612,10 +2192,8 @@
      'position' => 187,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 517635',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   188 => 
   Imanager\Item::__set_state(array(
@@ -2626,10 +2204,8 @@
      'position' => 188,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 161840',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   189 => 
   Imanager\Item::__set_state(array(
@@ -2640,10 +2216,8 @@
      'position' => 189,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 287975',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   190 => 
   Imanager\Item::__set_state(array(
@@ -2654,10 +2228,8 @@
      'position' => 190,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 202244',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   191 => 
   Imanager\Item::__set_state(array(
@@ -2668,10 +2240,8 @@
      'position' => 191,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 313166',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   192 => 
   Imanager\Item::__set_state(array(
@@ -2682,10 +2252,8 @@
      'position' => 192,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 29706',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   193 => 
   Imanager\Item::__set_state(array(
@@ -2696,10 +2264,8 @@
      'position' => 193,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 478010',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   194 => 
   Imanager\Item::__set_state(array(
@@ -2710,10 +2276,8 @@
      'position' => 194,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 325156',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   195 => 
   Imanager\Item::__set_state(array(
@@ -2724,10 +2288,8 @@
      'position' => 195,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 180777',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   196 => 
   Imanager\Item::__set_state(array(
@@ -2738,10 +2300,8 @@
      'position' => 196,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 213386',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   197 => 
   Imanager\Item::__set_state(array(
@@ -2752,10 +2312,8 @@
      'position' => 197,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 331508',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   198 => 
   Imanager\Item::__set_state(array(
@@ -2766,10 +2324,8 @@
      'position' => 198,
      'active' => true,
      'created' => 1515674830,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 807944',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   199 => 
   Imanager\Item::__set_state(array(
@@ -2780,10 +2336,8 @@
      'position' => 199,
      'active' => true,
      'created' => 1515674831,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 803379',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   200 => 
   Imanager\Item::__set_state(array(
@@ -2794,10 +2348,8 @@
      'position' => 200,
      'active' => true,
      'created' => 1515674831,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 302678',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   201 => 
   Imanager\Item::__set_state(array(
@@ -2808,10 +2360,8 @@
      'position' => 201,
      'active' => true,
      'created' => 1515674831,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 831121',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   204 => 
   Imanager\Item::__set_state(array(
@@ -2822,10 +2372,8 @@
      'position' => 202,
      'active' => true,
      'created' => 1515674831,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 976418',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
   203 => 
   Imanager\Item::__set_state(array(
@@ -2836,9 +2384,7 @@
      'position' => 203,
      'active' => true,
      'created' => 1515674831,
-     'updated' => 1515785633,
+     'updated' => 1515855754,
      'data' => 'Automatically added data field value 143103',
-     'test_field' => NULL,
-     'text' => NULL,
   )),
 ); ?>
