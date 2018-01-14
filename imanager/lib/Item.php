@@ -145,7 +145,7 @@ class Item extends FieldMapper
 	 *
 	 * @return bool
 	 */
-	public function set($name, $value, $sanitize=true)
+	public function set($name, $value, $sanitize = true)
 	{
 		$this->init($this->categoryid);
 		$attributeKey = strtolower(trim($name));
@@ -171,10 +171,10 @@ class Item extends FieldMapper
 		$Input = new $inputClassName($field);
 		//if(!is_array($value)) {
 		if(!$sanitize) {
-			if(false === $Input->prepareInput($value)) { return false; }
+			if(true !== $Input->prepareInput($value)) { return false; }
 			$this->{$name} = $Input->value;
 		} else {
-			if(false === $Input->prepareInput($value, true)) {return false; }
+			if(true !== $Input->prepareInput($value, true)) {return false; }
 			$this->{$name} = $Input->value;
 		}
 		return true;

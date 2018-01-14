@@ -2,23 +2,91 @@
 
 class Field extends Object
 {
+	/**
+	 * @var int|null - The category ID of this field
+	 */
 	public $categoryid = null;
+
+	/**
+	 * @var int|null - This field id
+	 */
 	public $id = null;
+
+	/**
+	 * @var string|null - Field name
+	 */
 	public $name = null;
+
+	/**
+	 * @var string|null - Field label
+	 */
 	public $label = null;
+
+	/**
+	 * @var string|null - Field type
+	 */
 	public $type = null;
+
+	/**
+	 * @var int|null - Field position
+	 */
 	public $position = null;
-	public $default = '';
+
+	/**
+	 * @var string|null - This field default value
+	 */
+	public $default = null;
+
+	/**
+	 * @var array - This field options
+	 */
 	public $options = array();
+
+	/**
+	 * @var null - Field info
+	 */
 	public $info = null;
+
+	/**
+	 * @var null - Required attribute of this field
+	 */
 	public $required = null;
+
+	/**
+	 * @var null - Minimum length for this field value
+	 */
 	public $minimum = null;
+
+	/**
+	 * @var null - Maximum length for this field value
+	 */
 	public $maximum = null;
+
+	/**
+	 * @var null - CSS class
+	 */
 	public $cssclass = null;
+
+	/**
+	 * @var null - Custom field configs
+	 */
 	public $configs = null;
+
+	/**
+	 * @var null - Created date
+	 */
 	public $created = null;
+
+	/**
+	 * @var null - Modified date
+	 */
 	public $updated = null;
 
+	/**
+	 * Field constructor.
+	 *
+	 * @param $category_id
+	 */
 	public function __construct($category_id)
 	{
 		$this->categoryid = (int) $category_id;
@@ -44,6 +112,11 @@ class Field extends Object
 		if(!isset($this->imanager)) { parent::___init($this->categoryid);}
 	}
 
+	/**
+	 * @param $an_array
+	 *
+	 * @return Field
+	 */
 	public static function __set_state($an_array)
 	{
 		$_instance = new Field($an_array['categoryid']);
@@ -191,7 +264,7 @@ class Field extends Object
 	}
 
 	/**
-	 * Search for reserved names
+	 * Look for reserved names
 	 *
 	 * @return bool
 	 */

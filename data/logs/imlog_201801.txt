@@ -1,0 +1,7 @@
+[ 13.01.2018 - 20:53:24 ] Undefined variable: number
+[ 13.01.2018 - 20:53:24 ] Type: ErrorException; Message: Field name already exists; File: /Applications/MAMP/htdocs/tests/gitlab-projects/imanager/lib/Field.php; Line: 193;
+[ 13.01.2018 - 20:54:10 ] Type: ErrorException; Message: Field name already exists; File: /Applications/MAMP/htdocs/tests/gitlab-projects/imanager/lib/Field.php; Line: 193;
+[ 13.01.2018 - 20:56:18 ] Type: ErrorException; Message: Field name already exists; File: /Applications/MAMP/htdocs/tests/gitlab-projects/imanager/lib/Field.php; Line: 193;
+[ 13.01.2018 - 21:04:16 ] Type: ErrorException; Message: Field name already exists; File: /Applications/MAMP/htdocs/tests/gitlab-projects/imanager/lib/Field.php; Line: 187;
+[ 14.01.2018 10:58:09 ] Type: ErrorException; Message: Category name already exists; File: /Applications/MAMP/htdocs/tests/gitlab-projects/imanager/lib/Category.php; Line: 227;
+[ 14.01.2018 10:58:21 ] Type: ErrorException; Message: Category slug already exists; File: /Applications/MAMP/htdocs/tests/gitlab-projects/imanager/lib/Category.php; Line: 231;

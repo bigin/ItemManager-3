@@ -11,6 +11,26 @@ include 'imanager.php';
 //var_dump($imanager->config);
 //echo imanager('config')->maxFieldNameLength;
 
+
+
+// If categories are not available yet, create one
+/*if(!$imanager->categoryMapper->categories) {
+	$category = new \Imanager\Category();
+	$category->set('name', 'My Fucking Test-Category');
+	$category->set('slug', 'My Fucking Test-Category');
+	$category->save();
+}*/
+
+/*$category = $imanager->getCategory('name=My Fucking Test-Category');
+$newField = new \Imanager\Field($category->id);
+$newField->set('type', 'text');
+$newField->set('name', 'data');
+$newField->set('label', 'Data field');
+$newField->save();
+\Imanager\Util::preformat('Just a test');*/
+
+//\Imanager\Util::preformat($category);
+
 // Creating new categories
 /*$category = new \Imanager\Category();
 $category->set('name', 'My Thrid Category');
@@ -34,6 +54,10 @@ $catMapper->init();
 $secondCategory = $catMapper->getCategory(1);
 $items = $secondCategory->getItems('test_field=');
 Imanager\Util::preformat($items);*/
+
+// Get several Categories
+/*$categories = $imanager->getCategories('position>10&&position<=16');
+\Imanager\Util::preformat($categories);*/
 
 // Update an existing category
 /*$catMapper = $imanager->categoryMapper;
@@ -84,6 +108,7 @@ Imanager\Util::preformat($fieldMapper->fields);*/
 /*$item = new \Imanager\Item(1);
 $item->data = 'This is the third item';
 $item->save();*/
+
 
 // Load an item
 /*$mapper = imanager()->getItemMapper();
@@ -175,6 +200,18 @@ if($field) {
 	}
 	\Imanager\Util::preformat($field);
 }*/
+
+// Remove a Category, with throwing an Exception
+/*$category = $imanager->getCategory(1);
+if($category) {
+	try {
+		$imanager->remove($category);
+	} catch (Exception $e) {
+		echo 'Caught exception: ',  $e->getMessage(), "\n";
+	}
+	\Imanager\Util::preformat($category);
+}*/
+
 
 // Markup Cache is used for caching specific parts of your templates
 /*if(!$output = $imanager->sectionCache->get('index')) {
