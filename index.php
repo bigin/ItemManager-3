@@ -141,7 +141,6 @@ if($result === true) {
 	}
 }*/
 
-
 // Load an item
 /*$category = $imanager->getCategory(1);
 $item = $category->getItem(1);
