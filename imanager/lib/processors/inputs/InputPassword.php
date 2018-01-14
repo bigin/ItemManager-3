@@ -1,78 +1,68 @@
-<?php
+<?php namespace Imanager;
+
 class InputPassword implements InputInterface
 {
-	protected $values;
+	protected $value;
 
 	protected $field;
+
+	const EMPTY_REQUIRED = -1;
+
+	const ERR_MIN_LENGTH = -2;
+
+	const ERR_MAX_LENGTH = -3;
+
+	const WRONG_VALUE_FORMAT = -4;
+
+	const COMPARISON_FAILED = -5;
+
+	public $errorCode = null;
 
 	public function __construct(Field $field)
 	{
 		$this->field = $field;
-
-		$this->values = new stdClass();
-
-		$this->values->value = null;
-
-		$this->confirm = null;
-
-		$this->password = '';
-
-		$this->salt = '';
-
-		$this->values->salt = null;
+		$this->value = new PasswordFieldValue();
 	}
 
-	public function prepareInput($value, $sanitize=false)
+	public function prepareInput($value, $sanitize = false)
 	{
-		$value = trim($value);
-		$this->confirm = trim($this->confirm);
-		// check input required
-		if(!empty($this->field->required) && $this->field->required == 1)
-		{
-			if(empty($value) || empty($this->confirm))
-				return self::ERR_REQUIRED;
+		if(!is_array($value)) {
+			$this->errorCode = self::WRONG_VALUE_FORMAT;
+			return false;
 		}
 
-		if((!empty($value) && empty($this->confirm)) ||
-			(!empty($this->confirm) && empty($value)))
-		{
-			return self::ERR_INCOMPLETED;
-
-		} elseif (empty($value) && empty($this->confirm))
-		{
-			$this->values->salt = $this->salt;
-			$this->values->value = $this->password;
-			return $this->values;
+		if(!isset($value['password']) || !isset($value['confirm_password'])) {
+			$this->errorCode = self::EMPTY_REQUIRED;
+			return false;
 		}
 
-		// check differences
-		if($value != $this->confirm)
-			return self::ERR_COMPARISON;
+		$password = trim($value['password']);
+		$confirm_password = trim($value['confirm_password']);
+
+		// Compare pass and confirmation pass
+		if($password != $confirm_password) {
+			$this->errorCode = self::COMPARISON_FAILED;
+			return false;
+		}
 
 		// check min value
-		if(!empty($this->field->minimum) && $this->field->minimum > 0)
-		{
-			if(strlen($value) < intval($this->field->minimum))
-				return self::ERR_MIN_VALUE;
+		if(!empty($this->field->minimum) && mb_strlen($password) < intval($this->field->minimum)) {
+			$this->errorCode = self::ERR_MIN_LENGTH;
+			return false;
 		}
 		// check input max value
-		if(!empty($this->field->maximum) && $this->field->maximum > 0)
-		{
-			if(strlen($value) > intval($this->field->maximum))
-				return self::ERR_MAX_VALUE;
+		if(!empty($this->field->maximum) && mb_strlen($password) > intval($this->field->maximum)) {
+			$this->errorCode = self::ERR_MAX_LENGTH;
+			return false;
 		}
 
-		$this->values->salt = $this->randomString();
-		$this->values->value = sha1($value . $this->values->salt);
-		$this->field->setProtected('confirmed', true);
-		return $this->values;
+		$this->value->salt = $this->randomString();
+		$this->value->password = sha1($password.$this->value->salt);
+
+		return true;
 	}
 
-	public function prepareOutput(){return $this->values;}
-
-
-	public function checkInput($pass, $confirm){return self::SUCCESS;}
-
+	public function prepareOutput(){ return $this->value; }
 
 	public function randomString($length = 10)
 	{

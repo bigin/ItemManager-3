@@ -147,10 +147,12 @@ class Field extends Object
 		$fm = $this->imanager->fieldMapper;
 		$fm->init($this->categoryid);
 		$ids = array();
-		foreach($fm->fields as $field) {
-			$ids[] = $field->id;
+		if(is_array($fm->fields)) {
+			foreach($fm->fields as $field) {
+				$ids[] = $field->id;
+			}
 		}
-		return ($ids) ? max($ids) : 0;
+		return (!empty($ids) ? max($ids) : 0);
 	}
 
 	/**

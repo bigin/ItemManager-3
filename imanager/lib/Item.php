@@ -171,11 +171,11 @@ class Item extends FieldMapper
 		$Input = new $inputClassName($field);
 		//if(!is_array($value)) {
 		if(!$sanitize) {
-			if(true !== $Input->prepareInput($value)) { return false; }
-			$this->{$name} = $Input->value;
+			if(true !== $Input->prepareInput($value)) { return $Input->errorCode; }
+			$this->{$name} = $Input->prepareOutput();
 		} else {
-			if(true !== $Input->prepareInput($value, true)) {return false; }
-			$this->{$name} = $Input->value;
+			if(true !== $Input->prepareInput($value, true)) { return $Input->errorCode; }
+			$this->{$name} = $Input->prepareOutput(true);
 		}
 		return true;
 	}

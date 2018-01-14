@@ -12,6 +12,8 @@ class InputText implements InputInterface
 
 	const ERR_MAX_LENGTH = -3;
 
+	public $errorCode = null;
+
 	public function __construct(Field $field)
 	{
 		$this->field = $field;
@@ -24,15 +26,18 @@ class InputText implements InputInterface
 
 		// check input required
 		if($this->field->required && empty($this->value)) {
-			return self::EMPTY_REQUIRED;
+			$this->errorCode = self::EMPTY_REQUIRED;
+			return false;
 		}
 		// check min value length
 		if(!empty($this->field->minimum) && mb_strlen($this->value, 'UTF-8') < (int) $this->field->minimum) {
-			return self::ERR_MIN_LENGTH;
+			$this->errorCode = self::ERR_MIN_LENGTH;
+			return false;
 		}
 		// check input max value
 		if(!empty($this->field->maximum) && mb_strlen($this->value, 'UTF-8') > (int) $this->field->maximum) {
-			return self::ERR_MAX_LENGTH;
+			$this->errorCode = self::ERR_MAX_LENGTH;
+			return false;
 		}
 
 		return true;

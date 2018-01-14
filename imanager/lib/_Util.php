@@ -226,6 +226,6 @@ class Util
 
 		$message = "Type: " . get_class( $e ) . "; Message: {$e->getMessage()}; File: {$e->getFile()}; Line: {$e->getLine()};";
 		self::dataLog($message);
-		exit();
+		//exit();
 	}
 }

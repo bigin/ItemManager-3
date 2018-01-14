@@ -70,14 +70,11 @@ $secondCategory->save();*/
  * Working with fields
  */
 // Create a single fields for a category
-/*$imanager = imanager();
-$catMapper = imanager()->getCategoryMapper();
-$catMapper->init();
-$category = $catMapper->getCategory(1);
+/*$category = $imanager->getCategory(1);
 $newField = new \Imanager\Field($category->id);
-$newField->set('type', 'text');
-$newField->set('name', 'text');
-$newField->set('label', 'Text field');
+$newField->set('type', 'password');
+$newField->set('name', 'password');
+$newField->set('label', 'Enter your password');
 $newField->save();
 Imanager\Util::preformat($newField);*/
 
@@ -104,17 +101,57 @@ Imanager\Util::preformat($fieldMapper->fields);*/
 /**
  * Working with items
  */
-// Create an item
+// Create an item with complex field
 /*$item = new \Imanager\Item(1);
-$item->data = 'This is the third item';
-$item->save();*/
+$item->set('data', 'This is the next item');
+$result = $item->set('password', array('password' => 'NtBz39Äö', 'confirm_password' => 'NtBz39Äg'));
+if($result !== true) {
+	echo 'sdsds'.$res;
+} else {
+	$item->save();
+}
+*/
+//\Imanager\Util::preformat($item);
+
+// Setting the password field value with error catching
+/*$category = $imanager->getCategory(1);
+$item = $category->getItem(1);
+$result = $item->set('password', array('password' => 'NtBz39Äö', 'confirm_password' => 'NtBz39Äg'));
+if($result === true) {
+	$item->save();
+} else {
+	switch($result){
+		case (-5):
+			echo 'The password you entered does not match the password you confirmed with';
+			break;
+		case (-4):
+			echo 'The password field value is formatted incorrectly';
+			break;
+		case (-3):
+			echo 'The password is too long';
+			break;
+		case (-2):
+			echo 'The password is too short';
+			break;
+		case (-1):
+			echo 'Password or the password confirmation field is empty';
+			break;
+		default:
+			echo 'Password field value could not be set';
+	}
+}*/
 
 
 // Load an item
-/*$mapper = imanager()->getItemMapper();
-$mapper->init(1);
-$item = imanager()->getItemMapper()->getItem(1);
+/*$category = $imanager->getCategory(1);
+$item = $category->getItem(1);
 Imanager\Util::preformat($item);*/
+
+// Load an Item and compare the passwords (simulates login)
+/*$category = $imanager->getCategory(1);
+$item = $category->getItem(1);
+$enteredPass = 'NtBz39Äö';
+var_dump($item->password->compare($enteredPass));*/
 
 // Update item
 /*$mapper = imanager()->getItemMapper();
