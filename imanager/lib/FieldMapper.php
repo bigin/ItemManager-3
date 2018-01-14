@@ -50,6 +50,7 @@ class FieldMapper extends Mapper
 
 	/**
 	 *
+	 * @since 3.0
 	 * @param $stat
 	 * @param array $fields
 	 *
@@ -194,19 +195,17 @@ class FieldMapper extends Mapper
 			trigger_error('Field object does not exist', E_USER_WARNING);
 			return false;
 		}
-
 		unset($this->fields[$field->name]);
 		// Create a backup if necessary
 		if($this->imanager->config->backupFields){
 			Util::createBackup(dirname($this->path).'/', basename($this->path, '.php'), '.php');
 		}
-
 		$categoryid = $field->categoryid;
 		$export = var_export($this->fields, true);
 		if(false !== file_put_contents($this->path, '<?php return ' . $export . '; ?>')) {
 			$field = null;
 			unset($field);
-			// Now, prepare and save all the items of this category
+			// Now, prepare and re-save all the items of this category
 			$this->imanager->itemMapper->rebuild($categoryid);
 			return true;
 		}

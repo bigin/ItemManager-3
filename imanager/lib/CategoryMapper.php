@@ -40,6 +40,14 @@ class CategoryMapper extends Mapper
 	}
 
 
+	public function __get($name)
+	{
+		if($name == 'categories') {
+			$this->init();
+			return $this->categories;
+		}
+	}
+
 	/**
 	 * Returns the number of categories
 	 *
@@ -50,7 +58,6 @@ class CategoryMapper extends Mapper
 		return count(!empty($categories) ? $categories : $this->categories);
 	}
 
-
 	/**
 	 * Returns the object of type Category
 	 * NOTE: However if no $categories argument is passed to the function, the categories
@@ -60,19 +67,19 @@ class CategoryMapper extends Mapper
 	 * You can search for category by ID: ImCategory::getCategory(2) or similar to ImCategory::getCategory('id=2')
 	 * or by category name ImCategory::getCategory('name=My category name')
 	 *
-	 * @param string/integer $stat
+	 * @param string/integer $selector
 	 * @param array $categories
 	 * @return boolean|object of the type Category
 	 */
-	public function getCategory($stat, array $categories=array())
+	public function getCategory($selector, array $categories=array())
 	{
 		if(!$categories)  $categories = $this->categories;
 		// No items selected
 		if(empty($categories)) return null;
 		// A nummeric value, id was entered?
-		if(is_numeric($stat)) return !empty($categories[$stat]) ? $categories[$stat] : null;
+		if(is_numeric($selector)) return !empty($categories[$selector]) ? $categories[$selector] : null;
 		// Separate selector
-		$data = explode('=', $stat, 2);
+		$data = explode('=', $selector, 2);
 		$key = strtolower(trim($data[0]));
 		$val = trim($data[1]);
 		$num = substr_count($val, '%');
@@ -97,7 +104,6 @@ class CategoryMapper extends Mapper
 		return null;
 	}
 
-
 	/**
 	 * Returns the array of objects type Category, by a comparison of values
 	 * NOTE: If $categories argument is not passed, the categories must already
@@ -108,13 +114,13 @@ class CategoryMapper extends Mapper
 	 * Example getting categories by "name":
 	 * CategoryMapper::getCategories('name=My Category Name')
 	 *
-	 * @param string $stat
+	 * @param string $selector
 	 * @param integer $key
 	 * @param array $categories -
 	 *
 	 * @return boolean|array    - Array of categories
 	 */
-	public function getCategories($stat, $length = 0, array $categories=array())
+	public function getCategories($selector, $length = 0, array $categories=array())
 	{
 		$offset = 0;
 		//settype($offset, 'integer');
@@ -131,8 +137,8 @@ class CategoryMapper extends Mapper
 
 		$treads = array();
 		// All parameter have to match selector
-		if(false !== strpos($stat, '&&')) {
-			$treads = explode('&&', $stat, 2);
+		if(false !== strpos($selector, '&&')) {
+			$treads = explode('&&', $selector, 2);
 			$parts[] = trim($treads[0]);
 			$parts[] = trim($treads[1]);
 
@@ -147,12 +153,12 @@ class CategoryMapper extends Mapper
 					//if( $length == 0) $len = null;
 					$arr = array_slice($arr, $offset, $length, true);
 				}
-				return $arr;
+				return $this->reviseItemIds($arr);
 			}
 		// Only one parameter have to match the data
-		} elseif(false !== strpos($stat, '||'))
+		} elseif(false !== strpos($selector, '||'))
 		{
-			$treads = explode('||', $stat, 2);
+			$treads = explode('||', $selector, 2);
 			$parts[] = trim($treads[0]);
 			$parts[] = trim($treads[1]);
 
@@ -170,9 +176,9 @@ class CategoryMapper extends Mapper
 						$sepitems[0] = array_slice($sepitems[0], $offset, $length, true);
 						$sepitems[1] = array_slice($sepitems[1], $offset, $length, true);
 						$return = array_merge($sepitems[0], $sepitems[1]);
-						return array_slice($return, $offset, $length, true);
+						return $this->reviseItemIds(array_slice($return, $offset, $length, true));
 					}
-					return array_merge($sepitems[0], $sepitems[1]);
+					return $this->reviseItemIds(array_merge($sepitems[0], $sepitems[1]));
 
 				} elseif(is_array($sepitems[0]) && !is_array($sepitems[1])) {
 					// limited output
@@ -180,7 +186,7 @@ class CategoryMapper extends Mapper
 						//if( $length == 0) $len = null;
 						$sepitems[0] = array_slice($sepitems[0],  $offset,  $length, true);
 					}
-					return $sepitems[0];
+					return $this->reviseItemIds($sepitems[0]);
 				} else
 				{
 					// limited output
@@ -188,13 +194,13 @@ class CategoryMapper extends Mapper
 						//if( $length == 0) $len = null;
 						$sepitems[1] = array_slice($sepitems[1], $offset, $length, true);
 					}
-					return $sepitems[1];
+					return $this->reviseItemIds($sepitems[1]);
 				}
 			}
-		// If $stat contains only one or empty selector
+		// If $selector contains only one or empty selector
 		} else
 		{
-			if(!empty($stat)) $arr = $this->applySearchPattern($categories, $stat);
+			if(!empty($selector)) $arr = $this->applySearchPattern($categories, $selector);
 			else $arr = $categories;
 			// limited output
 			if(!empty($arr) && ($offset > 0 || $length > 0)) {
@@ -202,7 +208,7 @@ class CategoryMapper extends Mapper
 				$arr = array_slice($arr, $offset, $length, true);
 			}
 
-			return $arr;
+			return $this->reviseItemIds($arr);
 		}
 		return null;
 	}
@@ -211,20 +217,20 @@ class CategoryMapper extends Mapper
 	 * Select categories by using several search patterns
 	 *
 	 * @param array $items - An array of categories to be processed
-	 * @param $stat - Selector
+	 * @param $selector - Selector
 	 *
 	 * @return array|bool
 	 */
-	protected function applySearchPattern(array $items, $stat)
+	protected function applySearchPattern(array $items, $selector)
 	{
 		$res = array();
 		$pattern = array(0 => '>=', 1 => '<=', 2 => '!=', 3 => '>', 4 => '<', 5 => '=');
 
 		foreach($pattern as $pkey => $pval)
 		{
-			if(false === strpos($stat, $pval)) continue;
+			if(false === strpos($selector, $pval)) continue;
 
-			$data = explode($pval, $stat, 2);
+			$data = explode($pval, $selector, 2);
 			$key = strtolower(trim($data[0]));
 			$val = trim($data[1]);
 			if(false !== strpos($key, ' ')) return false;
@@ -312,7 +318,6 @@ class CategoryMapper extends Mapper
 		return $this->categories;
 	}
 
-
 	/**
 	 * Deletes the category
 	 *
@@ -325,7 +330,6 @@ class CategoryMapper extends Mapper
 			return unlink(IM_CATEGORYPATH . $cat->id . IM_CATEGORY_SUFFIX);
 		return false;
 	}*/
-
 
 	/**
 	 * Reverse the array of items
@@ -354,8 +358,6 @@ class CategoryMapper extends Mapper
 		return $result;
 	}
 
-
-
 	/**
 	 * Sorts the category objects
 	 *
@@ -375,4 +377,107 @@ class CategoryMapper extends Mapper
 		} else {return strcasecmp($a, $b);}
 	}
 
+	/**
+	 * Method deletes the respective Field or Category object.
+	 *
+	 * Before that, it checks whether this element exists.
+	 *
+	 * @param Category|Field $obj
+	 *
+	 * @return bool
+	 */
+	public function remove(& $obj)
+	{
+		if($obj instanceof Category) { return $this->removeCategory($obj); }
+		elseif($obj instanceof Field) { return $this->removeField($obj); }
+
+		throw new \ErrorException('Object type is unknown');
+		return false;
+	}
+
+	/**
+	 * Method deletes the respective Category object.
+	 *
+	 * Before that, it checks whether this element exists.
+	 *
+	 * @param Category $field
+	 *
+	 * @return bool
+	 */
+	protected function removeCategory(Category & $category)
+	{
+		$this->init();
+		if(!isset($this->categories[$category->id])) {
+			trigger_error('Category object does not exist', E_USER_WARNING);
+			return false;
+		}
+		unset($this->categories[$category->id]);
+		// Create a backup if necessary
+		if($this->imanager->config->backupCategories) {
+			Util::createBackup(dirname($this->path) . '/', basename($this->path, '.php'), '.php');
+		}
+
+		/* Delete item file */
+
+		// Create a backup
+		$itemsFile = IM_BUFFERPATH.'items/'.$category->id.'.items.php';
+		if($this->imanager->config->backupItems) {
+			Util::createBackup(dirname($itemsFile).'/', basename($itemsFile, '.php'),'.php');
+		}
+		if(file_exists($itemsFile)) { @unlink($itemsFile); }
+
+		/* Delete field file */
+
+		// Create a backup
+		$fieldsFile = IM_BUFFERPATH.'fields/'.$category->id.'.fields.php';
+		if($this->imanager->config->backupFields) {
+			Util::createBackup(dirname($fieldsFile).'/', basename($fieldsFile, '.php'),'.php');
+		}
+		if(file_exists($fieldsFile)) { @unlink($fieldsFile); }
+
+		/* And finally delete the Category */
+
+		$export = var_export($this->categories, true);
+		if(false !== file_put_contents($this->path, '<?php return ' . $export . '; ?>')) {
+			$category = null;
+			unset($category);
+			return true;
+		}
+		trigger_error('Field object could not be deleted', E_USER_WARNING);
+		return false;
+	}
+
+	/**
+	 * Method deletes the respective Field object.
+	 *
+	 * Before that, it checks whether this element exists.
+	 *
+	 * @param Field $field
+	 *
+	 * @return bool
+	 */
+	protected function removeField(Field & $field)
+	{
+		$this->init($field->categoryid);
+		if(!isset($this->fields[$field->name])) {
+			trigger_error('Field object does not exist', E_USER_WARNING);
+			return false;
+		}
+		unset($this->fields[$field->name]);
+		// Create a backup if necessary
+		if($this->imanager->config->backupFields) {
+			Util::createBackup(dirname($this->path) . '/', basename($this->path, '.php'), '.php');
+		}
+		$categoryid = $field->categoryid;
+		$export = var_export($this->fields, true);
+		if(false !== file_put_contents($this->path, '<?php return ' . $export . '; ?>')) {
+			$field = null;
+			unset($field);
+			// Now, prepare and save all the items of this category
+			$this->imanager->itemMapper->rebuild($categoryid);
+			return true;
+		}
+		trigger_error('Field object could not be deleted', E_USER_WARNING);
+		return false;
+	}
 }

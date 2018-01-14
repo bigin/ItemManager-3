@@ -136,16 +136,21 @@ class Category extends Object
 		return $this->imanager->itemMapper->sort($filterby, $order, $offset, $length, $items);
 	}
 
+	/**
+	 * @param $obj
+	 *
+	 * @return bool
+	 * @throws \ErrorException
+	 */
 	public function remove(& $obj)
 	{
 		$this->init();
-
 		if($obj instanceof Item) {
 			return $this->imanager->itemMapper->remove($obj);
 		} elseif($obj instanceof Field) {
 			return $this->imanager->fieldMapper->remove($obj);
 		}
-		throw new \ErrorException('Object type is unknown');
+		trigger_error('Object type is unknown', E_USER_WARNING);
 		return false;
 	}
 
@@ -175,7 +180,7 @@ class Category extends Object
 	 *
 	 * @return bool
 	 */
-	public function set($key, $val, $sanitize=true)
+	public function set($key, $val, $sanitize = true)
 	{
 		$this->init();
 		$sanitizer = $this->imanager->sanitizer;
@@ -184,14 +189,48 @@ class Category extends Object
 		// Allowed attributes
 		if(!in_array($key, $this->getAttributes())) { return false; }
 
+		$sanitized = null;
 		if($key == 'slug') {
-			$val = ($sanitize) ? $sanitizer->pageName($val) : $val;
+			$sanitized = ($sanitize) ? $sanitizer->pageName($val) : $val;
 		} elseif($key == 'id' || $key == 'created' || $key == 'updated' || $key == 'position') {
-			$val = ($sanitize) ? (int) $val : $val;
+			$sanitized = ($sanitize) ? (int) $val : $val;
 		} else {
-			$val = ($sanitize) ? $sanitizer->text($val) : $val;
+			$sanitized = ($sanitize) ? $sanitizer->text($val) : $val;
 		}
-		$this->{$key} = $val;
+
+		if(!$sanitized) { return false; }
+		$this->{$key} = $sanitized;
+	}
+
+	/**
+	 * Check required Category attributes
+	 *
+	 * @return bool
+	 */
+	private function checkRequired()
+	{
+		if(!$this->name) {
+			Util::logException(new \ErrorException('A Category name attribute value is expected'));
+		}
+		return true;
+	}
+
+	/**
+	 * Check category name/slug duplicates
+	 *
+	 * @return bool
+	 */
+	private function checkDuplicates()
+	{
+		$existed = $this->imanager->categoryMapper->getCategory('name='.$this->name);
+		if($existed && ((int) $existed->id !== (int) $this->id)) {
+			Util::logException(new \ErrorException('Category name already exists'));
+		}
+		$existed = $this->imanager->categoryMapper->getCategory('slug='.$this->slug);
+		if($existed && ((int) $existed->id !== (int) $this->id)) {
+			Util::logException(new \ErrorException('Category slug already exists'));
+		}
+		return true;
 	}
 
 	/**
@@ -225,12 +264,25 @@ class Category extends Object
 		$cm = $this->imanager->categoryMapper;
 		$cm->init();
 
-		if(!$this->id && $cm->categories) $this->id = (max(array_keys($cm->categories))+1);
-		else $this->id = ($this->id) ? (int) $this->id : 1;
+		if(true !== $this->checkRequired()) { return false; }
 
-		if(!$this->created) $this->created = $now;
+		if(!$this->id && $cm->categories) {
+			$this->id = (max(array_keys($cm->categories))+1);
+		} else {
+			$this->id = ($this->id) ? (int) $this->id : 1;
+		}
+		if(!$this->slug) {
+			$this->slug = $sanitizer->pageName($this->name);
+		}
+		if(!$this->created) {
+			$this->created = $now;
+		}
 		$this->updated = $now;
-		if(!$this->position) $this->position = (int) $this->id;
+		if(!$this->position) {
+			$this->position = (int) $this->id;
+		}
+
+		if(true !== $this->checkDuplicates()) { return false; }
 
 		$this->declutter();
 

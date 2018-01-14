@@ -71,13 +71,13 @@ class Field extends Object
 	 */
 	private function getMaxFieldId()
 	{
-		$fm = $this->imanager->getFieldMapper();
+		$fm = $this->imanager->fieldMapper;
 		$fm->init($this->categoryid);
 		$ids = array();
 		foreach($fm->fields as $field) {
 			$ids[] = $field->id;
 		}
-		return max($ids);
+		return ($ids) ? max($ids) : 0;
 	}
 
 	/**
@@ -152,25 +152,22 @@ class Field extends Object
 		$sanitizer = $this->imanager->sanitizer;
 
 		$catid = (int) $this->categoryid;
-		$mapper = $this->imanager->getCategoryMapper();
-		$mapper->init();
-		$cat = $mapper->getCategory($catid);
+
+		$this->imanager->categoryMapper->init();
+		$cat = $this->imanager->categoryMapper->getCategory($catid);
 		if(!$cat) {
-			MsgReporter::setError('err_cat_id_unknown');
-			return false;
+			Util::logException(new \ErrorException('The entered category id is unknown'));
 		}
 		$this->categoryid = $cat->id;
 
 		$this->type = $sanitizer->fieldName($this->type);
 		if(!$this->type) {
-			MsgReporter::setError('err_fieldtype');
-			return false;
+			Util::logException(new \ErrorException('Illegal field type'));
 		}
 
 		$this->name = $sanitizer->fieldName($this->name, false, $this->imanager->config->maxFieldNameLength);
 		if(!$this->name) {
-			MsgReporter::setError('err_fieldname');
-			return false;
+			Util::logException(new \ErrorException('Illegal field name'));
 		}
 
 		return true;
@@ -183,12 +180,11 @@ class Field extends Object
 	 */
 	private function checkNameDuplicates()
 	{
-		$fm = $this->imanager->getFieldMapper();
+		$fm = $this->imanager->fieldMapper;
 		$fm->init($this->categoryid);
 		$existed = $fm->getField('name='.$this->name);
 		if($existed && ((int) $existed->id !== (int) $this->id)) {
-			MsgReporter::setError('err_duplicate_fieldname');
-			return false;
+			Util::logException(new \ErrorException('Field name already exists'));
 		}
 
 		return true;
@@ -202,10 +198,8 @@ class Field extends Object
 	private function checkReservedNames()
 	{
 		if(in_array($this->name, $this->getAttributes())) {
-			MsgReporter::setError('err_reserved_fieldname', array('name' => $this->name));
-			return false;
+			Util::logException(new \ErrorException("Field name '$this->name' is reserved for internal usage"));
 		}
-
 		return true;
 	}
 
@@ -234,7 +228,7 @@ class Field extends Object
 		// check reserved name
 		if(!$this->checkReservedNames()) return false;
 
-		$fm = $this->imanager->getFieldMapper();
+		$fm = $this->imanager->fieldMapper;
 		$fm->init($this->categoryid);
 		// Remove unwanted field attributes
 		foreach($this as $key => $value) {

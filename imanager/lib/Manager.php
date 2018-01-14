@@ -140,12 +140,10 @@ class Manager
 		$err = false;
 		foreach($item->fields as $fieldname => $fieldvalue)
 		{
-			if($fieldvalue->type != 'imageupload' && $fieldvalue->type != 'fileupload')
-				continue;
+			if($fieldvalue->type != 'imageupload' && $fieldvalue->type != 'fileupload') continue;
 
 			$inputClassName = 'Input'.ucfirst($fieldvalue->type);
 			$InputType = new $inputClassName($item->fields->$fieldname);
-
 
 			// try to rename file directory
 			$newpath = IM_IMAGE_UPLOAD_DIR.$item->id.'.'.$item->categoryid.'/';

@@ -39,21 +39,21 @@ $config->maxItemsPerPage = 10;
  *
  * @var bool
  */
-$config->backupCategories = true;
+$config->backupCategories = false;
 
 /**
  * Create field backups when saving or editing fields
  *
  * @var bool
  */
-$config->backupFields = true;
+$config->backupFields = false;
 
 /**
  * Create items backups when saving or editing
  *
  * @var bool
  */
-$config->backupItems = true;
+$config->backupItems = false;
 
 /**
  * Backup file lifetime
@@ -97,14 +97,9 @@ $config->chmodDir = 0755;
  */
 $config->pageNumbersUrlSegment = 'page';
 
-
-$config->systemDateFormat = 'd.m.Y - H:i:s';
-
-
-//$this->injectActions = false;
-
-//$this->useAllocater = true;
-
-//$this->hiddeAdmin = false;
-
-//$this->adminDisabledMsg = 'ItemManager\'s admin interface is currently disabled';
+/**
+ * Date format used by the system
+ *
+ * @var string
+ */
+$config->systemDateFormat = 'd.m.Y H:i:s';

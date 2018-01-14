@@ -52,9 +52,7 @@ class ItemMapper extends Mapper
 	}
 
 	/**
-	 * Method deletes the respective Item object.
-	 *
-	 * Before that, it checks whether this element exists.
+	 * Method deletes the passed Item object
 	 *
 	 * @param Item $item
 	 *
@@ -104,20 +102,20 @@ class ItemMapper extends Mapper
 	/**
 	 * Get the Item matching the given selector string without exclusions. Returns an Item, or a NULL if not found.
 	 *
-	 * @param $stat - Selector
+	 * @param $selector - Selector
 	 * @param array $items
 	 *
 	 * @return bool|mixed
 	 */
-	public function getItem($stat, array $items=array())
+	public function getItem($selector, array $items=array())
 	{
 		if($items) $this->items = $items;
 		// No items selected
 		if(empty($this->items)) return false;
 		// A nummeric value, id was entered?
-		if(is_numeric($stat)) return !empty($this->items[$stat]) ? $this->items[$stat] : false;
+		if(is_numeric($selector)) return !empty($this->items[$selector]) ? $this->items[$selector] : false;
 		// Separate selector
-		$data = explode('=', $stat, 2);
+		$data = explode('=', $selector, 2);
 		$key = strtolower(trim($data[0]));
 		$val = trim($data[1]);
 		$num = substr_count($val, '%');
@@ -142,7 +140,7 @@ class ItemMapper extends Mapper
 	/**
 	 * Find matching item - Finds an item belonging to one category (returns exactly one result)
 	 *
-	 * @param $stat – A search selector: (name=Item Name) for example
+	 * @param $selector – A search selector: (name=Item Name) for example
 	 * @param array $limit_ids – An optional parameter array, with category id's, to restrict the search process
 	 *                           to specific categories (NOTE: The specifying category id's could speed up the
 	 *                           searsh process!)
@@ -151,14 +149,14 @@ class ItemMapper extends Mapper
 	 *
 	 * @return bool|mixed
 	 */
-	public function findItem($stat, array $limit_ids = array())
+	public function findItem($selector, array $limit_ids = array())
 	{
 		$mapper = imanager()->getCategoryMapper();
 		if(!empty($limit_ids))
 		{
 			foreach($limit_ids as $catid) {
 				$this->init($mapper->categories[(int)$catid]->id);
-				$item = $this->getItem($stat);
+				$item = $this->getItem($selector);
 				if(!empty($item)) return $item;
 			}
 			return false;
@@ -166,7 +164,7 @@ class ItemMapper extends Mapper
 		foreach($mapper->categories as $category)
 		{
 			$this->init($category->id);
-			$item = $this->getItem($stat);
+			$item = $this->getItem($selector);
 			if(!empty($item)) return $item;
 		}
 		return false;
@@ -175,21 +173,21 @@ class ItemMapper extends Mapper
 	/**
 	 * Find matching items - Finds all items belonging to one category (returns matching items of a category)
 	 *
-	 * @param $stat – A search selector: (name=Item Name) for example
+	 * @param $selector – A search selector: (name=Item Name) for example
 	 * @param array $limit_ids – An optional parameter array, with category id's, to restrict the search process
 	 *                           to specific categories (NOTE: The specifying category id's could speed up the
 	 *                           searsh process!)
 	 *
 	 * @return array|bool
 	 */
-	public function findItems($stat, array $limit_ids = array())
+	public function findItems($selector, array $limit_ids = array())
 	{
 		$mapper = imanager()->getCategoryMapper();
 		if(!empty($limit_ids))
 		{
 			foreach($limit_ids as $catid) {
 				$this->init($mapper->categories[(int)$catid]->id);
-				$items = $this->getItems($stat);
+				$items = $this->getItems($selector);
 				if(!empty($items)) return $items;
 			}
 			return false;
@@ -197,7 +195,7 @@ class ItemMapper extends Mapper
 		foreach($mapper->categories as $category)
 		{
 			$this->init($category->id);
-			$items = $this->getItems($stat);
+			$items = $this->getItems($selector);
 			if(!empty($items)) return $items;
 		}
 		return false;
@@ -206,14 +204,14 @@ class ItemMapper extends Mapper
 	/**
 	 * Find all matching items - Finds all items of all categories (returns matching items of all categories)
 	 *
-	 * @param $stat – A search selector: (name=Item Name) for example
+	 * @param $selector – A search selector: (name=Item Name) for example
 	 * @param array $limit_ids – An optional parameter array, with category id's, to restrict the search process
 	 *                           to specific categories (NOTE: The specifying category id's could speed up the
 	 *                           searsh process!)
 	 *
 	 * @return array|bool
 	 */
-	public function findAll($stat, array $limit_ids = array())
+	public function findAll($selector, array $limit_ids = array())
 	{
 		$allItems = array();
 		$count = 0;
@@ -222,7 +220,7 @@ class ItemMapper extends Mapper
 		{
 			foreach($limit_ids as $catid) {
 				$this->init($mapper->categories[(int)$catid]->id);
-				$items = $this->getItems($stat);
+				$items = $this->getItems($selector);
 				$count += $this->total;
 				if(!empty($items)) $allItems[] = $items;
 			}
@@ -232,7 +230,7 @@ class ItemMapper extends Mapper
 		foreach($mapper->categories as $category)
 		{
 			$this->init($category->id);
-			$items = $this->getItems($stat);
+			$items = $this->getItems($selector);
 			$count += $this->total;
 			if(!empty($items)) $allItems[] = $items;
 		}
@@ -243,13 +241,13 @@ class ItemMapper extends Mapper
 	/**
 	 * Select method for multiple items
 	 *
-	 * @param $stat        - Selector
+	 * @param $selector        - Selector
 	 * @param int $length  - A clause that is used to specify the number of records to return
 	 * @param array $items - Item array rekursion
 	 *
 	 * @return array|bool
 	 */
-	public function getItems($stat, $length = 0, array $items = array())
+	public function getItems($selector, $length = 0, array $items = array())
 	{
 		$offset = 0;//($this->imanager->input->pageNumber) ? (($this->imanager->input->pageNumber -1) * $length +1) : 0;
 		settype($length, 'integer');
@@ -265,9 +263,9 @@ class ItemMapper extends Mapper
 
 		$treads = array();
 		// All parameter have to match the data
-		if(false !== strpos($stat, '&&'))
+		if(false !== strpos($selector, '&&'))
 		{
-			$treads = explode('&&', $stat, 2);
+			$treads = explode('&&', $selector, 2);
 			$parts[] = trim($treads[0]);
 			$parts[] = trim($treads[1]);
 
@@ -288,9 +286,9 @@ class ItemMapper extends Mapper
 				return $this->reviseItemIds($arr);
 			}
 			// only one parameter have to match the data
-		} elseif(false !== strpos($stat, '||'))
+		} elseif(false !== strpos($selector, '||'))
 		{
-			$treads = explode('||', $stat, 2);
+			$treads = explode('||', $selector, 2);
 			$parts[] = trim($treads[0]);
 			$parts[] = trim($treads[1]);
 
@@ -331,10 +329,10 @@ class ItemMapper extends Mapper
 					return $this->reviseItemIds($sepitems[1]);
 				}
 			}
-			// If $stat contains only one or empty selector
+			// If $selector contains only one or empty selector
 		} else
 		{
-			if(!empty($stat)) $arr = $this->applySearchPattern($items, $stat);
+			if(!empty($selector)) $arr = $this->applySearchPattern($items, $selector);
 			else $arr = $items;
 			// limited output
 			if(!empty($arr) && ($offset > 0 || $length > 0)) {
@@ -402,20 +400,20 @@ class ItemMapper extends Mapper
 	 * Select items by using several search patterns
 	 *
 	 * @param array $items - An array of categories to be processed
-	 * @param $stat - Selector
+	 * @param $selector - Selector
 	 *
 	 * @return array|bool
 	 */
-	protected function applySearchPattern(array $items, $stat)
+	protected function applySearchPattern(array $items, $selector)
 	{
 		$res = array();
 		$pattern = array(0 => '>=', 1 => '<=', 2 => '!=', 3 => '>', 4 => '<', 5 => '=');
 
 		foreach($pattern as $pkey => $pval)
 		{
-			if(false === strpos($stat, $pval)) continue;
+			if(false === strpos($selector, $pval)) continue;
 
-			$data = explode($pval, $stat, 2);
+			$data = explode($pval, $selector, 2);
 			$key = strtolower(trim($data[0]));
 			$val = trim($data[1]);
 			if(false !== strpos($key, ' ')) return false;
@@ -525,8 +523,9 @@ class ItemMapper extends Mapper
 
 				return true;
 			}
+			trigger_error('Items could not be rebuild', E_USER_WARNING);
+			return false;
 		}
-		trigger_error('Items could not be rebuild', E_USER_WARNING);
-		return false;
+		return true;
 	}
 }

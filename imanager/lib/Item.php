@@ -115,7 +115,7 @@ class Item extends FieldMapper
 	 * Retrives item attributes array
 	 */
 	private function getAttributes() {
-		return array('categoryid', 'id', 'name', 'label', 'position', 'active', 'options', 'created', 'updated');
+		return array('categoryid', 'id', 'name', 'label', 'position', 'active', 'created', 'updated');
 	}
 
 	/**
@@ -135,23 +135,22 @@ class Item extends FieldMapper
 	}
 
 	/**
-	 * A secure method to set the value of a field
+	 * A secure method to set the value of an attribute or field.
+	 * Used for internal purposes, users are recommended to write
+	 * their own function for this purpose.
 	 *
-	 * @param string $fieldname - Fieldname or attribute
+	 * @param string $name - Fieldname or attribute
 	 * @param int|string|boolean|array $value
 	 * @param bool $sanitize
 	 *
 	 * @return bool
 	 */
-	public function set($fieldname, $value, $sanitize=true)
+	public function set($name, $value, $sanitize=true)
 	{
 		$this->init($this->categoryid);
-		$attributeKey = strtolower(trim($fieldname));
+		$attributeKey = strtolower(trim($name));
 		$isAttribute = !in_array($attributeKey, $this->getAttributes()) ? false : true;
-		if(!$isAttribute && !isset($this->fields[$fieldname])) {
-			MsgReporter::setError('err_fieldname_exists');
-			return false;
-		}
+		if(!$isAttribute && !isset($this->fields[$name])) { return false;}
 		if($isAttribute) {
 			if(in_array($attributeKey, array('categoryid', 'id', 'position', 'created', 'updated'))) {
 				$this->$attributeKey = (int) $value;
@@ -165,21 +164,31 @@ class Item extends FieldMapper
 				$this->$attributeKey = (boolean) $value;
 				if($this->$attributeKey) return true;
 			}
-			MsgReporter::setError('err_setting_attribute', array('attribute' => $attributeKey));
 			return false;
 		}
-
-		$field = $this->fields[$fieldname];
-
+		$field = $this->fields[$name];
 		$inputClassName = __NAMESPACE__.'\Input'.ucfirst($field->type);
 		$Input = new $inputClassName($field);
 		//if(!is_array($value)) {
 		if(!$sanitize) {
 			if(false === $Input->prepareInput($value)) { return false; }
-			$this->{$fieldname} = $Input->value;
+			$this->{$name} = $Input->value;
 		} else {
 			if(false === $Input->prepareInput($value, true)) {return false; }
-			$this->{$fieldname} = $Input->value;
+			$this->{$name} = $Input->value;
+		}
+		return true;
+	}
+
+	/**
+	 * Check required Item attributes
+	 *
+	 * @return bool
+	 */
+	private function checkRequired()
+	{
+		if(!(int) $this->categoryid) {
+			Util::logException(new \ErrorException('A categoryid attribute value is expected'));
 		}
 		return true;
 	}
@@ -213,13 +222,18 @@ class Item extends FieldMapper
 
 		$this->id = (!$this->id) ? $this->getNextId() : (int) $this->id;
 
-		if(!$this->created) $this->created = $now;
+		if(!$this->created) {
+			$this->created = $now;
+		}
 		$this->updated = $now;
-		if(!$this->position) $this->position = (int) $this->id;
+		if(!$this->position) {
+			$this->position = (int) $this->id;
+		}
+		if(true !== $this->checkRequired()) { return false; }
 
 		// Set empty values to default defined field value
 		foreach($this->fields as $key => $field) {
-			if(!isset($this->{$field->name}) || !$this->{$field->name}) $this->{$field->name} = $field->default;
+			if(!isset($this->{$field->name}) || !$this->{$field->name}) { $this->{$field->name} = $field->default; }
 		}
 
 		$im = $this->imanager->itemMapper;

@@ -155,12 +155,22 @@ class Util
 
 	/**
 	 * Removes the given file
+	 *
+	 * @param string $filename
+	 *
 	 */
 	protected static function removeFilename($filename){@unlink($filename);}
 
 	/**
 	 * ItemManager internal error handler
 	 *
+	 * To trigger the ERROR/WARNING/NOTICE messages, use trigger_error() function:
+	 *     trigger_error('Object type is unknown', E_USER_WARNING);
+	 *
+	 *     E_USER_NOTICE             // Notice (default)
+	 *     E_USER_WARNING            // Warning
+	 *     E_USER_ERROR              // Error
+	 * ------------------------------------------------------------
 	 * @param $number
 	 * @param $string
 	 * @param $file
@@ -192,13 +202,30 @@ class Util
 		else {
 			self::dataLog($string);
 		}
+	}
 
+	/**
+	 * This method is used to log and show ItemManager internal exceptions
+	 *
+	 * @param \Exception $e
+	 */
+	public static function logException(\Exception $e)
+	{
+		$error_is_enabled = (bool)(ini_get('error_reporting'));
 
-		/*
-		  E_USER_NOTICE             // Notice (default)
-		  E_USER_WARNING            // Warning
-		  E_USER_ERROR
-		*/
-		//trigger_error('Object type is unknown', E_USER_WARNING);
+		if($error_is_enabled) {
+			print "<div style='text-align: center;'>";
+			print "<h2 style='color: rgb(190, 50, 50);'>Exception Occured:</h2>";
+			print "<table style='width: 800px; display: inline-block;'>";
+			print "<tr style='background-color:rgb(230,230,230);'><th style='width: 80px;'>Type</th><td>" . get_class( $e ) . "</td></tr>";
+			print "<tr style='background-color:rgb(240,240,240);'><th>Message</th><td>{$e->getMessage()}</td></tr>";
+			print "<tr style='background-color:rgb(230,230,230);'><th>File</th><td>{$e->getFile()}</td></tr>";
+			print "<tr style='background-color:rgb(240,240,240);'><th>Line</th><td>{$e->getLine()}</td></tr>";
+			print "</table></div>";
+		}
+
+		$message = "Type: " . get_class( $e ) . "; Message: {$e->getMessage()}; File: {$e->getFile()}; Line: {$e->getLine()};";
+		self::dataLog($message);
+		exit();
 	}
 }
