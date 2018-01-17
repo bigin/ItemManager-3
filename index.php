@@ -46,8 +46,6 @@ for($i = 0; $i < $number; $i++) {
 	$category->save();
 }*/
 
-//var_dump($category);
-
 // Get an existing category by id and related items
 /*$catMapper = $imanager->categoryMapper;
 $catMapper->init();
@@ -66,6 +64,18 @@ $secondCategory = $catMapper->getCategory(3);
 $secondCategory->name = 'My Third Category';
 $secondCategory->save();*/
 
+// Remove a Category, with throwing an Exception
+/*$category = $imanager->getCategory(1);
+if($category) {
+	try {
+		$imanager->remove($category);
+	} catch (Exception $e) {
+		echo 'Caught exception: ',  $e->getMessage(), "\n";
+	}
+	\Imanager\Util::preformat($category);
+}*/
+
+
 /**
  * Working with fields
  */
@@ -75,6 +85,14 @@ $newField = new \Imanager\Field($category->id);
 $newField->set('type', 'password');
 $newField->set('name', 'password');
 $newField->set('label', 'Enter your password');
+$newField->save();
+Imanager\Util::preformat($newField);*/
+// Another example, create decimal field
+/*$category = $imanager->getCategory(1);
+$newField = new \Imanager\Field($category->id);
+$newField->set('name', 'money');
+$newField->set('type', 'decimal');
+$newField->set('label', 'Enter a decimal number');
 $newField->save();
 Imanager\Util::preformat($newField);*/
 
@@ -98,19 +116,32 @@ $field->info = 'Just a simple field info '.time();
 $field->save();
 Imanager\Util::preformat($fieldMapper->fields);*/
 
+// Remove a field of the category 1, with throwing an Exception
+/*$category = $imanager->getCategory(1);
+$field = $category->getField('name=test_field');
+if($field) {
+	try {
+		$category->remove($field);
+	} catch (Exception $e) {
+		echo 'Caught exception: ',  $e->getMessage(), "\n";
+	}
+	\Imanager\Util::preformat($field);
+}*/
+
+
 /**
  * Working with items
  */
 // Create an item with complex field
 /*$item = new \Imanager\Item(1);
-$item->set('data', 'This is the next item');
-$result = $item->set('password', array('password' => 'NtBz39Äö', 'confirm_password' => 'NtBz39Äg'));
+$item->set('data', 'This is BCRYPTed item');
+$result = $item->set('password', array('password' => 'NtBz39Äö', 'confirm_password' => 'NtBz39Äö'));
 if($result !== true) {
-	echo 'sdsds'.$res;
+	echo 'Error code: '.$result;
 } else {
 	$item->save();
-}
-*/
+}*/
+
 //\Imanager\Util::preformat($item);
 
 // Setting the password field value with error catching
@@ -146,9 +177,39 @@ if($result === true) {
 $item = $category->getItem(1);
 Imanager\Util::preformat($item);*/
 
+$category = $imanager->getCategory(1);
+$item = $category->getItem(2);
+
+$result = $item->set('money', '100.345,35');
+if($result === true) {
+	$item->save();
+} else {
+	switch($result){
+		case (-5):
+			echo 'The password you entered does not match the password you confirmed with';
+			break;
+		case (-4):
+			echo 'The password field value is formatted incorrectly';
+			break;
+		case (-3):
+			echo 'The password is too long';
+			break;
+		case (-2):
+			echo 'The password is too short';
+			break;
+		case (-1):
+			echo 'Password or the password confirmation field is empty';
+			break;
+		default:
+			echo 'Password field value could not be set';
+	}
+}
+Imanager\Util::preformat(gettype($item->money));
+
+
 // Load an Item and compare the passwords (simulates login)
 /*$category = $imanager->getCategory(1);
-$item = $category->getItem(1);
+$item = $category->getItem(2);
 $enteredPass = 'NtBz39Äö';
 var_dump($item->password->compare($enteredPass));*/
 
@@ -223,29 +284,6 @@ if($item) {
 		echo 'Caught exception: ',  $e->getMessage(), "\n";
 	}
 	\Imanager\Util::preformat($item);
-}*/
-
-// Remove a field of the category 1, with throwing an Exception
-/*$category = $imanager->getCategory(1);
-$field = $category->getField('name=test_field');
-if($field) {
-	try {
-		$category->remove($field);
-	} catch (Exception $e) {
-		echo 'Caught exception: ',  $e->getMessage(), "\n";
-	}
-	\Imanager\Util::preformat($field);
-}*/
-
-// Remove a Category, with throwing an Exception
-/*$category = $imanager->getCategory(1);
-if($category) {
-	try {
-		$imanager->remove($category);
-	} catch (Exception $e) {
-		echo 'Caught exception: ',  $e->getMessage(), "\n";
-	}
-	\Imanager\Util::preformat($category);
 }*/
 
 

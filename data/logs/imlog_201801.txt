@@ -16,3 +16,15 @@
 [ 14.01.2018 21:03:47 ] Undefined variable: result
 [ 14.01.2018 21:03:47 ] Undefined variable: result
 [ 14.01.2018 21:03:47 ] Undefined variable: result
+[ 15.01.2018 19:28:41 ] Function mcrypt_create_iv() is deprecated
+[ 15.01.2018 19:28:41 ] password_hash(): Use of the 'salt' option to password_hash is deprecated
+[ 17.01.2018 18:44:18 ] Undefined variable: config
+[ 17.01.2018 18:44:18 ] Trying to get property of non-object
+[ 17.01.2018 18:44:18 ] Type: ErrorException; Message: Illegal field name; File: /Applications/MAMP/htdocs/tests/gitlab-projects/imanager/lib/Field.php; Line: 245;
+[ 17.01.2018 18:47:26 ] Type: ErrorException; Message: Illegal field name; File: /Applications/MAMP/htdocs/tests/gitlab-projects/imanager/lib/Field.php; Line: 245;
+[ 17.01.2018 18:48:08 ] Type: ErrorException; Message: Illegal field name; File: /Applications/MAMP/htdocs/tests/gitlab-projects/imanager/lib/Field.php; Line: 245;
+[ 17.01.2018 18:49:07 ] Type: ErrorException; Message: Illegal field name; File: /Applications/MAMP/htdocs/tests/gitlab-projects/imanager/lib/Field.php; Line: 245;
+[ 17.01.2018 18:49:48 ] Type: ErrorException; Message: Illegal field name; File: /Applications/MAMP/htdocs/tests/gitlab-projects/imanager/lib/Field.php; Line: 245;
+[ 17.01.2018 19:23:28 ] Undefined variable: decimals
+[ 17.01.2018 19:30:16 ] filter_var_array() expects parameter 1 to be array, string given
+[ 17.01.2018 19:44:38 ] Undefined variable: precision

@@ -216,16 +216,16 @@ class Util
 		if($error_is_enabled) {
 			print "<div style='text-align: center;'>";
 			print "<h2 style='color: rgb(190, 50, 50);'>Exception Occured:</h2>";
-			print "<table style='width: 800px; display: inline-block;'>";
+			print "<table style='text-align: left; display: inline-block;'>";
 			print "<tr style='background-color:rgb(230,230,230);'><th style='width: 80px;'>Type</th><td>" . get_class( $e ) . "</td></tr>";
 			print "<tr style='background-color:rgb(240,240,240);'><th>Message</th><td>{$e->getMessage()}</td></tr>";
 			print "<tr style='background-color:rgb(230,230,230);'><th>File</th><td>{$e->getFile()}</td></tr>";
 			print "<tr style='background-color:rgb(240,240,240);'><th>Line</th><td>{$e->getLine()}</td></tr>";
-			print "</table></div>";
+			print "</table><p>This error message was shown because site is in debug mode (\$config->debug = true;). Error has been logged</p></div>";
 		}
 
 		$message = "Type: " . get_class( $e ) . "; Message: {$e->getMessage()}; File: {$e->getFile()}; Line: {$e->getLine()};";
 		self::dataLog($message);
-		//exit();
+		exit();
 	}
 }

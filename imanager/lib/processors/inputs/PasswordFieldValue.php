@@ -38,6 +38,16 @@ class PasswordFieldValue
 	 */
 	public function compare($enteredPass)
 	{
+		/**
+		 * If you use the secure BCRYPT password hashing method instead,
+		 * please uncomment next line:
+		 */
+		//return password_verify($enteredPass, $this->password);
+
+		/**
+		 * Comment out the next lines if you want to use the secure BCRYPT
+		 * password hashing method instead.
+		 */
 		$enterdHash = sha1($enteredPass.$this->salt);
 		if($enterdHash === $this->password) return true;
 		return false;

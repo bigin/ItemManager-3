@@ -1,6 +1,5 @@
 <?php
 if(!isset($_SESSION)){ session_start(); }
-//if(!isset($_SESSION['cat']) || is_null($_SESSION['cat'])) $_SESSION['cat'] = null;
 
 // Define constants
 include_once(__DIR__.'/_def.php');

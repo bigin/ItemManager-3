@@ -56,6 +56,20 @@ class InputPassword implements InputInterface
 			return false;
 		}
 
+		/**
+		 * Uncomment it, if you want to increase the default sha1() hash, so you can
+		 * switched to BCRYPT, which will always be 60 characters:
+		 */
+		/*$options = [
+			'cost' => 11
+		];
+		$this->value->salt = '';
+		$this->value->password = password_hash($password, PASSWORD_BCRYPT, $options);*/
+
+		/**
+		 * Comment out the next 2 lines if you want to use the secure BCRYPT
+		 * password hashing method instead:
+		 */
 		$this->value->salt = $this->randomString();
 		$this->value->password = sha1($password.$this->value->salt);
 
