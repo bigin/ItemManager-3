@@ -103,3 +103,14 @@ $config->pageNumbersUrlSegment = 'page';
  * @var string
  */
 $config->systemDateFormat = 'd.m.Y H:i:s';
+
+/**
+ * Default thumbnail size
+ *
+ * @var array
+ */
+$config->thumbSize = array(
+	'width' => 150,
+	'height' => 0 // If the value is 0, it is proportional to the image width
+);
+

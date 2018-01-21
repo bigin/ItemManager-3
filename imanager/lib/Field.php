@@ -91,6 +91,8 @@ class Field extends Object
 	{
 		$this->categoryid = (int) $category_id;
 
+		$this->configs = new FieldConfigs();
+
 		settype($this->id, 'integer');
 		settype($this->position, 'integer');
 		settype($this->maximum, 'integer');
@@ -125,7 +127,7 @@ class Field extends Object
 			else $_instance->{$key} = $val;
 		}
 		//$_instance->configs = new \stdClass();
-		$_instance->configs = array();
+		//$_instance->configs = array();
 		return $_instance;
 	}
 
@@ -311,6 +313,9 @@ class Field extends Object
 				unset($this->$key);
 			}
 		}
+		// Check field id exists and delete it if renamed
+		$exist = $fm->getField($this->id);
+		if($exist && $exist->name != $this->name) { unset($fm->fields[$exist->name]); }
 		$fm->fields[$this->name] = $this;
 
 		$fm->sort();

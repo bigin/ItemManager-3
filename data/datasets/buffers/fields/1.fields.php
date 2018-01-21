@@ -39,9 +39,9 @@
      'minimum' => 0,
      'maximum' => 0,
      'cssclass' => NULL,
-     'configs' => 
-    array (
-    ),
+	  'configs' =>
+		  Imanager\FieldConfigs::__set_state(array(
+		  )),
      'created' => 1515947553,
      'updated' => 1515947553,
   )),
@@ -62,8 +62,57 @@
      'minimum' => 0,
      'maximum' => 0,
      'cssclass' => NULL,
-     'configs' => NULL,
+	  'configs' =>
+		  Imanager\FieldConfigs::__set_state(array(
+		  )),
      'created' => 1516211677,
      'updated' => 1516211677,
+  )),
+  'hidden_field' => 
+  Imanager\Field::__set_state(array(
+     'categoryid' => 1,
+     'id' => 5,
+     'name' => 'hidden_field',
+     'label' => NULL,
+     'type' => 'hidden',
+     'position' => 5,
+     'default' => NULL,
+     'options' => 
+    array (
+    ),
+     'info' => NULL,
+     'required' => false,
+     'minimum' => 0,
+     'maximum' => 0,
+     'cssclass' => NULL,
+	  'configs' =>
+		  Imanager\FieldConfigs::__set_state(array(
+		  )),
+     'created' => 1516275821,
+     'updated' => 1516275821,
+  )),
+  'images' => 
+  Imanager\Field::__set_state(array(
+     'categoryid' => 1,
+     'id' => 6,
+     'name' => 'images',
+     'label' => 'Images',
+     'type' => 'fileupload',
+     'position' => 6,
+     'default' => NULL,
+     'options' => 
+    array (
+    ),
+     'info' => NULL,
+     'required' => false,
+     'minimum' => 0,
+     'maximum' => 0,
+     'cssclass' => NULL,
+     'configs' => 
+    Imanager\FieldConfigs::__set_state(array(
+		'accept_types' => 'gif|jpe?g|png'
+    )),
+     'created' => 1516540222,
+     'updated' => 1516541834,
   )),
 ); ?>

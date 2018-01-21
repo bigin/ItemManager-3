@@ -1,31 +1,146 @@
-<?php
+<?php namespace Imanager;
 
 class InputFileupload implements InputInterface
 {
-	//protected $values;
-	//protected $field;
+	protected $value;
+
+	protected $field;
+
+	protected $itemid;
+
+	protected $tmpDir = null;
+
+	protected $timestamp;
+
+	public $errorCode = null;
+
+	public $errorBuffer = array();
 
 	public function __construct(Field $field)
 	{
 		$this->field = $field;
-		$this->values = new stdClass();
-		$this->values->value = null;
+		$this->value = new FileuploadFieldValue();
 
-		$this->values->file_name = array();
+		$this->timestamp = time();
+		//$this->tmpDir = IM_UPLOADPATH.'.tmp_'.$this->timestamp.'_'
+		/*$this->values->file_name = array();
 		$this->values->path = array();
 		$this->values->fullpath = array();
 		$this->values->url = array();
 		$this->values->fullurl = array();
 		$this->values->title = array();
 		$this->positions = array();
-		$this->titles = array();
+		$this->titles = array();*/
 	}
 
 
-	public function prepareInput($value, $sanitize=false)
+	public function __set($name, $value) { $this->$name = $value; }
+
+
+	public function prepareInput($values, $sanitize = false)
 	{
-		if(!file_exists($value))
-			return $this->values;
+		if(!is_array($values)) {
+			$this->errorCode = self::WRONG_VALUE_FORMAT;
+			return false;
+		}
+
+		// Check outside coming data for correctness
+		foreach($values as $item) {
+			if(!$this->field->categoryid) {
+				$this->errorCode = self::UNDEFINED_CATEGORY_ID;
+				return false;
+			}
+
+			$categoryid = (int) $this->field->categoryid;
+			$itemid = $this->itemid;
+
+			// The value must be an array
+			if(!is_array($item)) {
+				$this->errorCode = self::WRONG_VALUE_FORMAT;
+				return false;
+			}
+
+			// Loop through all items now and move them to the right location
+			foreach($item as $key => $value) {
+
+				if(!file_exists($value['path'])) {
+					$errorBuffer[$key]['message'] = 'File does not exist';
+					continue;
+				}
+			}
+
+		}
+
+		echo $this->itemid;
+
+		//Util::preformat($values);
+
+
+		// imageupload
+		/*if($fieldvalue->type == 'imageupload' || $fieldvalue->type == 'fileupload')
+		{
+			// new item
+			if(empty($_GET['itemid']) && !empty($_POST['timestamp']))
+			{
+				// pass temporary image directory
+				$tmp_image_dir = IM_IMAGE_UPLOAD_DIR.'tmp_'.(int)$_POST['timestamp'].'_'.$categoryid.'/';
+				$fieldinput = $tmp_image_dir;
+			} else
+			{
+				// pass image directory
+				$fieldinput = IM_IMAGE_UPLOAD_DIR.$curitem->id.'.'.$categoryid.'/';
+			}
+
+			// position is send
+			if(isset($_POST['position']) && is_array($_POST['position']))
+			{
+				$InputType->positions = $_POST['position'];
+				$InputType->titles = isset($_POST['title']) ? $_POST['title'] : '';
+
+				if(!file_exists($fieldinput.'config.xml'))
+				{
+					$xml = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><params></params>');
+					$i = 0;
+					foreach($InputType->positions as $filepos => $filename)
+					{
+						$xml->image[$i]->name = $filename;
+						$xml->image[$i]->position = $filepos;
+						$xml->image[$i]->title = !empty($InputType->titles[$filepos])
+							? $InputType->titles[$filepos] : '';
+						$i++;
+					}
+
+				} else
+				{
+					$xml = simplexml_load_file($fieldinput.'config.xml');
+					unset($xml->image);
+					$i = 0;
+					foreach($InputType->positions as $filepos => $filename)
+					{
+						$xml->image[$i]->name = $filename;
+						$xml->image[$i]->position = $filepos;
+						$xml->image[$i]->title = !empty($InputType->titles[$filepos])
+							? $InputType->titles[$filepos] : '';
+						$i++;
+					}
+				}
+				if(is_dir($fieldinput)) $xml->asXml($fieldinput.'config.xml');
+			}
+		}*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+		/*if(!file_exists($value)) return $this->values;
 
 		$temp_arr = array();
 
@@ -83,7 +198,7 @@ class InputFileupload implements InputInterface
 		// delete empty config file
 		if($i <= 0 && file_exists($value.'config.xml')) {unlink($value.'config.xml');}
 
-		return $this->values;
+		return $this->values;*/
 	}
 
 

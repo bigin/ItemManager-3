@@ -3,7 +3,11 @@ RewriteEngine On
 AddDefaultCharset UTF-8
 
 RewriteBase /gitlab-projects/
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !(favicon\.ico|robots\.txt)
 RewriteRule ^(.*)$ index.php?id=$1 [L,QSA]
 
-RewriteCond %{REQUEST_FILENAME} (^|/)manager/
-RewriteRule ^(.*)$ index.php?id=$1 [L,QSA]
+#RewriteCond %{REQUEST_FILENAME} (^|/)manager/
+#RewriteRule ^(.*)$ index.php?id=$1 [L,QSA]

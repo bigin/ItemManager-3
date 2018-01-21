@@ -25,7 +25,7 @@
      'position' => 2,
      'active' => false,
      'created' => 1516041103,
-     'updated' => 1516215375,
+     'updated' => 1516275988,
      'data' => 'This is BCRYPTed item',
      'password' => 
     Imanager\PasswordFieldValue::__set_state(array(
@@ -33,5 +33,6 @@
        'salt' => '',
     )),
      'money' => 100345.35000000000582076609134674072265625,
+     'hidden_field' => 'Das ist der Inhalt des versteckten Feldes',
   )),
 ); ?>

@@ -1,6 +1,45 @@
 <?php
-
 include 'imanager.php';
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+
+	<title>Page Title</title>
+
+	<meta name="description" content="">
+
+	<!-- Mobile-friendly viewport -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- Style sheet link -->
+	<link href="css/main.css" rel="stylesheet" media="all">
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+
+	<!-- js stuff -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+</head>
+<body>
+
+<header role="banner">
+
+	<a class="brand">Site Title or Logo</a>
+
+	<nav role="navigation">
+		<ul class="navbar">
+			<li><a href="#">Page 1</a></li>
+			<li><a href="#">Page 2</a></li>
+			<li><a href="#">Page 3</a></li>
+			<li><a href="#">Page 4</a></li>
+		</ul>
+	</nav>
+
+</header>
+<main role="main">
+<?php
 // Ja gerade geändert1515662883
 //$category = $imanager->getCategory('name=Ja gerade geändert151566%');
 //\Imanager\Util::preformat($category);
@@ -95,26 +134,22 @@ $newField->set('type', 'decimal');
 $newField->set('label', 'Enter a decimal number');
 $newField->save();
 Imanager\Util::preformat($newField);*/
+// Anpther example creating an image field
+/*$category = $imanager->getCategory(1);
+$newField = new \Imanager\Field($category->id);
+$newField->set('name', 'images');
+$newField->set('type', 'fileupload');
+$newField->set('label', 'Images');
+$newField->save();*/
 
-// Load fields of a category
-/*$catMapper = $imanager->getCategoryMapper();
-$catMapper->init();
-$category = $catMapper->getCategory(1);
-$fieldMapper = $imanager->getFieldMapper();
-$fieldMapper->init(1);
-Imanager\Util::preformat($fieldMapper->fields);*/
 
-// Update field
-/*$catMapper = $imanager->getCategoryMapper();
-$catMapper->init();
-$category = $catMapper->getCategory(1);
-$fieldMapper = $imanager->getFieldMapper();
-$fieldMapper->init(1);
-$field = $fieldMapper->getField(1);
-$field->position = 1;
-$field->info = 'Just a simple field info '.time();
+// Update a field of a category
+/*$category = $imanager->categoryMapper->getCategory(1);
+$field = $category->getField(6);
+$field->set('label', 'Images');
+$field->set('type', 'fileupload');
 $field->save();
-Imanager\Util::preformat($fieldMapper->fields);*/
+Imanager\Util::preformat($field);*/
 
 // Remove a field of the category 1, with throwing an Exception
 /*$category = $imanager->getCategory(1);
@@ -151,7 +186,7 @@ $result = $item->set('password', array('password' => 'NtBz39Äö', 'confirm_pass
 if($result === true) {
 	$item->save();
 } else {
-	switch($result){
+	switch($result) {
 		case (-5):
 			echo 'The password you entered does not match the password you confirmed with';
 			break;
@@ -177,7 +212,7 @@ if($result === true) {
 $item = $category->getItem(1);
 Imanager\Util::preformat($item);*/
 
-$category = $imanager->getCategory(1);
+/*$category = $imanager->getCategory(1);
 $item = $category->getItem(2);
 
 $result = $item->set('money', '100.345,35');
@@ -204,8 +239,7 @@ if($result === true) {
 			echo 'Password field value could not be set';
 	}
 }
-Imanager\Util::preformat(gettype($item->money));
-
+Imanager\Util::preformat(gettype($item->money));*/
 
 // Load an Item and compare the passwords (simulates login)
 /*$category = $imanager->getCategory(1);
@@ -213,27 +247,44 @@ $item = $category->getItem(2);
 $enteredPass = 'NtBz39Äö';
 var_dump($item->password->compare($enteredPass));*/
 
+
+// Insert file field value
+/*$category = $imanager->getCategory(1);
+$item = $category->getItem(2);
+
+$options = array(
+	0 => array(
+		'id' => null,
+		'path' => '',
+		'position' => '',
+		'title' => ''
+	),
+	1 => array(
+		'id' => null,
+		'path' => '',
+		'position' => '',
+		'title' => ''
+	)
+);
+echo $item->set('images', $options);*/
+
+
+//$item->set('images', $options);
+
+//\Imanager\Util::preformat($item);
+
+
+
+
+
+//var_dump($item->password->compare($item));
+
 // Update item
 /*$mapper = imanager()->getItemMapper();
 $mapper->init(1);
 $item = imanager()->getItemMapper()->getItem(1);
 $item->set('data', 'Data wurde aktualisiert '.time());
 $item->set('text', 'Das ist Itemtext-Value '.time());
-$item->save();
-$msgs = \Imanager\MsgReporter::getMessages();
-if($msgs) {
-	echo '<ul>';
-	foreach($msgs as $msg) {
-		echo $msg->text;
-	}
-	echo '</ul>';
-}
-Imanager\Util::preformat($item);*/
-
-/*$mapper = imanager()->getItemMapper();
-$mapper->init(1);
-$item = imanager()->getItemMapper()->getItem(2);
-$item->set('data', 'This is the second item item '.time());
 $item->save();
 $msgs = \Imanager\MsgReporter::getMessages();
 if($msgs) {
@@ -286,7 +337,6 @@ if($item) {
 	\Imanager\Util::preformat($item);
 }*/
 
-
 // Markup Cache is used for caching specific parts of your templates
 /*if(!$output = $imanager->sectionCache->get('index')) {
 	$category = $imanager->getCategory(1);
@@ -300,3 +350,27 @@ if($item) {
 }
 echo $output;*/
 
+// Display an FileUpload field:
+$category = $imanager->categoryMapper->getCategory(1);
+$field = $category->getField(6);
+
+$fieldMarkup = new \Imanager\FieldFileupload();
+$siteurl = $imanager->config->getSiteUrl();
+
+$fieldMarkup->set('action', $siteurl.'imanager/upload/server/php/index.php');
+$fieldMarkup->set('jsurl', $siteurl.'imanager/upload/js/');
+$fieldMarkup->set('id', 'images');
+$fieldMarkup->set('categoryid', $field->categoryid);
+$fieldMarkup->set('itemid', 1);
+$fieldMarkup->set('fieldid', $field->id);
+$fieldMarkup->set('configs', $field->configs, false);
+$fieldMarkup->set('name', 'images');
+echo $fieldMarkup->render();
+?>
+</main>
+<footer role="contentinfo">
+	<div>Page footer content</div>
+	<small>Copyright &copy; <time datetime="2018">2018</time> Ehret Studio</small>
+</footer>
+</body>
+</html>

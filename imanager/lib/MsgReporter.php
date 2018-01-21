@@ -6,6 +6,8 @@ class MsgReporter
 	private static $_msgs = array();
 	private static $_error = false;
 
+	public static function getMessages() { if(self::$_msgs) return self::$_msgs; }
+
 	public static function setMessage($name, array $var=array())
 	{
 		global $i18n;
@@ -26,8 +28,6 @@ class MsgReporter
 		self::$_msgs[] = $msgs;
 	}
 
-	public static function getMessages() { if(self::$_msgs) return self::$_msgs; }
-
 	public static function setError($name='err_general', array $var=array())
 	{
 		global $i18n;
@@ -47,6 +47,26 @@ class MsgReporter
 		}
 
 		self::$_msgs[] = $msgs;
+	}
+
+	public static function getRecord($name, array $var=array())
+	{
+		global $i18n;
+
+		$record = '';
+
+		if(!isset($i18n[$name])) { return $record;
+		} else {
+			if($var) {
+				foreach($var as $key => $value) {
+					$record = preg_replace('%\[\[( *)'.$key.'( *)\]\]%', $value, $i18n[$name]);
+				}
+			} else {
+				$record = $i18n[$name];
+			}
+		}
+
+		return $record;
 	}
 
 	public static function isError(){return self::$_error;}

@@ -119,6 +119,11 @@ class Manager
 	 */
 	protected function _imSectionCache() { return new SectionCache(); }
 
+
+
+
+
+
 	// Todo: check is used in 3.0?
 	public function setAdmin($admin)
 	{

@@ -3,7 +3,9 @@
 define('IS_IM', true);
 define('IM_ROOTPATH', $basedir.'/');
 define('IM_SOURCEPATH', IM_ROOTPATH.'imanager/lib/');
-define('IM_DATAPATH', IM_ROOTPATH.'data/');
+define('IM_DATAPATH_FRACTION', 'data/');
+define('IM_DATAPATH', IM_ROOTPATH.IM_DATAPATH_FRACTION);
+define('IM_UPLOADHANDLERPATH', IM_ROOTPATH.'upload/');
 define('IM_CATEGORYPATH', IM_DATAPATH.'categories/');
 define('IM_FIELDSPATH', IM_DATAPATH.'fields/');
 define('IM_ITEMPATH', IM_DATAPATH.'items/');

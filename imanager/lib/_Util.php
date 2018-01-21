@@ -14,6 +14,7 @@ class Util
 		if(file_exists(IM_SETTINGSPATH.'custom.config.php')) { include(IM_SETTINGSPATH.'custom.config.php'); }
 		if($config->debug) { error_reporting(E_ALL); }
 		else { error_reporting(0); }
+		//$config->getSiteUrl();
 		return $config;
 	}
 
@@ -42,7 +43,11 @@ class Util
 	 *
 	 * @param $data
 	 */
-	public static function preformat($data){ echo '<pre>'.print_r($data, true).'</pre>'; }
+	public static function preformat($data, $return = false)
+	{
+		if(!$return) echo '<pre>'.print_r($data, true).'</pre>';
+		else return '<pre>'.print_r($data, true).'</pre>';
+	}
 
 
 	/**
@@ -50,8 +55,11 @@ class Util
 	 *
 	 * @param $path
 	 */
-	public static function install($path) {
-		if(!mkdir(dirname($path), imanager('config')->chmodDir, true)) echo 'Unable to create path: '.dirname($path);
+	public static function install($path)
+	{
+		if(!mkdir(dirname($path), imanager('config')->chmodDir, true)) {
+			self::logException(new \ErrorException('Unable to create path: '.dirname($path)));
+		}
 	}
 
 	/**
@@ -187,20 +195,20 @@ class Util
 		// -- FATAL ERROR
 		// throw an Error Exception, to be handled by whatever Exception handling logic is available in this context
 		if(in_array($number, array(E_USER_ERROR, E_RECOVERABLE_ERROR)) && $error_is_enabled) {
-			throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+			throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
 		}
 
 		// -- NON-FATAL ERROR/WARNING/NOTICE
 		// Log the error if it's enabled, otherwise just ignore it
 		else if($error_is_enabled) {
 			error_log($string, 0 );
-			self::dataLog($string);
+			self::dataLog("$string in $file on line $line $context");
 			return false;
 		}
 
 		// -- DISABLED ERRORS/WARNINGS, just write internal log
 		else {
-			self::dataLog($string);
+			self::dataLog("$string in $file on line $line $context");
 		}
 	}
 

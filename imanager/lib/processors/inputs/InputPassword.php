@@ -6,16 +6,6 @@ class InputPassword implements InputInterface
 
 	protected $field;
 
-	const EMPTY_REQUIRED = -1;
-
-	const ERR_MIN_LENGTH = -2;
-
-	const ERR_MAX_LENGTH = -3;
-
-	const WRONG_VALUE_FORMAT = -4;
-
-	const COMPARISON_FAILED = -5;
-
 	public $errorCode = null;
 
 	public function __construct(Field $field)
@@ -24,7 +14,7 @@ class InputPassword implements InputInterface
 		$this->value = new PasswordFieldValue();
 	}
 
-	public function prepareInput($value, $sanitize = false)
+	public function prepareInput(s$value, $sanitize = false)
 	{
 		if(!is_array($value)) {
 			$this->errorCode = self::WRONG_VALUE_FORMAT;

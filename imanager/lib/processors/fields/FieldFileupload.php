@@ -1,46 +1,127 @@
-<?php
+<?php namespace Imanager;
+
 class FieldFileupload implements FieldInterface
 {
-	public $properties;
-	protected $tpl;
+	//public $properties;
 
-	public function __construct(TemplateEngine $tpl)
+	/**
+	 * @var ItemManager
+	 */
+	protected $imanager;
+
+	/**
+	 * @var null|string - Real field name
+	 */
+	public $name = null;
+
+	/**
+	 * @var null|string - URL to the root of the upload handler
+	 */
+	public $action = null; // '../plugins/imanager/upload/server/php/'
+
+	/**
+	 * @var null|string - URL to the folder where you have stored your static resources
+	 */
+	public $jsurl = null; // '../plugins/imanager/upload/server/js/'
+
+	/**
+	 * @var null|string - CSS-Class of the field
+	 */
+	public $class = null;
+
+	/**
+	 * @var null|string - CSS-ID of the field
+	 */
+	public $id = null;
+
+	/**
+	 * @var null|int - Real field id
+	 */
+	public $fieldid = null;
+
+	/**
+	 * @var FieldConfigs|null
+	 */
+	public $configs = null;
+
+	/**
+	 * @var null|mixed - Field value
+	 */
+	public $value = null;
+
+	/**
+	 * @var null|int - Category id
+	 */
+	public $categoryid = null;
+
+	/**
+	 * @var null|int - Item id
+	 */
+	public $itemid = null;
+
+	/**
+	 * @var null|int - Current timestamp
+	 */
+	public $timestamp = null;
+
+
+	protected $defaults = array(
+		'accept_types' => 'gif|jpe?g|png'
+	);
+
+	/**
+	 * FieldFileupload constructor
+	 */
+	public function __construct()
 	{
-		$this->tpl = & $tpl;
-		$this->name = null;
-		$this->class = null;
-		$this->id = null;
-		$this->realid = null;
-		$this->value = null;
-		$this->categoryid = null;
-		$this->itemid = null;
-		$this->timestamp = null;
-		$this->configs = new stdClass();
+		$this->imanager = imanager();
+		$this->setDefaults();
 	}
 
-
-	public function render($sanitize=false)
+	protected function setDefaults()
 	{
-		if(is_null($this->name))
+		if(!isset($this->configs)) { $this->configs = new FieldConfigs();}
+		foreach($this->defaults as $key => $value) {
+			if(!isset($this->configs->{$key})) { $this->configs->{$key} = $value; }
+		}
+	}
+
+	public function set($name, $value, $sanitize = true) {
+		$this->{strtolower($name)} = ($sanitize) ? $this->imanager->sanitizer->text($value) : $value;
+	}
+
+	public function render()
+	{
+		if(is_null($this->name)) {
+			trigger_error('FieldFileupload::$name expected, null given', E_USER_WARNING);
 			return false;
+		}
 
-		$itemeditor = $this->tpl->getTemplates('field');
-		$field = $this->tpl->getTemplate('fileupload', $itemeditor);
+		$siteUrl = rawurlencode($this->imanager->config->getSiteUrl());
+		$urlParams = "itemid={$this->itemid}&categoryid={$this->categoryid}&fieldid={$this->
+			fieldid}&timestamp={$this->timestamp}&siteurl={$siteUrl}";
 
-		$output = $this->tpl->render($field, array(
+		return $this->imanager->templateParser->render('fields/fileupload', array(
+				'action' => $this->action,
+				'add_files' => MsgReporter::getRecord('add_files'),
+				'start_upload' => MsgReporter::getRecord('start_upload'),
+				'cancel_upload' => MsgReporter::getRecord('cancel_upload'),
+				'delete_upload' => MsgReporter::getRecord('delete_upload'),
+				'imagetitle_placeholder' => MsgReporter::getRecord('imagetitle_placeholder'),
+				'jsurl' => $this->jsurl,
+				'scripturl' => "{$this->action}?{$urlParams}",
+				'deleteurl' => "&{$urlParams}",
 				'name' => $this->name,
 				'class' => $this->class,
 				'id' => $this->id,
 				'value' => $this->value,
-				'scriptdir' => IM_SITE_URL,
-				'item-id' => $this->itemid,
-				'currentcategory' => $this->categoryid,
-				'field' => $this->realid,
+				/*'scriptdir' => IM_SITE_URL,*/
+				'itemid' => $this->itemid,
+				'categoryid' => $this->categoryid,
+				'fieldid' => $this->fieldid,
 				'timestamp' => $this->timestamp,
 			), true, array()
 		);
-
-		return $output;
 	}
 
 	public function getConfigFieldtype()
@@ -49,26 +130,22 @@ class FieldFileupload implements FieldInterface
 		$tpltext = $this->tpl->getTemplate('text', $this->tpl->getTemplates('field'));
 		$tplinfotext = $this->tpl->getTemplate('infotext', $this->tpl->getTemplates('itemeditor'));
 		$tplarea = $this->tpl->getTemplate('fieldarea', $this->tpl->getTemplates('itemeditor'));
-
 		// let's load accepted value
 		$accept_types = isset($this->configs->accept_types) ? $this->configs->accept_types : '';
-
 		// render textfied <input name="[[name]]" type="text" class="[[class]]" id="[[id]]" value="[[value]]"[[style]]/>
 		$textfied = $this->tpl->render($tpltext, array(
-				// NOTE: The PREFIX must always be used as a part of the field name
-				'name' => self::PREFIX . 'accept_types',
+				// NOTE: The CUSTOM_PREFIX must always be used as a part of the field name
+				'name' => self::CUSTOM_PREFIX.'accept_types',
 				'class' => '',
 				'id' => '',
 				'value' => $accept_types
 			)
 		);
-
 		// render infotext template <p class="field-info">[[infotext]]</p>
 		$infotext = $this->tpl->render($tplinfotext, array(
 				'infotext' => '<i class="fa fa-info-circle"></i>
 					Accepted file types separated by pipe, example: gif|jpe?g|png|pdf')
 		);
-
 		// let's merge the pieces and return the output
 		return $this->tpl->render($tplarea, array(
 				'fieldid' =>  '',

@@ -2,9 +2,9 @@
 
 interface FieldInterface
 {
-	const PREFIX = 'custom-';
+	const CUSTOM_PREFIX = 'custom-';
 
-	public function render($sanitize=false);
+	public function render();
 
 	public function getConfigFieldtype();
 }

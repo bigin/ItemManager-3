@@ -169,7 +169,7 @@ class Item extends FieldMapper
 		$field = $this->fields[$name];
 		$inputClassName = __NAMESPACE__.'\Input'.ucfirst($field->type);
 		$Input = new $inputClassName($field);
-		//if(!is_array($value)) {
+		$Input->itemid = $this->id;
 		if(!$sanitize) {
 			if(true !== $Input->prepareInput($value)) { return $Input->errorCode; }
 			$this->{$name} = $Input->prepareOutput();
