@@ -251,13 +251,15 @@ class UploadHandler
 		return '';
 	}
 
-	protected function get_upload_path($file_name = null, $version = null) {
+	protected function get_upload_path($file_name = null, $version = null)
+	{
 		$file_name = $file_name ? $file_name : '';
-		if (empty($version)) {
+		if(empty($version)) {
 			$version_path = '';
 		} else {
-			$version_dir = @$this->options['image_versions'][$version]['upload_dir'];
-			if ($version_dir) {
+			$version_dir = isset($this->options['image_versions'][$version]['upload_dir']) ?
+				$this->options['image_versions'][$version]['upload_dir'] : '';
+			if($version_dir) {
 				return $version_dir.$this->get_user_path().$file_name;
 			}
 			$version_path = $version.'/';
@@ -270,8 +272,9 @@ class UploadHandler
 		return strpos($url, '?') === false ? '?' : '&';
 	}
 
-	protected function get_download_url($file_name, $version = null, $direct = false) {
-		if (!$direct && $this->options['download_via_php']) {
+	protected function get_download_url($file_name, $version = null, $direct = false)
+	{
+		if(!$direct && $this->options['download_via_php']) {
 			$url = $this->options['script_url']
 				.$this->get_query_separator($this->options['script_url'])
 				.$this->get_singular_param_name()
@@ -281,11 +284,12 @@ class UploadHandler
 			}
 			return $url.'&download=1';
 		}
-		if (empty($version)) {
+		if(empty($version)) {
 			$version_path = '';
 		} else {
-			$version_url = @$this->options['image_versions'][$version]['upload_url'];
-			if ($version_url) {
+			$version_url = isset($this->options['image_versions'][$version]['upload_url']) ?
+				$this->options['image_versions'][$version]['upload_url'] : '';
+			if($version_url) {
 				return $version_url.$this->get_user_path().rawurlencode($file_name);
 			}
 			$version_path = rawurlencode($version).'/';

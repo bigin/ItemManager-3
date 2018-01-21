@@ -64,7 +64,9 @@ class FieldFileupload implements FieldInterface
 	 */
 	public $timestamp = null;
 
-
+	/**
+	 * @var array Default configs
+	 */
 	protected $defaults = array(
 		'accept_types' => 'gif|jpe?g|png'
 	);

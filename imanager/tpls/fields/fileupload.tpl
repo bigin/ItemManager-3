@@ -68,7 +68,9 @@
 	</td>
 	<td>
 	<p class="size">Processing...</p>
-	<div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar progress-bar-success" style="width:0%;"></div></div>
+	<div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+		<div class="progress-bar progress-bar-success" style="width:0%;"></div>
+	</div>
 	</td>
 	<td>
 	{% if (!i && !o.options.autoUpload) { %}
@@ -119,7 +121,8 @@
 		</td>
 		<td>
 			{% if (file.deleteUrl) { %}
-				<button class="btn btn-danger delete" data-type="{%=file.deleteType%}" data-url="{%=file.deleteUrl%}[[deleteurl]]"{% if (file.deleteWithCredentials) { %} data-xhr-fields='{"withCredentials":true}'{% } %}>
+				<button class="btn btn-danger delete" data-type="{%=file.deleteType%}"
+					data-url="{%=file.deleteUrl%}[[deleteurl]]"{% if (file.deleteWithCredentials) { %} data-xhr-fields='{"withCredentials":true}'{% } %}>
 					<i class="fa fa-trash"></i>
 				</button>
 				<input type="checkbox" name="delete" value="1" class="toggle">
