@@ -1,5 +1,5 @@
 # IManager simple flat-file PHP framework
-_Ideal for smaller projects that need to be finished quickly._
+_Ideal for smaller projects with smaller-sized data volumes, because no database is used._
 
 Project is currently in development stage. Please check back here frequently, hopefully there will be continuous updates ;-)
 
