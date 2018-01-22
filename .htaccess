@@ -1,7 +1,7 @@
 RewriteEngine On
 AddDefaultCharset UTF-8
 
-RewriteBase /gitlab-projects/
+RewriteBase /
 
 # Allow harmless files
 RewriteCond %{REQUEST_URI} !\.(?:css|js|jpe?g|gif|png)$ [NC]
