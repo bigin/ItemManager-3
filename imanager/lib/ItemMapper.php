@@ -70,6 +70,7 @@ class ItemMapper extends Mapper
 		}
 		$export = var_export($this->items, true);
 		if(false !== file_put_contents($this->path, '<?php return ' . $export . '; ?>')) {
+			@chmod($this->path, $this->imanager->config->chmodFile);
 			$item = null;
 			unset($item);
 			return true;
@@ -520,6 +521,7 @@ class ItemMapper extends Mapper
 				}
 				$export = var_export($items, true);
 				file_put_contents($this->path, '<?php return ' . $export . '; ?>');
+				@chmod($this->path, $this->imanager->config->chmodFile);
 
 				return true;
 			}

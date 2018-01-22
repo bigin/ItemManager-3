@@ -91,6 +91,13 @@ $config->filterByItems = 'position';
 $config->chmodDir = 0755;
 
 /**
+ *	Permissions for wew files
+ *
+ * @var octal
+ */
+$config->chmodFile = 0644;
+
+/**
  * Url segment that should be used for the numbering of pages
  *
  * @var string

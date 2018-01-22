@@ -3,9 +3,18 @@
   Imanager\Category::__set_state(array(
      'id' => 1,
      'position' => 1,
-     'name' => 'My Fucking Test-Category',
-     'slug' => 'my-fucking-test-category',
-     'created' => 1515868091,
-     'updated' => 1515868091,
+     'name' => 'My First Category',
+     'slug' => 'my-first-category',
+     'created' => 1516619824,
+     'updated' => 1516619824,
+  )),
+  2 => 
+  Imanager\Category::__set_state(array(
+     'id' => 2,
+     'position' => 2,
+     'name' => 'My Bla Category',
+     'slug' => 'my-bla-category',
+     'created' => 1516627628,
+     'updated' => 1516627628,
   )),
 ); ?>

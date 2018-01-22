@@ -293,6 +293,7 @@ class Category extends Object
 		}
 		$export = var_export($cm->categories, true);
 		file_put_contents($cm->path, '<?php return ' . $export . '; ?>');
+		@chmod($cm->path, $cm->imanager->config->chmodFile);
 
 		return true;
 	}

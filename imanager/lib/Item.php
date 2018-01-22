@@ -251,6 +251,7 @@ class Item extends FieldMapper
 
 		$export = var_export($im->items, true);
 		file_put_contents($im->path, '<?php return ' . $export . '; ?>');
+		@chmod($im->path, $config->chmodFile);
 
 		return true;
 	}

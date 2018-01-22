@@ -1,13 +1,16 @@
-
 RewriteEngine On
 AddDefaultCharset UTF-8
 
-RewriteBase /gitlab-projects/
+RewriteBase /
+
+# Allow harmless files
+RewriteCond %{REQUEST_URI} !\.(?:css|js|jpe?g|gif|png)$ [NC]
+# Block access to any htaccess files
+RewriteCond %{REQUEST_URI} (^|/)\.htaccess$ [NC,OR]
+# Block access to protected data directories
+RewriteCond %{REQUEST_URI} (^|/)data/(datasets|cache|logs|backups|settings)($|/.*$) [OR]
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !(favicon\.ico|robots\.txt)
 RewriteRule ^(.*)$ index.php?id=$1 [L,QSA]
-
-#RewriteCond %{REQUEST_FILENAME} (^|/)manager/
-#RewriteRule ^(.*)$ index.php?id=$1 [L,QSA]
