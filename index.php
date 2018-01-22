@@ -1,6 +1,4 @@
-<?php
-include 'imanager.php';
-?>
+<?php include('imanager.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +12,7 @@ include 'imanager.php';
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 	<!-- Style sheet link -->
-	<link href="css/main.css" rel="stylesheet" media="all">
+	<link href="css/main.css" rel="stylesheet" type="text/css" media="all">
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
 
 	<!-- js stuff -->
@@ -40,6 +38,12 @@ include 'imanager.php';
 </header>
 <main role="main">
 <?php
+$category = new \Imanager\Category();
+$category->set('name', 'My Bla Category');
+$category->save();
+
+//$category = $imanager->getCategory(1);
+
 // Ja gerade geändert1515662883
 //$category = $imanager->getCategory('name=Ja gerade geändert151566%');
 //\Imanager\Util::preformat($category);
@@ -49,6 +53,7 @@ include 'imanager.php';
  */
 //var_dump($imanager->config);
 //echo imanager('config')->maxFieldNameLength;
+
 
 
 
@@ -269,30 +274,14 @@ $options = array(
 echo $item->set('images', $options);*/
 
 
-//$item->set('images', $options);
-
-//\Imanager\Util::preformat($item);
-
-
-
-
-
-//var_dump($item->password->compare($item));
-
 // Update item
-/*$mapper = imanager()->getItemMapper();
-$mapper->init(1);
-$item = imanager()->getItemMapper()->getItem(1);
-$item->set('data', 'Data wurde aktualisiert '.time());
-$item->set('text', 'Das ist Itemtext-Value '.time());
-$item->save();
-$msgs = \Imanager\MsgReporter::getMessages();
-if($msgs) {
-	echo '<ul>';
-	foreach($msgs as $msg) {
-		echo $msg->text;
-	}
-	echo '</ul>';
+/*$category = $imanager->getCategory(1);
+$item = $category->getItem(1);
+$result = $item->set('data', 'Data wurde aktualisiert '.time());
+if($result === true) {
+	$item->save();
+} else {
+	\Imanager\Util::preformat('Error: '. $result);
 }
 Imanager\Util::preformat($item);*/
 
@@ -351,7 +340,7 @@ if($item) {
 echo $output;*/
 
 // Display an FileUpload field:
-$category = $imanager->categoryMapper->getCategory(1);
+/*$category = $imanager->categoryMapper->getCategory(1);
 $field = $category->getField(6);
 
 $fieldMarkup = new \Imanager\FieldFileupload();
@@ -365,7 +354,7 @@ $fieldMarkup->set('itemid', 1);
 $fieldMarkup->set('fieldid', $field->id);
 $fieldMarkup->set('configs', $field->configs, false);
 $fieldMarkup->set('name', 'images');
-echo $fieldMarkup->render();
+echo $fieldMarkup->render();*/
 ?>
 </main>
 <footer role="contentinfo">

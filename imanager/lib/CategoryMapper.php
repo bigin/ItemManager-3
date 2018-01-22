@@ -439,6 +439,7 @@ class CategoryMapper extends Mapper
 
 		$export = var_export($this->categories, true);
 		if(false !== file_put_contents($this->path, '<?php return ' . $export . '; ?>')) {
+			@chmod($this->path, $this->imanager->config->chmodFile);
 			$category = null;
 			unset($category);
 			return true;
@@ -471,6 +472,7 @@ class CategoryMapper extends Mapper
 		$categoryid = $field->categoryid;
 		$export = var_export($this->fields, true);
 		if(false !== file_put_contents($this->path, '<?php return ' . $export . '; ?>')) {
+			@chmod($this->path, $this->imanager->config->chmodFile);
 			$field = null;
 			unset($field);
 			// Now, prepare and save all the items of this category

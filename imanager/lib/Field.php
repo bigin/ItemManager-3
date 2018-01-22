@@ -327,6 +327,7 @@ class Field extends Object
 
 		$export = var_export($fm->fields, true);
 		file_put_contents($fm->path, '<?php return ' . $export . '; ?>');
+		@chmod($fm->path, $config->chmodFile);
 		return true;
 	}
 }

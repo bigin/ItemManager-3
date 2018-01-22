@@ -36,6 +36,7 @@ class Util
 		$datum = date(imanager('config')->systemDateFormat, time());
 		if(!fwrite($handle, '[ '.$datum.' ]'. ' ' . print_r($data, true) . "\r\n")) { return; }
 		fclose($handle);
+		chmod($filename, imanager('config')->chmodFile);
 	}
 
 	/**
@@ -57,7 +58,7 @@ class Util
 	 */
 	public static function install($path)
 	{
-		if(!mkdir(dirname($path), imanager('config')->chmodDir, true)) {
+		if(!file_exists(dirname($path)) && !mkdir(dirname($path), imanager('config')->chmodDir, true)) {
 			self::logException(new \ErrorException('Unable to create path: '.dirname($path)));
 		}
 	}
@@ -130,6 +131,7 @@ class Util
 		if(!file_exists($path.$file.$suffix)) return false;
 		$stamp = time();
 		if(!copy($path.$file.$suffix, IM_BACKUPPATH.'backup_'.$stamp.'_'.$file)) return false;
+		chmod(IM_BACKUPPATH.'backup_'.$stamp.'_'.$file, imanager('config')->chmodFile);
 		self::deleteOutdatedBackups();
 		return true;
 	}
@@ -202,13 +204,13 @@ class Util
 		// Log the error if it's enabled, otherwise just ignore it
 		else if($error_is_enabled) {
 			error_log($string, 0 );
-			self::dataLog("$string in $file on line $line $context");
+			self::dataLog("$string in $file on line $line");
 			return false;
 		}
 
 		// -- DISABLED ERRORS/WARNINGS, just write internal log
 		else {
-			self::dataLog("$string in $file on line $line $context");
+			self::dataLog("$string in $file on line $line");
 		}
 	}
 

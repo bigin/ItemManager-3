@@ -203,6 +203,7 @@ class FieldMapper extends Mapper
 		$categoryid = $field->categoryid;
 		$export = var_export($this->fields, true);
 		if(false !== file_put_contents($this->path, '<?php return ' . $export . '; ?>')) {
+			@chmod($this->path, $this->imanager->config->chmodFile);
 			$field = null;
 			unset($field);
 			// Now, prepare and re-save all the items of this category

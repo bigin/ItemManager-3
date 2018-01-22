@@ -6,12 +6,6 @@ class InputLongtext implements InputInterface
 
 	protected $field;
 
-	const EMPTY_REQUIRED = -1;
-
-	const ERR_MIN_LENGTH = -2;
-
-	const ERR_MAX_LENGTH = -3;
-
 	public $errorCode = null;
 
 	public function __construct(Field $field)
