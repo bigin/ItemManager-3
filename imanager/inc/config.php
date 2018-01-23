@@ -121,3 +121,10 @@ $config->thumbSize = array(
 	'height' => 0 // If the value is 0, it is proportional to the image width
 );
 
+/**
+ * Delete tmp directories after X days
+ * Temporary directory example: /uploads/.tmp_74837483_2.3
+ *
+ * @var integer
+ */
+$config->tmpFilesCleanPeriod = 1;

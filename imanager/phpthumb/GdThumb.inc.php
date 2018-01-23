@@ -594,7 +594,8 @@ class GdThumb extends ThumbBase
 				{ 
 					header('Content-type: image/png'); 
 				}
-				imagepng($this->oldImage);
+				//imagepng($this->oldImage);
+				imagepng($this->oldImage, null, $this->options['pngQuality']);
 				break;
 		}
 		
@@ -678,7 +679,8 @@ class GdThumb extends ThumbBase
 				imagejpeg($this->oldImage, $fileName, $this->options['jpegQuality']);
 				break;
 			case 'PNG':
-				imagepng($this->oldImage, $fileName);
+				//imagepng($this->oldImage, $fileName);
+				imagepng($this->oldImage, $fileName, $this->options['pngQuality']);
 				break;
 		}
 		
@@ -715,6 +717,7 @@ class GdThumb extends ThumbBase
 			(
 				'resizeUp'				=> false,
 				'jpegQuality'			=> 100,
+				'pngQuality'			=> 1,
 				'correctPermissions'	=> false,
 				'preserveAlpha'			=> true,
 				'alphaMaskColor'		=> array (255, 255, 255),

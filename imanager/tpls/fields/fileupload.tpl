@@ -53,11 +53,12 @@
 	<ol class="indicator"></ol>
 </div>
 <!-- The template to display files available for upload -->
-<script id="template-upload" type="text/x-tmpl">
+<script id="template-upload_[[id]]" type="text/x-tmpl">
 	{% for (var i=0, file; file=o.files[i]; i++) { %}
 	<tr class="template-upload fade">
 		<td>
-			<input class="pos" type="hidden" name="position[{%=file.position%}]" value="{%=file.name%}">
+			<input class="pos" type="hidden" name="position_[[id]][{%=file.position%}]" value="{%=file.name%}">
+			<input type="hidden" name="timestamp_[[id]]" value="[[timestamp]]">
 		</td>
 		<td>
 			<span class="preview"></span>
@@ -88,12 +89,13 @@
 	{% } %}
 </script>
 <!-- The template to display files available for download -->
-<script id="template-download" type="text/x-tmpl">
+<script id="template-download_[[id]]" type="text/x-tmpl">
 	{% for (var i=0, file; file=o.files[i]; i++) { %}
 	<tr class="template-download fade sortable">
 		<td>
 			<i class="fa fa-hand-o-up"></i>
-			<input class="pos" type="hidden" name="position[{%=file.position%}]" value="{%=file.name%}">
+			<input class="pos" type="hidden" name="position_[[id]][{%=file.position%}]" value="{%=file.name%}">
+			<input type="hidden" name="timestamp_[[id]]" value="[[timestamp]]">
 		</td>
 		<td>
 			<span class="preview">
@@ -110,7 +112,7 @@
 					<span>{%=file.name%}</span>
 				{% } %}
 				<br />
-				<input class="tit" type="text" placeholder="[[imagetitle_placeholder]]" name="title[{%=file.position%}]" value="{%=file.title%}">
+				<input class="tit" type="text" placeholder="[[imagetitle_placeholder]]" name="title_[[id]][{%=file.position%}]" value="{%=file.title%}">
 			</p>
 			{% if (file.error) { %}
 				<div><span class="label label-danger">Error</span> {%=file.error%}</div>
@@ -135,34 +137,6 @@
 	</tr>
 {% } %}
 </script>
-<!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
-<script src="[[jsurl]]vendor/jquery.ui.widget.js"></script>
-<!-- The Templates plugin is included to render the upload/download listings -->
-<script src="[[jsurl]]tmpl.min.js"></script>
-<!-- The Load Image plugin is included for the preview images and image resizing functionality -->
-<script src="[[jsurl]]load-image.all.min.js"></script>
-<!-- The Canvas to Blob plugin is included for image resizing functionality -->
-<script src="[[jsurl]]canvas-to-blob.min.js"></script>
-<script src="[[jsurl]]bootstrap.min.js"></script>
-<!-- blueimp Gallery script -->
-<script src="[[jsurl]]jquery.blueimp-gallery.min.js"></script>
-<!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
-<script src="[[jsurl]]jquery.iframe-transport.js"></script>
-<!-- The basic File Upload plugin -->
-<script src="[[jsurl]]jquery.fileupload.js"></script>
-<!-- The File Upload processing plugin -->
-<script src="[[jsurl]]jquery.fileupload-process.js"></script>
-<!-- The File Upload image preview & resize plugin -->
-<script src="[[jsurl]]jquery.fileupload-image.js"></script>
-<!-- The File Upload audio preview plugin -->
-<script src="[[jsurl]]jquery.fileupload-audio.js"></script>
-<!-- The File Upload video preview plugin -->
-<script src="[[jsurl]]jquery.fileupload-video.js"></script>
-<!-- The File Upload validation plugin -->
-<script src="[[jsurl]]jquery.fileupload-validate.js"></script>
-<!-- The File Upload user interface plugin -->
-<script src="[[jsurl]]jquery.fileupload-ui.js"></script>
-<script src="[[jsurl]]jquery.fileupload-jquery-ui.js"></script>
 <script>
 function renumberImages(g) {
 	$('.table tbody tr').each(function(i,tr) {
@@ -177,11 +151,17 @@ $(function () {
 	// Initialize the jQuery File Upload widget:
 	$("#fileupload_[[id]]").fileupload({
 		// Uncomment the following to send cross-domain cookies:
-		url: '[[scripturl]]'
+		url: '[[scripturl]]',
+		uploadTemplateId: 'template-upload_[[id]]',
+		downloadTemplateId: 'template-download_[[id]]'
 	});
 	// Enable iframe cross-domain access via redirect option:
 	$("#fileupload_[[id]]").fileupload(
 		'option',
+		{
+			previewMaxWidth: [[thumb_width]],
+			previewMaxHeight: [[thumb_height]]
+		},
 		'redirect',
 		window.location.href.replace(
 			/\/[^\/]*$/,

@@ -186,7 +186,9 @@ class Field extends Object
 				$this->{$key} = ($sanitize) ? $sanitizer->text($val) : $val;
 			}
 		} elseif($key == 'options') {
-			$this->options[] = ($sanitize) ? $sanitizer->text($val) : $val;
+			$this->options = $val;
+		} elseif($key == 'configs' && $val instanceof FieldConfigs) {
+			$this->{$key} = $val;
 		} else {
 			$this->{$key} = ($sanitize) ? (int) $val : $val;
 		}

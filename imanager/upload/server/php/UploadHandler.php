@@ -46,10 +46,12 @@ class UploadHandler
 		$this->imanager = imanager();
 
 		if(!$this->imanager->input->get->fieldid || !$this->imanager->input->get->categoryid) {
+			trigger_error('fieldid and categoryid expected', E_USER_WARNING);
 			return false;
 		}
 
 		if(!$this->imanager->input->get->itemid && !$this->imanager->input->get->timestamp) {
+			trigger_error('Neither a timestamp nor an itemid was passed', E_USER_WARNING);
 			return false;
 		}
 
@@ -67,19 +69,27 @@ class UploadHandler
 			if(!$timestamp) { return false; }
 			$siteurl = rawurldecode($this->imanager->input->get->siteurl);
 			$upload_dir = IM_UPLOADPATH.'.tmp_'.$timestamp.'_'.$categoryid.'.'.$fieldid.'/';
-			$upload_url = $siteurl.IM_DATAPATH_FRACTION.'uploads/.tmp_'.$timestamp.'_'.$categoryid.'.'.$fieldid.'/';
+			$upload_url = $siteurl.IM_SITEROOT.'uploads/.tmp_'.$timestamp.'_'.$categoryid.'.'.$fieldid.'/';
 
 		// Item exists, an upload directory has already been created
 		} else {
 			$itemid = (int) $this->imanager->input->get->itemid;
 			$siteurl = rawurldecode($this->imanager->input->get->siteurl);
 			$upload_dir = IM_UPLOADPATH.$categoryid.'.'.$itemid.'.'.$fieldid.'/';
-			$upload_url = $siteurl.IM_DATAPATH_FRACTION.'uploads/'.$categoryid.'.'.$itemid.'.'.$fieldid.'/';
+			$upload_url = $siteurl.IM_SITEROOT.'uploads/'.$categoryid.'.'.$itemid.'.'.$fieldid.'/';
 		}
 
-		//\Imanager\Util::dataLog(\Imanager\Util::preformat($_REQUEST, true));
-		$this->positions = !empty($_REQUEST['position']) ? $_REQUEST['position'] : array();
-		$this->titles = !empty($_REQUEST['title']) ? $_REQUEST['title'] : array();
+		$item = null;
+		$category = $this->imanager->getCategory($categoryid);
+		if($category) { $item = $category->getItem($this->imanager->input->get->itemid); }
+		if($item && $field) {
+			if(empty($this->positions) && $item->{$field->name}) {
+				foreach($item->{$field->name} as $i => $itemfile) {
+					$this->positions[$itemfile->position] = $itemfile->name;
+					$this->titles[$itemfile->position] = $itemfile->title;
+				}
+			}
+		}
 		$this->response = array();
 
 		$this->options = array(
@@ -309,38 +319,18 @@ class UploadHandler
 			$file->deleteUrl .= '&_method=DELETE';
 		}
 
-		if(file_exists($this->get_upload_path().'config.xml'))
-		{
-			$xml = simplexml_load_file($this->get_upload_path().'config.xml');
-
-			// build new titles array
-			if(empty($this->positions))
-			{
-				for($i = 0; $i < count($xml->image); $i++)
-				{
-					$this->positions[(int) $xml->image[$i]->position] = (string) $xml->image[$i]->name;
-					if(empty($this->titles[(int) $xml->image[$i]->position]))
-					{
-						$this->titles[(int) $xml->image[$i]->position] = (string) $xml->image[$i]->title;
-					}
-				}
-			}
-			// initialise image title and position
-			if(in_array($file->name, $this->positions))
-			{
-				foreach($this->positions as $pos => $name)
-				{
-					if($file->name == $name)
-					{
-						$file->position = (int) $pos;
-						$file->title = !empty($this->titles[$pos]) ? $this->titles[$pos] : '';
-						break;
-					}
+		// initialise image title and position tags .xml xml
+		if(in_array($file->name, $this->positions)) {
+			foreach($this->positions as $pos => $name) {
+				if($file->name == $name) {
+					$file->position = (int) $pos;
+					$file->title = !empty($this->titles[$pos]) ? $this->titles[$pos] : '';
+					break;
 				}
 			}
 		}
 
-		if ($this->options['access_control_allow_credentials']) {
+		if($this->options['access_control_allow_credentials']) {
 			$file->deleteWithCredentials = true;
 		}
 	}
@@ -512,7 +502,7 @@ class UploadHandler
 				@$this->options['image_versions']['']['auto_orient'] &&
 				function_exists('exif_read_data') &&
 				($exif = @exif_read_data($uploaded_file)) &&
-				(((int) @$exif['Orientation']) >= 5 )
+				(isset($exif['Orientation']) && ((int) @$exif['Orientation']) >= 5 )
 			) {
 			  $tmp = $img_width;
 			  $img_width = $img_height;
@@ -711,16 +701,17 @@ class UploadHandler
 		return $new_img;
 	}
 
-	protected function gd_orient_image($file_path, $src_img) {
-		if (!function_exists('exif_read_data')) {
+	protected function gd_orient_image($file_path, $src_img)
+	{
+		if(!function_exists('exif_read_data')) {
 			return false;
 		}
 		$exif = @exif_read_data($file_path);
-		if ($exif === false) {
+		if($exif === false) {
 			return false;
 		}
-		$orientation = (int)@$exif['Orientation'];
-		if ($orientation < 2 || $orientation > 8) {
+		$orientation = isset($exif['Orientation']) ? (int) @$exif['Orientation'] : 0;
+		if($orientation < 2 || $orientation > 8) {
 			return false;
 		}
 		switch ($orientation) {
@@ -1465,13 +1456,17 @@ class UploadHandler
 		$response = array();
 		foreach($file_names as $file_name) {
 			$file_path = $this->get_upload_path($file_name);
-			$success = is_file($file_path) && $file_name[0] !== '.' && unlink($file_path);
+			/**
+			 * We prevent files from being deleted because we want to do this in InputFileupload()
+			 */
+			//$success = is_file($file_path) && $file_name[0] !== '.' && unlink($file_path);
+			$success = is_file($file_path) && $file_name[0] !== '.' && true;
 			if ($success) {
 				foreach($this->options['image_versions'] as $version => $options) {
 					if (!empty($version)) {
 						$file = $this->get_upload_path($file_name, $version);
 						if (is_file($file)) {
-							unlink($file);
+							//unlink($file);
 						}
 					}
 				}

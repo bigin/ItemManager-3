@@ -14,7 +14,7 @@ class Util
 		if(file_exists(IM_SETTINGSPATH.'custom.config.php')) { include(IM_SETTINGSPATH.'custom.config.php'); }
 		if($config->debug) { error_reporting(E_ALL); }
 		else { error_reporting(0); }
-		//$config->getSiteUrl();
+		//$config->getScriptUrl();
 		return $config;
 	}
 
@@ -170,6 +170,26 @@ class Util
 	 *
 	 */
 	protected static function removeFilename($filename){@unlink($filename);}
+
+	/**
+	 * Removes dated temporary directories
+	 *
+	 * @return bool
+	 */
+	public static function cleanUpTempContainers()
+	{
+		if(!file_exists(IM_UPLOADPATH)) return false;
+		$tp = (int) imanager('config')->tmpFilesCleanPeriod;
+		foreach(glob(IM_UPLOADPATH.'.tmp_*_*') as $file)
+		{
+			$base = basename($file);
+			$strp = explode('_', $base);
+			// wrong file name, continue
+			if(count($strp) < 3) continue;
+			$storagetime =  time() - (60 * 60 * 24 * $tp);
+			if($strp[1] < $storagetime && $storagetime > 0) { self::delTree($file); }
+		}
+	}
 
 	/**
 	 * ItemManager internal error handler

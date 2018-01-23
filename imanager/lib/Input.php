@@ -23,7 +23,7 @@ class Input
 
 	private function parseUrl() {
 		$currentUrl = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-		$siteRootUrl = $this->config->getSiteUrl();
+		$siteRootUrl = $this->config->getScriptUrl();
 		if(empty($currentUrl)) return;
 		$pathOnly = str_replace($siteRootUrl, '', $currentUrl);
 		$this->buildSegments($pathOnly);

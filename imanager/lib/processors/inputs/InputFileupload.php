@@ -19,18 +19,7 @@ class InputFileupload implements InputInterface
 	public function __construct(Field $field)
 	{
 		$this->field = $field;
-		$this->value = new FileuploadFieldValue();
-
 		$this->timestamp = time();
-		//$this->tmpDir = IM_UPLOADPATH.'.tmp_'.$this->timestamp.'_'
-		/*$this->values->file_name = array();
-		$this->values->path = array();
-		$this->values->fullpath = array();
-		$this->values->url = array();
-		$this->values->fullurl = array();
-		$this->values->title = array();
-		$this->positions = array();
-		$this->titles = array();*/
 	}
 
 
@@ -39,173 +28,105 @@ class InputFileupload implements InputInterface
 
 	public function prepareInput($values, $sanitize = false)
 	{
-		if(!is_array($values)) {
+		/*if(!is_array($values) || !is_array($values['file'])) {
 			$this->errorCode = self::WRONG_VALUE_FORMAT;
 			return false;
+		}*/
+		if(!is_array($values) || !is_array($values['file'])) {
+			$this->remove(null);
+			$this->value = null;
+			Util::cleanUpTempContainers();
+			return true;
 		}
 
+		$categoryid = (int) $this->field->categoryid;
+		$itemid = $this->itemid;
+
+
+		// It might be a new item?
+		if($itemid && !empty($values['timestamp'])) {
+			// 'uploads/.tmp_'.$timestamp.'_'.$categoryid.'.'.$fieldid.'/'
+			$stamp = (int) $values['timestamp'];
+			if(file_exists(IM_UPLOADPATH.".tmp_{$stamp}_{$categoryid}.{$this->field->id}") &&
+				!file_exists(IM_UPLOADPATH."$categoryid.$itemid.{$this->field->id}")) {
+				/*@mkdir(dirname(IM_UPLOADPATH."$categoryid.$itemid.{$this->field->id}"),
+					imanager('config')->chmodDir, true);*/
+				if(!rename(IM_UPLOADPATH.".tmp_{$stamp}_{$categoryid}.{$this->field->id}",
+					IM_UPLOADPATH."$categoryid.$itemid.{$this->field->id}")) {
+					trigger_error('Moving and renaming failed', E_USER_WARNING);
+				}
+			}
+		}
+
+		$newNames = array();
 		// Check outside coming data for correctness
-		foreach($values as $item) {
+		foreach($values['file'] as $pos => $file) {
 			if(!$this->field->categoryid) {
 				$this->errorCode = self::UNDEFINED_CATEGORY_ID;
 				return false;
 			}
+			settype($pos, 'integer');
+			$this->value[$pos] = new FileuploadFieldValue();
+			// Item id isn't empty
+			if($itemid) {
+				if(file_exists(IM_UPLOADPATH."$categoryid.$itemid.{$this->field->id}/$file")) {
+					$this->value[$pos]->set('name', $file);
+					$this->value[$pos]->set('path', IM_SITEROOT."uploads/$categoryid.$itemid.{$this->field->id}/");
+					$this->value[$pos]->set('title', isset($values['title'][$pos]) ?
+						(($sanitize) ? $this->sanitize($values['title'][$pos]) : $values['title'][$pos]) : '');
+					$this->value[$pos]->set('position', $pos);
 
-			$categoryid = (int) $this->field->categoryid;
-			$itemid = $this->itemid;
-
-			// The value must be an array
-			if(!is_array($item)) {
-				$this->errorCode = self::WRONG_VALUE_FORMAT;
-				return false;
-			}
-
-			// Loop through all items now and move them to the right location
-			foreach($item as $key => $value) {
-
-				if(!file_exists($value['path'])) {
-					$errorBuffer[$key]['message'] = 'File does not exist';
-					continue;
+					$newNames[] = $file;
 				}
-			}
 
+			}
 		}
 
-		echo $this->itemid;
+		usort($this->value, array($this, 'sortObjects'));
 
-		//Util::preformat($values);
-
-
-		// imageupload
-		/*if($fieldvalue->type == 'imageupload' || $fieldvalue->type == 'fileupload')
-		{
-			// new item
-			if(empty($_GET['itemid']) && !empty($_POST['timestamp']))
-			{
-				// pass temporary image directory
-				$tmp_image_dir = IM_IMAGE_UPLOAD_DIR.'tmp_'.(int)$_POST['timestamp'].'_'.$categoryid.'/';
-				$fieldinput = $tmp_image_dir;
-			} else
-			{
-				// pass image directory
-				$fieldinput = IM_IMAGE_UPLOAD_DIR.$curitem->id.'.'.$categoryid.'/';
-			}
-
-			// position is send
-			if(isset($_POST['position']) && is_array($_POST['position']))
-			{
-				$InputType->positions = $_POST['position'];
-				$InputType->titles = isset($_POST['title']) ? $_POST['title'] : '';
-
-				if(!file_exists($fieldinput.'config.xml'))
-				{
-					$xml = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><params></params>');
-					$i = 0;
-					foreach($InputType->positions as $filepos => $filename)
-					{
-						$xml->image[$i]->name = $filename;
-						$xml->image[$i]->position = $filepos;
-						$xml->image[$i]->title = !empty($InputType->titles[$filepos])
-							? $InputType->titles[$filepos] : '';
-						$i++;
-					}
-
-				} else
-				{
-					$xml = simplexml_load_file($fieldinput.'config.xml');
-					unset($xml->image);
-					$i = 0;
-					foreach($InputType->positions as $filepos => $filename)
-					{
-						$xml->image[$i]->name = $filename;
-						$xml->image[$i]->position = $filepos;
-						$xml->image[$i]->title = !empty($InputType->titles[$filepos])
-							? $InputType->titles[$filepos] : '';
-						$i++;
-					}
-				}
-				if(is_dir($fieldinput)) $xml->asXml($fieldinput.'config.xml');
-			}
-		}*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-		/*if(!file_exists($value)) return $this->values;
-
-		$temp_arr = array();
-
-
-		if(empty($this->positions) && file_exists($value.'config.xml'))
-		{
-			$xml = simplexml_load_file($value.'config.xml');
-			for($i = 0; $i < count($xml->image); $i++)
-			{
-				$this->positions[(int) $xml->image[$i]->position] = (string) $xml->image[$i]->name;
-				$this->titles[(int) $xml->image[$i]->position] = (string) $xml->image[$i]->title;
-			}
-		}
-		$i = 0;
-		foreach(glob($value.'*') as $file)
-		{
-			if(is_dir($file) || 'xml' == pathinfo($file, PATHINFO_EXTENSION)) continue;
-
+		// The remaining files should be deleted now
+		foreach(glob(IM_UPLOADPATH."$categoryid.$itemid.{$this->field->id}/*") as $file) {
+			if(is_dir($file)) continue;
 			$base = basename($file);
-			$basedir = basename($value);
-
-			$poskey = $i;
-			$title = '';
-			if(!empty($this->positions))
-			{
-				$poskey = array_search($base, $this->positions);
-				$title = $this->titles[$poskey];
+			if(!in_array($base, $newNames)) {
+				// Remove all resized images
+				foreach(glob(IM_UPLOADPATH."$categoryid.$itemid.{$this->field->id}/thumbnail/*x*_$base") as $resized) {
+					$this->remove($resized);
+				}
+				// Remove thumbnail
+				$this->remove(IM_UPLOADPATH."$categoryid.$itemid.{$this->field->id}/thumbnail/$base");
+				// Remove original image
+				$this->remove($file);
 			}
-
-			$temp_arr[$i] = new stdClass();
-			$temp_arr[$i]->file_name = $base;
-			$temp_arr[$i]->position = (int) $poskey;
-			$temp_arr[$i]->path = $value;
-			$temp_arr[$i]->fullpath = $value.$base;
-			$temp_arr[$i]->url = 'data/uploads/imanager/'.$basedir.'/';
-			$temp_arr[$i]->fullurl = 'data/uploads/imanager/'.$basedir.'/'.$base;
-			$temp_arr[$i]->title = $title;
-
-			$i++;
 		}
 
-		usort($temp_arr, array($this, 'sortObjects'));
+		Util::cleanUpTempContainers();
 
-		$this->values->value = $value;
-
-		foreach($temp_arr as $key => $val)
-		{
-			$this->values->file_name[] = $temp_arr[$key]->file_name;
-			$this->values->path[] = $temp_arr[$key]->path;
-			$this->values->fullpath[] = $temp_arr[$key]->fullpath;
-			$this->values->url[] = $temp_arr[$key]->url;
-			$this->values->fullurl[] = $temp_arr[$key]->fullurl;
-			$this->values->title[] = $temp_arr[$key]->title;
-		}
-		// delete empty config file
-		if($i <= 0 && file_exists($value.'config.xml')) {unlink($value.'config.xml');}
-
-		return $this->values;*/
+		return true;
 	}
 
 
-	public function prepareOutput(){return $this->values;}
+	protected function remove($file)
+	{
+		$categoryid = (int) $this->field->categoryid;
+		$itemid = $this->itemid;
+		if(!$file) {
+			if(file_exists(IM_UPLOADPATH."$categoryid.$itemid.{$this->field->id}")) {
+				Util::delTree(IM_UPLOADPATH."$categoryid.$itemid.{$this->field->id}");
+			}
+		} else {
+			if(file_exists($file)) {
+				@unlink($file);
+			}
+		}
+		return true;
+	}
 
 
-	protected function sanitize($value){return imanager('sanitizer')->text($value);}
+	public function prepareOutput(){return $this->value;}
+
+
+	protected function sanitize($value) { return imanager('sanitizer')->text($value); }
 
 
 	private function sortObjects($a, $b)
@@ -219,10 +140,5 @@ class InputFileupload implements InputInterface
 			if($b > $a) {return -1;}
 			else {return 1;}
 		}
-	}
-
-	protected function getFullUrl()
-	{
-		return IM_SITE_URL;
 	}
 }
