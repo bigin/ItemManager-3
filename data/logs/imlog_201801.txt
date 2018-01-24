@@ -1,1 +1,0 @@
-[ 22.01.2018 14:34:36 ] Type: ErrorException; Message: Category name already exists; File: /Applications/MAMP/htdocs/tests/gitlab-projects/framework/imanager/lib/Category.php; Line: 227;
