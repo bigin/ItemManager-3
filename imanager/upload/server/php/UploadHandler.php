@@ -3,6 +3,8 @@
  * jQuery File Upload Plugin PHP Class 8.3.1
  * https://github.com/blueimp/jQuery-File-Upload
  *
+ * Modified by J. Ehret, https://ehret-studio.com, on 23.01.2018
+ *
  * Copyright 2010, Sebastian Tschan
  * https://blueimp.net
  *

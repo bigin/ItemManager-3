@@ -2,8 +2,6 @@
 
 class FieldFileupload implements FieldInterface
 {
-	//public $properties;
-
 	/**
 	 * @var ItemManager
 	 */
@@ -20,11 +18,14 @@ class FieldFileupload implements FieldInterface
 	public $action = null; // '../plugins/imanager/upload/server/php/'
 
 	/**
-	 * @var null|string - URL to the folder where you have stored your static resources
+	 * @var null|string - URL to the IManager root
 	 */
 	public $url = null; // '../plugins/imanager/upload/server/js/'
 
-	public $jsurl = null;
+	/**
+	 * @var null|string - URL to the folder where you have stored your static resources
+	 */
+	public $jsurl = null; // '../plugins/imanager/upload/server/js/'
 
 	/**
 	 * @var null|string - CSS-Class of the field
@@ -126,7 +127,7 @@ class FieldFileupload implements FieldInterface
 				'categoryid' => $this->categoryid,
 				'fieldid' => $this->fieldid,
 				'timestamp' => $this->timestamp,
-			), true, array()
+			), array(), true
 		);
 	}
 

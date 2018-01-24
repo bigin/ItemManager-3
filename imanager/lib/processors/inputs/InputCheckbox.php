@@ -1,23 +1,25 @@
-<?php
+<?php namespace Imanager;
+
 class InputCheckbox implements InputInterface
 {
-	protected $values;
+	public $value;
+
 	protected $field;
+
+	public $errorCode = null;
 
 	public function __construct(Field $field)
 	{
 		$this->field = $field;
-		$this->values = new stdClass();
-		$this->values->value = null;
+		$this->value = null;
 	}
 
-	public function prepareInput($value, $sanitize=false)
-	{
-		$this->values->value = ($value > 0) ? 1 : 0;
-		return $this->values;
+	public function prepareInput($value, $sanitize = false) {
+		$this->value = ($value) ? true : false;
+		return true;
 	}
 
-	public function prepareOutput(){return $this->values;}
+	public function prepareOutput() { return (boolean) $this->value; }
 
-	protected function sanitize($value){return imanager('sanitizer')->text($value);}
+	protected function sanitize($value) { return (boolean) $value; }
 }

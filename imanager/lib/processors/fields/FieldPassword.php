@@ -1,8 +1,72 @@
-<?php
+<?php namespace Imanager;
+
 class FieldPassword implements FieldInterface
 {
-	public $properties;
-	protected $tpl;
+	/**
+	 * @var ItemManager
+	 */
+	protected $imanager;
+
+	/**
+	 * @var null|string - Real field name
+	 */
+	public $name = null;
+
+
+	public $type = null;
+
+	/**
+	 * @var null|string - CSS-Class of the field
+	 */
+	public $class = null;
+
+	/**
+	 * @var null|string - CSS-ID of the field
+	 */
+	public $id = null;
+
+	/**
+	 * @var null|int - Real field id
+	 */
+	public $fieldid = null;
+
+	/**
+	 * @var FieldConfigs|null
+	 */
+	public $configs = null;
+
+	/**
+	 * @var null|mixed - Field value
+	 */
+	public $value = null;
+
+	/**
+	 * @var null|int - Field size attribute
+	 */
+	public $size = null;
+
+
+	public $required = null;
+
+
+	public $maxlength = null;
+
+	/**
+	 * @var null|int - Category id
+	 */
+	public $categoryid = null;
+
+	/**
+	 * @var null|int - Item id
+	 */
+	public $itemid = null;
+
+	/**
+	 * @var array Default configs
+	 */
+	protected $defaults = array(
+
+	);
 
 	public function __construct(TemplateEngine $tpl)
 	{

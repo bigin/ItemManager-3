@@ -22,16 +22,10 @@ class InputFileupload implements InputInterface
 		$this->timestamp = time();
 	}
 
-
 	public function __set($name, $value) { $this->$name = $value; }
-
 
 	public function prepareInput($values, $sanitize = false)
 	{
-		/*if(!is_array($values) || !is_array($values['file'])) {
-			$this->errorCode = self::WRONG_VALUE_FORMAT;
-			return false;
-		}*/
 		if(!is_array($values) || !is_array($values['file'])) {
 			$this->remove(null);
 			$this->value = null;
@@ -41,7 +35,6 @@ class InputFileupload implements InputInterface
 
 		$categoryid = (int) $this->field->categoryid;
 		$itemid = $this->itemid;
-
 
 		// It might be a new item?
 		if($itemid && !empty($values['timestamp'])) {

@@ -14,7 +14,7 @@ class InputPassword implements InputInterface
 		$this->value = new PasswordFieldValue();
 	}
 
-	public function prepareInput(s$value, $sanitize = false)
+	public function prepareInput($value, $sanitize = false)
 	{
 		if(!is_array($value)) {
 			$this->errorCode = self::WRONG_VALUE_FORMAT;

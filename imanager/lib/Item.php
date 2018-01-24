@@ -129,7 +129,9 @@ class Item extends FieldMapper
 		$maxid = 1;
 		if(file_exists(IM_BUFFERPATH.'items/'.(int) $this->categoryid.'.items.php')) {
 			$items = include(IM_BUFFERPATH.'items/'.(int) $this->categoryid.'.items.php');
-			if(is_array($items)) { $maxid = (max(array_keys($items))+1);}
+			if(is_array($items)) {
+				$maxid = !empty($items) ? (max(array_keys($items))+1) : 1;
+			}
 		}
 		return $maxid;
 	}

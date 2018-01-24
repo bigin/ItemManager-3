@@ -1,28 +1,38 @@
-<?php
+<?php namespace Imanager;
+
 class InputDropdown implements InputInterface
 {
-	protected $values;
+	public $value;
+
 	protected $field;
+
+	public $errorCode = null;
 
 	public function __construct(Field $field)
 	{
 		$this->field = $field;
-		$this->values = new stdClass();
-		$this->values->value = null;
+		$this->value = '';
 	}
 
-	public function prepareInput($value, $sanitize=false)
+	public function prepareInput($value, $sanitize = false)
 	{
-		$this->values->value = empty($sanitize) ? $value : $this->sanitize($value);
+		$this->value = ($sanitize) ? $this->sanitize($value) : $value;
 		// check input required
-		if(!empty($this->field->required) && $this->field->required == 1)
-		{
-
-			if(empty($this->values->value))
-				return self::ERR_REQUIRED;
+		if($this->field->required && empty($this->value)) {
+			$this->errorCode = self::EMPTY_REQUIRED;
+			return false;
 		}
-
-		return $this->values;
+		// check min value length
+		if(!empty($this->field->minimum) && mb_strlen($this->value, 'UTF-8') < (int) $this->field->minimum) {
+			$this->errorCode = self::ERR_MIN_LENGTH;
+			return false;
+		}
+		// check input max value
+		if(!empty($this->field->maximum) && mb_strlen($this->value, 'UTF-8') > (int) $this->field->maximum) {
+			$this->errorCode = self::ERR_MAX_LENGTH;
+			return false;
+		}
+		return true;
 	}
 
 	public function prepareOutput(){return $this->values;}

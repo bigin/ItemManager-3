@@ -6,16 +6,6 @@ class InputDecimal implements InputInterface
 
 	protected $field;
 
-	// protected $precision = 10;
-
-	const EMPTY_REQUIRED = -1;
-
-	const ERR_MIN_LENGTH = -2;
-
-	const ERR_MAX_LENGTH = -3;
-
-	const WRONG_VALUE_FORMAT = -4;
-
 	public $errorCode = null;
 
 	public function __construct(Field $field)
