@@ -1,7 +1,11 @@
 RewriteEngine On
 AddDefaultCharset UTF-8
 
-RewriteBase /
+Options -Indexes
+Options +SymLinksIfOwnerMatch
+# Options +SymLinksifOwnerMatch
+
+# RewriteBase /
 
 # Allow harmless files
 RewriteCond %{REQUEST_URI} !\.(?:css|js|jpe?g|gif|png)$ [NC]
@@ -17,4 +21,6 @@ RewriteCond %{REQUEST_URI} (^|/)imanager($|/.*$) [OR]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !(favicon\.ico|robots\.txt)
-RewriteRule ^(.*)$ index.php?id=$1 [L,QSA]
+# Used for testing purposes
+# RewriteRule ^(.*)$ index.php?id=$1 [L,QSA]
+RewriteRule ^.*$ index.html [L,QSA]
