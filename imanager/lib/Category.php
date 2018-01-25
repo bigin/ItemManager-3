@@ -126,7 +126,7 @@ class Category extends Object
 	{
 		$this->init();
 		$this->imanager->itemMapper->init($this->id);
-		return $this->imanager->itemMapper->getItems($stat, $length, $items);
+		return $this->imanager->itemMapper->getItems($selector, $length, $items);
 	}
 
 	public function sort($filterby = 'position', $order = 'asc',  $offset = 0, $length = 0, array $items = array())

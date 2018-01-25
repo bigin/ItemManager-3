@@ -182,6 +182,11 @@ class Field extends Object
 				$this->{$key} = $sanitizer->fieldName($val, false, $this->imanager->config->maxFieldNameLength);
 			} elseif($key == 'type') {
 				$this->{$key} = $sanitizer->fieldName($val);
+			} elseif($key == 'default') {
+				if(is_bool($val)) { $this->{$key} = $val; }
+				elseif(is_array($val)) { $this->{$key} = $val; }
+				elseif(is_numeric($val)) { $this->{$key} = $val; }
+				else { $this->{$key} = ($sanitize) ? $sanitizer->text($val) : $val; }
 			} else {
 				$this->{$key} = ($sanitize) ? $sanitizer->text($val) : $val;
 			}
