@@ -235,7 +235,7 @@ class Item extends FieldMapper
 
 		// Set empty values to default defined field value
 		foreach($this->fields as $key => $field) {
-			if(!isset($this->{$field->name}) || !$this->{$field->name}) { $this->{$field->name} = $field->default; }
+			if(!isset($this->{$field->name}) || !isset($this->{$field->name})) { $this->{$field->name} = $field->default; }
 		}
 
 		$im = $this->imanager->itemMapper;
