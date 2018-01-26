@@ -1,0 +1,5 @@
+[ 25.01.2018 13:05:34 ] Undefined variable: cmd in /Applications/MAMP/htdocs/tests/gitlab-projects/index.php on line 54
+[ 25.01.2018 20:32:40 ] Undefined variable: stat in /Applications/MAMP/htdocs/tests/gitlab-projects/framework/imanager/lib/Category.php on line 129
+[ 25.01.2018 20:47:23 ] Undefined variable: stat in /Applications/MAMP/htdocs/tests/gitlab-projects/framework/imanager/lib/Category.php on line 129
+[ 25.01.2018 21:15:06 ] Undefined variable: users in /Applications/MAMP/htdocs/tests/gitlab-projects/index.php on line 44
+[ 25.01.2018 21:44:34 ] var_export does not handle circular references in /Applications/MAMP/htdocs/tests/gitlab-projects/framework/imanager/lib/Item.php on line 254

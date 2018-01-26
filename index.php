@@ -1,4 +1,4 @@
-<?php include('imanager.php'); ?>
+<?php include('framework/imanager.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +12,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 	<!-- Style sheet link -->
-	<link href="css/main.css" rel="stylesheet" type="text/css" media="all">
+	<!--<link href="css/main.css" rel="stylesheet" type="text/css" media="all">-->
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
 
 	<!-- js stuff -->
@@ -38,6 +38,14 @@
 </header>
 <main role="main">
 <?php
+$category = $imanager->getCategory('name=My Test Category');
+if($category) {
+	$users = $category->getItems('active=');
+	$users = $category->getItems('name!=', 0, $users);
+	Imanager\Util::preformat($users);
+}
+
+
 
 /*$category = new \Imanager\Category();
 $category->set('name', 'My Bla Category');
@@ -79,7 +87,7 @@ $newField->save();
 
 // Creating new categories
 /*$category = new \Imanager\Category();
-$category->set('name', 'My Thrid Category');
+$category->set('name', 'A Test Category');
 $category->save();*/
 
 // Creating multiple categories in a loop
@@ -328,7 +336,7 @@ echo $output;*/
 /**
  * Create new image with images
  */
-$category = $imanager->getCategory(1);
+/*$category = $imanager->getCategory(1);
 $field = $category->getField('name=images');
 $fieldMarkup = new \Imanager\FieldFileupload();
 $timestamp_images = time();
@@ -369,8 +377,8 @@ if($item && $imanager->input->post->action == 'save')
 
 echo '<form action="./" method="post">';
 
-$fieldMarkup->set('url', '');
-$fieldMarkup->set('action', 'imanager/upload/server/php/index.php');
+$fieldMarkup->set('url', 'framework/');
+$fieldMarkup->set('action', 'framework/imanager/upload/server/php/index.php');
 $fieldMarkup->set('id', $field->name);
 $fieldMarkup->set('categoryid', $field->categoryid);
 $fieldMarkup->set('itemid', $item->id);
@@ -385,9 +393,7 @@ echo $fieldMarkup->renderJsLibs();
 echo '<input type="hidden" name="action" value="save">';
 echo '<button type="submit">Save</button>';
 
-echo '</form>';
-
-
+echo '</form>';*/
 
 /**
  * Imanager's file upload form with multiple upload fields, example:
@@ -476,6 +482,21 @@ if($item->files) {
 		echo '<img src="' . $resized->url . '" width="300">';
 	}
 }*/
+
+// Creating input field markup automaticlly
+/*$category = $imanager->getCategory('name=My Test Category');
+if($category) {
+	foreach($category->fields as $field) {
+
+		$fieldType = '\Imanager\Field'.ucfirst($field->type);
+		$fieldMarkup = new $fieldType();
+		$fieldMarkup->set('name', $field->name);
+		$fieldMarkup->set('value', '');
+
+		echo $fieldMarkup->render();
+	}
+}*/
+
 ?>
 </main>
 <footer role="contentinfo">

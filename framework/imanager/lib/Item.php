@@ -137,7 +137,7 @@ class Item extends FieldMapper
 	}
 
 	/**
-	 * A secure method to set the value of an attribute or field.
+	 * A secure method to set the value of an attribute or item.
 	 * Used for internal purposes, users are recommended to write
 	 * their own function for this purpose.
 	 *
