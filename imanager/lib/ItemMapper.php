@@ -97,8 +97,9 @@ class ItemMapper extends Mapper
 	 *
 	 * @return int
 	 */
-	public function countItems(array $items=array())
-	{return !empty($items) ? count($items) : count($this->items);}
+	public function countItems(array $items=array()) {
+		return !empty($items) ? count($items) : count($this->items);
+	}
 
 	/**
 	 * Get the Item matching the given selector string without exclusions. Returns an Item, or a NULL if not found.
@@ -112,9 +113,9 @@ class ItemMapper extends Mapper
 	{
 		if($items) $this->items = $items;
 		// No items selected
-		if(empty($this->items)) return false;
+		if(empty($this->items)) return null;
 		// A nummeric value, id was entered?
-		if(is_numeric($selector)) return !empty($this->items[$selector]) ? $this->items[$selector] : false;
+		if(is_numeric($selector)) return !empty($this->items[$selector]) ? $this->items[$selector] : null;
 		// Separate selector
 		$data = explode('=', $selector, 2);
 		$key = strtolower(trim($data[0]));
@@ -129,13 +130,13 @@ class ItemMapper extends Mapper
 		} elseif($num == 2) {
 			$pat = '/'.strtolower(trim(str_replace('%', '', $val))).'/';
 		}
-		if(false !== strpos($key, ' ')) return false;
+		if(false !== strpos($key, ' ')) return null;
 		// Searching for entered value
 		foreach($this->items as $itemkey => $item) {
 			if(!$pat && strtolower($item->{$key}) == strtolower($val)) return $item;
 			elseif($pat && preg_match($pat, strtolower($item->{$key}))) return $item;
 		}
-		return false;
+		return null;
 	}
 
 	/**
@@ -250,100 +251,25 @@ class ItemMapper extends Mapper
 	 */
 	public function getItems($selector, $length = 0, array $items = array())
 	{
-		$offset = 0;//($this->imanager->input->pageNumber) ? (($this->imanager->input->pageNumber -1) * $length +1) : 0;
+		$offset = 0;
 		settype($length, 'integer');
 		// reset offset
 		$offset = ($offset > 0) ? $offset-1 : $offset;
-
-		//if($offset > 0 && $length > 0 && $offset >= $length) return false;
-
 		if(!$items) $items = $this->items;
-
 		// nothing to select
-		if(empty($items)) return false;
+		if(empty($items)) return null;
 
-		$treads = array();
-		// All parameter have to match the data
-		if(false !== strpos($selector, '&&'))
-		{
-			$treads = explode('&&', $selector, 2);
-			$parts[] = trim($treads[0]);
-			$parts[] = trim($treads[1]);
-
-			$sepitems = array();
-			foreach($parts as $part) {
-				$sepitems[] = $this->applySearchPattern($items, $part);
-			}
-			if(!empty($sepitems[0]) && !empty($sepitems[1]))
-			{
-				$arr = array_map('unserialize', array_intersect(array_map('serialize', $sepitems[0]),
-					array_map('serialize', $sepitems[1])));
-
-				// limited output
-				if(!empty($arr) && ($offset > 0 || $length > 0)) {
-					//if($length == 0) $len = null;
-					$arr = array_slice($arr, $offset, $length, true);
-				}
-				return $this->reviseItemIds($arr);
-			}
-			// only one parameter have to match the data
-		} elseif(false !== strpos($selector, '||'))
-		{
-			$treads = explode('||', $selector, 2);
-			$parts[] = trim($treads[0]);
-			$parts[] = trim($treads[1]);
-
-			$sepitems = array();
-			foreach($parts as $part)
-			{
-				$sepitems[] = $this->applySearchPattern($items, $part);
-			}
-			if(!empty($sepitems[0]) || !empty($sepitems[1]))
-			{
-				if(is_array($sepitems[0]) && is_array($sepitems[1]))
-				{
-					// limited output
-					if(!empty($sepitems[0]) && ($offset > 0 || $length > 0)) {
-						//if($length == 0) $len = null;
-						$sepitems[0] = array_slice($sepitems[0], $offset, $length, true);
-						$sepitems[1] = array_slice($sepitems[1], $offset, $length, true);
-						$return = array_merge($sepitems[0], $sepitems[1]);
-						return $this->reviseItemIds(array_slice($return, $offset, $length, true));
-					}
-					return $this->reviseItemIds(array_merge($sepitems[0], $sepitems[1]));
-
-				} elseif(is_array($sepitems[0]) && !is_array($sepitems[1]))
-				{
-					// limited output
-					if(!empty($sepitems[0]) && ($offset > 0 || $length > 0)) {
-						//if($length == 0) $len = null;
-						$sepitems[0] = array_slice($sepitems[0], $offset, $length, true);
-					}
-					return $this->reviseItemIds($sepitems[0]);
-				} else
-				{
-					// limited output
-					if(!empty($sepitems[1]) && ($offset > 0 || $length > 0)) {
-						//if($length == 0) $len = null;
-						$sepitems[1] = array_slice($sepitems[1], $offset, $length, true);
-					}
-					return $this->reviseItemIds($sepitems[1]);
-				}
-			}
-			// If $selector contains only one or empty selector
-		} else
-		{
-			if(!empty($selector)) $arr = $this->applySearchPattern($items, $selector);
-			else $arr = $items;
-			// limited output
-			if(!empty($arr) && ($offset > 0 || $length > 0)) {
-				//if($length == 0) $len = null;
-				$arr = array_slice($arr, $offset, $length, true);
-			}
-
+		if(!empty($selector)) $arr = $this->applySearchPattern($items, $selector);
+		else $arr = $items;
+		// limited output
+		if(!empty($arr) && ($offset > 0 || $length > 0)) {
+			//if($length == 0) $len = null;
+			$arr = array_slice($arr, $offset, $length, true);
+		} else if(!empty($arr)) {
 			return $this->reviseItemIds($arr);
 		}
-		return false;
+
+		return null;
 	}
 
 
@@ -370,9 +296,6 @@ class ItemMapper extends Mapper
 		$offset = ($offset) ? $offset :
 			(($this->imanager->input->pageNumber) ? (($this->imanager->input->pageNumber -1) * $length) : 0);
 
-		/*$offset = ($offset > 0) ? $offset-1 : (($this->imanager->input->pageNumber) ?
-			(($this->imanager->input->pageNumber -1) * $length +1) : 1);*/
-
 		$localItems = !empty($items) ? $items : $this->items;
 
 		if(empty($localItems)) return false;
@@ -398,7 +321,7 @@ class ItemMapper extends Mapper
 	}
 
 	/**
-	 * Select items by using several search patterns
+	 * Select items by using search patterns
 	 *
 	 * @param array $items - An array of categories to be processed
 	 * @param $selector - Selector
@@ -417,7 +340,7 @@ class ItemMapper extends Mapper
 			$data = explode($pval, $selector, 2);
 			$key = strtolower(trim($data[0]));
 			$val = trim($data[1]);
-			if(false !== strpos($key, ' ')) return false;
+			if(false !== strpos($key, ' ')) return null;
 
 			$num = substr_count($val, '%');
 			$pat = false;
@@ -434,7 +357,7 @@ class ItemMapper extends Mapper
 
 			foreach($items as $itemkey => $item)
 			{
-				//if(!array_key_exists($key, $item)) { continue; }
+				if(!isset($item->$key)) { continue; }
 				if($pkey == 0) {
 					if($item->$key < $val) continue;
 				} elseif($pkey == 1) {
@@ -453,9 +376,9 @@ class ItemMapper extends Mapper
 			}
 
 			if(!empty($res)) return $res;
-			return false;
+			return null;
 		}
-		return false;
+		return null;
 	}
 
 	/**
