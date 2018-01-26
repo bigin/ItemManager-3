@@ -265,6 +265,7 @@ class ItemMapper extends Mapper
 		if(!empty($arr) && ($offset > 0 || $length > 0)) {
 			//if($length == 0) $len = null;
 			$arr = array_slice($arr, $offset, $length, true);
+			return $this->reviseItemIds($arr);
 		} else if(!empty($arr)) {
 			return $this->reviseItemIds($arr);
 		}
@@ -358,6 +359,10 @@ class ItemMapper extends Mapper
 			foreach($items as $itemkey => $item)
 			{
 				if(!isset($item->$key)) { continue; }
+				/*if(($key == 'categoryid' || $key == 'id' || $key == 'position' || $key == 'created' ||
+					$key == 'updated') && !is_numeric($val)) {
+					return null;
+				}*/
 				if($pkey == 0) {
 					if($item->$key < $val) continue;
 				} elseif($pkey == 1) {

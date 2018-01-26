@@ -120,96 +120,28 @@ class CategoryMapper extends Mapper
 	 *
 	 * @return boolean|array    - Array of categories
 	 */
-	public function getCategories($selector, $length = 0, array $categories=array())
+	public function getCategories($selector, $length = 0, array $categories = array())
 	{
 		$offset = 0;
 		//settype($offset, 'integer');
 		settype($length, 'integer');
 		// reset offset
 		$offset = ($offset > 0) ? $offset-1 : $offset;
-
 		if($offset > 0 && $length > 0 && $offset >= $length) return null;
-
 		if(!$categories) $categories = $this->categories;
-
 		// nothing to select
 		if(empty($categories)) return null;
-
-		$treads = array();
-		// All parameter have to match selector
-		if(false !== strpos($selector, '&&')) {
-			$treads = explode('&&', $selector, 2);
-			$parts[] = trim($treads[0]);
-			$parts[] = trim($treads[1]);
-
-			$sepitems = array();
-			foreach($parts as $part) {
-				$sepitems[] = $this->applySearchPattern($categories, $part);
-			}
-			if(!empty($sepitems[0]) && !empty($sepitems[1])) {
-				$arr = array_map('unserialize', array_intersect(array_map('serialize', $sepitems[0]), array_map('serialize', $sepitems[1])));
-				// limited output
-				if(!empty($arr) && ( $offset > 0 ||  $length > 0)) {
-					//if( $length == 0) $len = null;
-					$arr = array_slice($arr, $offset, $length, true);
-				}
-				return $this->reviseItemIds($arr);
-			}
-		// Only one parameter have to match the data
-		} elseif(false !== strpos($selector, '||'))
-		{
-			$treads = explode('||', $selector, 2);
-			$parts[] = trim($treads[0]);
-			$parts[] = trim($treads[1]);
-
-			$sepitems = array();
-			foreach($parts as $part)
-			{
-				$sepitems[] = $this->applySearchPattern($categories, $part);
-			}
-			if(!empty($sepitems[0]) || !empty($sepitems[1]))
-			{
-				if(is_array($sepitems[0]) && is_array($sepitems[1])) {
-					// limited output
-					if(!empty($sepitems[0]) && ( $offset > 0 ||  $length > 0)) {
-						//if( $length == 0) $len = null;
-						$sepitems[0] = array_slice($sepitems[0], $offset, $length, true);
-						$sepitems[1] = array_slice($sepitems[1], $offset, $length, true);
-						$return = array_merge($sepitems[0], $sepitems[1]);
-						return $this->reviseItemIds(array_slice($return, $offset, $length, true));
-					}
-					return $this->reviseItemIds(array_merge($sepitems[0], $sepitems[1]));
-
-				} elseif(is_array($sepitems[0]) && !is_array($sepitems[1])) {
-					// limited output
-					if(!empty($sepitems[0]) && ($offset > 0 || $length > 0)) {
-						//if( $length == 0) $len = null;
-						$sepitems[0] = array_slice($sepitems[0],  $offset,  $length, true);
-					}
-					return $this->reviseItemIds($sepitems[0]);
-				} else
-				{
-					// limited output
-					if(!empty($sepitems[1]) && ( $offset > 0 ||  $length > 0)) {
-						//if( $length == 0) $len = null;
-						$sepitems[1] = array_slice($sepitems[1], $offset, $length, true);
-					}
-					return $this->reviseItemIds($sepitems[1]);
-				}
-			}
-		// If $selector contains only one or empty selector
-		} else
-		{
-			if(!empty($selector)) $arr = $this->applySearchPattern($categories, $selector);
-			else $arr = $categories;
-			// limited output
-			if(!empty($arr) && ($offset > 0 || $length > 0)) {
-				//if( $length == 0) $len = null;
-				$arr = array_slice($arr, $offset, $length, true);
-			}
-
+		if(!empty($selector)) $arr = $this->applySearchPattern($categories, $selector);
+		else $arr = $categories;
+		// limited output
+		if(!empty($arr) && ($offset > 0 || $length > 0)) {
+			//if( $length == 0) $len = null;
+			$arr = array_slice($arr, $offset, $length, true);
+			return $this->reviseItemIds($arr);
+		} else if(!empty($arr)) {
 			return $this->reviseItemIds($arr);
 		}
+
 		return null;
 	}
 
@@ -250,7 +182,11 @@ class CategoryMapper extends Mapper
 
 			foreach($items as $itemkey => $item)
 			{
-				//if(!array_key_exists($key, $item)) { continue; }
+				if(!isset($item->$key)) { continue; }
+				/*if(($key == 'id' || $key == 'position' || $key == 'created' || $key == 'updated') &&
+					!is_numeric($val)) {
+					return null;
+				}*/
 				if($pkey == 0) {
 					if($item->$key < $val) continue;
 				} elseif($pkey == 1) {
@@ -318,18 +254,6 @@ class CategoryMapper extends Mapper
 		return $this->categories;
 	}
 
-	/**
-	 * Deletes the category
-	 *
-	 * @param Category $cat
-	 * @return bool
-	 */
-	/*public function destroyCategory(Category $cat)
-	{
-		if(file_exists(IM_CATEGORYPATH . $cat->id . IM_CATEGORY_SUFFIX))
-			return unlink(IM_CATEGORYPATH . $cat->id . IM_CATEGORY_SUFFIX);
-		return false;
-	}*/
 
 	/**
 	 * Reverse the array of items
