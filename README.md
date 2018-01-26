@@ -32,7 +32,7 @@ Please be careful with file permissions like 777 or 666. Those permissions effec
 Please make sure that the `.htaccess` file that comes with IManager, is in IManager's root folder – it's usually where your `imanager.php` file is locaded. 
 
 ##### Global config   
-When you run IManager, it automatically includes your project-specific global configuration entries stored in `custom.config.php` file. By default, there is no custom.config.php file in your `/your-project-dir/data/settings/` directory, you have to create this file first. The directory `/your-project-dir/imanager/inc/` contains a `config.php` file (This is the default configuration file and should not be changed). You will need to make a copy of this file, place it in the `/your-project-dir/data/settings/` directory and re-name it to `custom.config.php`, that one will take priority over default IManager settings. Now, you can modify all variables listed in the custom.config.php suit your needs.
+When you run IManager, it automatically includes your project-specific global configuration entries stored in `custom.config.php` file. By default, there is no custom.config.php file in your `/your-project/data/settings/` directory, you have to create this file first. The directory `/your-project/imanager/inc/` contains a `config.php` file (This is the default configuration file and should not be changed). You will need to make a copy of this file, place it in the `/your-project/data/settings/` directory and re-name it to `custom.config.php`, that one will take priority over default IManager settings. Now, you can modify all variables listed in the custom.config.php suit your needs.
 
 ## Design
 
