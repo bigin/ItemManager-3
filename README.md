@@ -5,13 +5,13 @@ Project is currently in development stage. Please check back here frequently, ho
 
 ## Here are some tips for getting started
 
-- [Configure IManager](./#configure-imanager)    
-    - [.htaccess File](./#htaccess-file)
-    - [Global Configuration](./#global-config) 
-- [Design](./#design)   
-- [File Structure](./#file-structure)   
-- [Getting Started](./#getting-started)
-    - [Working With Categories](./#working-with-categories)   
+- [Configure IManager](#configure-imanager)    
+    - [.htaccess File](#htaccess-file)
+    - [Global Configuration](#global-config) 
+- [Design](#design)   
+- [File Structure](#file-structure)   
+- [Getting Started](#getting-started)
+    - [Working With Categories](#working-with-categories)   
     - [Working With Fields](./#working-with-fields) 
     - [Working With Items](./#working-with-items)
         - [Accessing Fields/Attributes](./#accessing-fieldsattributes)
