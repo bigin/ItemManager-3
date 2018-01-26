@@ -1,4 +1,4 @@
-<?php include('framework/imanager.php'); ?>
+<?php include('imanager.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
