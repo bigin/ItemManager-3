@@ -136,7 +136,7 @@ class FieldFileupload implements FieldInterface
 		$this->jsurl = $this->url.'imanager/upload/js/';
 		ob_start(); ?>
 		<!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
-		<script src="<?php echo $this->jsurl; ?>vendor/jquery.ui.widget.js"></script>
+		<script src="<?php echo $this->jsurl; ?>jquery.ui.widget.js"></script>
 		<!-- The Templates plugin is included to render the upload/download listings -->
 		<script src="<?php echo $this->jsurl; ?>tmpl.min.js"></script>
 		<!-- The Load Image plugin is included for the preview images and image resizing functionality -->
