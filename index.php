@@ -40,8 +40,10 @@
 <?php
 $category = $imanager->getCategory('name=My Test Category');
 if($category) {
-	$users = $category->getItems('active=');
-	$users = $category->getItems('name!=', 0, $users);
+	//$users = $category->getItems('active='.true);
+	$users = $category->getItems('id>3&&id<5&&active!=1');
+	var_dump($users);
+	//$users = $category->getItems('name!=', 0, $users);
 	Imanager\Util::preformat($users);
 }
 
