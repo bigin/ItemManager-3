@@ -12,10 +12,10 @@ Project is currently in development stage. Please check back here frequently, ho
 - [File Structure](#file-structure)   
 - [Getting Started](#getting-started)
     - [Working With Categories](#working-with-categories)   
-    - [Working With Fields](./#working-with-fields) 
-    - [Working With Items](./#working-with-items)
-        - [Accessing Fields/Attributes](./#accessing-fieldsattributes)
-        - [Retrieving Items & Creating A Number Of Items](./#retrieving-items-creating-a-number-of-items)    
+    - [Working With Fields](#working-with-fields) 
+    - [Working With Items](#working-with-items)
+        - [Accessing Fields/Attributes](#accessing-fieldsattributes)
+        - [Retrieving Items & Creating A Number Of Items](#retrieving-items-creating-a-number-of-items)    
 
 
 
