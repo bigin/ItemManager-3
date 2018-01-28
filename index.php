@@ -38,16 +38,16 @@
 </header>
 <main role="main">
 <?php
+
 $category = $imanager->getCategory('name=My Test Category');
 if($category) {
-	//$users = $category->getItems('active='.true);
-	$users = $category->getItems('id>3&&id<5&&active!=1');
-	var_dump($users);
-	//$users = $category->getItems('name!=', 0, $users);
-	Imanager\Util::preformat($users);
+	$val = '5B6';
+	if(is_numeric($val)) {
+		$users = $category->getItems("id=$val");
+	}
 }
-
-
+// let your result pass through the filter again
+\Imanager\Util::preformat($users);
 
 /*$category = new \Imanager\Category();
 $category->set('name', 'My Bla Category');
