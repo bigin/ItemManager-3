@@ -122,13 +122,28 @@ class Category extends Object
 	 *
 	 * @return mixed
 	 */
-	public function getItems($selector, $length = 0, array $items = array())
+	public function getItems($selector = '', $length = 0, array $items = array())
 	{
 		$this->init();
 		$this->imanager->itemMapper->init($this->id);
 		return $this->imanager->itemMapper->getItems($selector, $length, $items);
 	}
 
+	/**
+	 * A public method for sorting the items
+	 *
+	 * You can sort items by using any attribute.
+	 * Default sortng attribute is "position":
+	 * ItemMapper::sort('position', 'DESC', $offset, $length, $your_items_array)
+	 *
+	 * @param string $filterby - Filter by Item attribute
+	 * @param string $order    - The order in which Items are listed
+	 * @param int|null $offset - The first row to return
+	 * @param length $length   - Specifies the maximum number of rows to return
+	 * @param array $items     - Elements to search through or empty if the buffered Items shall be used instead
+	 *
+	 * @return boolean|array   - An array of Item objects
+	 */
 	public function sort($filterby = 'position', $order = 'asc',  $offset = 0, $length = 0, array $items = array())
 	{
 		$this->init();

@@ -45,7 +45,7 @@ class ItemManager extends Manager
 	 *
 	 * @return mixed|array - An array of Category objects
 	 */
-	public function getCategories($selector, $length = 0, array $categories = array()) {
+	public function getCategories($selector = '', $length = 0, array $categories = array()) {
 		if(empty($this->categoryMapper->categories) && !$categories) {
 			$this->categoryMapper->init();
 		}
@@ -63,6 +63,33 @@ class ItemManager extends Manager
 			$this->categoryMapper->init();
 		}
 		return $this->categoryMapper->getCategory($selector, $categories);
+	}
+
+	/**
+	 * A public method for sorting the categories and items
+	 *
+	 * You can sort categories/items by using any attribute.
+	 * Default sortng attribute is "position":
+	 * ItemMapper::sort('position', 'DESC', $offset, $length, $your_items_array)
+	 *
+	 * @param string $filterby - Filter by Item attribute
+	 * @param string $order    - The order in which Items are listed
+	 * @param int|null $offset - The first row to return
+	 * @param length $length   - Specifies the maximum number of rows to return
+	 * @param array $items     - Elements to search through or empty if the buffered Items shall be used instead
+	 *
+	 * @return boolean|array   - An array of Item objects
+	 */
+	public function sort($filterby = 'position', $order = 'asc',  $offset = 0, $length = 0, array $items = array())
+	{
+		if($items && (array_values($items)[0] instanceof Item)) {
+			return $this->itemMapper->sort($filterby, $order, $offset, $length, $items);
+		} else if($items && (array_values($items)[0] instanceof Category)) {
+			return $this->categoryMapper->sort($filterby, $order, $offset, $length, $items);
+		}
+
+		trigger_error('Object type is unknown', E_USER_WARNING);
+		return false;
 	}
 
 	/**
