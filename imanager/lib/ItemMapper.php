@@ -140,107 +140,6 @@ class ItemMapper extends Mapper
 	}
 
 	/**
-	 * Find matching item - Finds an item belonging to one category (returns exactly one result)
-	 *
-	 * @param $selector – A search selector: (name=Item Name) for example
-	 * @param array $limit_ids – An optional parameter array, with category id's, to restrict the search process
-	 *                           to specific categories (NOTE: The specifying category id's could speed up the
-	 *                           searsh process!)
-	 *
-	 * @param array $limit_ids
-	 *
-	 * @return bool|mixed
-	 */
-	public function findItem($selector, array $limit_ids = array())
-	{
-		$mapper = imanager()->getCategoryMapper();
-		if(!empty($limit_ids))
-		{
-			foreach($limit_ids as $catid) {
-				$this->init($mapper->categories[(int)$catid]->id);
-				$item = $this->getItem($selector);
-				if(!empty($item)) return $item;
-			}
-			return false;
-		}
-		foreach($mapper->categories as $category)
-		{
-			$this->init($category->id);
-			$item = $this->getItem($selector);
-			if(!empty($item)) return $item;
-		}
-		return false;
-	}
-
-	/**
-	 * Find matching items - Finds all items belonging to one category (returns matching items of a category)
-	 *
-	 * @param $selector – A search selector: (name=Item Name) for example
-	 * @param array $limit_ids – An optional parameter array, with category id's, to restrict the search process
-	 *                           to specific categories (NOTE: The specifying category id's could speed up the
-	 *                           searsh process!)
-	 *
-	 * @return array|bool
-	 */
-	public function findItems($selector, array $limit_ids = array())
-	{
-		$mapper = imanager()->getCategoryMapper();
-		if(!empty($limit_ids))
-		{
-			foreach($limit_ids as $catid) {
-				$this->init($mapper->categories[(int)$catid]->id);
-				$items = $this->getItems($selector);
-				if(!empty($items)) return $items;
-			}
-			return false;
-		}
-		foreach($mapper->categories as $category)
-		{
-			$this->init($category->id);
-			$items = $this->getItems($selector);
-			if(!empty($items)) return $items;
-		}
-		return false;
-	}
-
-	/**
-	 * Find all matching items - Finds all items of all categories (returns matching items of all categories)
-	 *
-	 * @param $selector – A search selector: (name=Item Name) for example
-	 * @param array $limit_ids – An optional parameter array, with category id's, to restrict the search process
-	 *                           to specific categories (NOTE: The specifying category id's could speed up the
-	 *                           searsh process!)
-	 *
-	 * @return array|bool
-	 */
-	public function findAll($selector, array $limit_ids = array())
-	{
-		$allItems = array();
-		$count = 0;
-		$mapper = imanager()->getCategoryMapper();
-		if(!empty($limit_ids))
-		{
-			foreach($limit_ids as $catid) {
-				$this->init($mapper->categories[(int)$catid]->id);
-				$items = $this->getItems($selector);
-				$count += $this->total;
-				if(!empty($items)) $allItems[] = $items;
-			}
-			$this->total = $count;
-			return (!empty($allItems) ? $allItems : false);
-		}
-		foreach($mapper->categories as $category)
-		{
-			$this->init($category->id);
-			$items = $this->getItems($selector);
-			$count += $this->total;
-			if(!empty($items)) $allItems[] = $items;
-		}
-		$this->total = $count;
-		return (!empty($allItems) ? $allItems : false);
-	}
-
-	/**
 	 * Select method for multiple items
 	 *
 	 * @param $selector        - Selector
@@ -434,6 +333,13 @@ class ItemMapper extends Mapper
 		return $result;
 	}
 
+	/**
+	 * Recreates an item buffer completely
+	 *
+	 * @param $category_id
+	 *
+	 * @return bool
+	 */
 	public function rebuild($category_id)
 	{
 		$this->init($category_id);
