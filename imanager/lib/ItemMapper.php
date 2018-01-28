@@ -148,7 +148,7 @@ class ItemMapper extends Mapper
 	 *
 	 * @return array|bool
 	 */
-	public function getItems($selector, $length = 0, array $items = array())
+	public function getItems($selector = '', $length = 0, array $items = array())
 	{
 		$offset = 0;
 		settype($length, 'integer');

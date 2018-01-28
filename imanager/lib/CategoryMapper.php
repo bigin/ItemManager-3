@@ -120,7 +120,7 @@ class CategoryMapper extends Mapper
 	 *
 	 * @return boolean|array    - Array of categories
 	 */
-	public function getCategories($selector, $length = 0, array $categories = array())
+	public function getCategories($selector = '', $length = 0, array $categories = array())
 	{
 		$offset = 0;
 		//settype($offset, 'integer');
