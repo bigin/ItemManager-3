@@ -31,7 +31,7 @@ class ItemManager extends Manager
 	 *
 	 * @return string - Pagination markup
 	 */
-	public function paginate($items, array $params = array(), $argtpls = array()) {
+	public function paginate(& $items, array $params = array(), $argtpls = array()) {
 		return $this->templateParser->renderPagination($items, $params, $argtpls);
 	}
 
