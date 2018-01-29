@@ -188,7 +188,7 @@ class FieldMapper extends Mapper
 	 *
 	 * @return bool
 	 */
-	public function remove(Field & $field)
+	public function remove(Field & $field, $complete = true)
 	{
 		$this->init($field->categoryid);
 		if(!isset($this->fields[$field->name])) {
@@ -201,13 +201,18 @@ class FieldMapper extends Mapper
 			Util::createBackup(dirname($this->path).'/', basename($this->path, '.php'), '.php');
 		}
 		$categoryid = $field->categoryid;
+		$id = $field->id;
 		$export = var_export($this->fields, true);
 		if(false !== file_put_contents($this->path, '<?php return ' . $export . '; ?>')) {
 			@chmod($this->path, $this->imanager->config->chmodFile);
 			$field = null;
 			unset($field);
 			// Now, prepare and re-save all the items of this category
-			$this->imanager->itemMapper->rebuild($categoryid);
+			if($complete) {
+				$this->imanager->itemMapper->rebuild($categoryid, array('removeAssets' => true, 'fieldId' => $id));
+			} else {
+				$this->imanager->itemMapper->rebuild($categoryid);
+			}
 			return true;
 		}
 		trigger_error('Field object could not be deleted', E_USER_WARNING);

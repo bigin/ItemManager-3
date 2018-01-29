@@ -121,10 +121,6 @@ class Manager
 	protected function _imSectionCache() { return new SectionCache(); }
 
 
-
-
-
-
 	// Todo: check is used in 3.0?
 	public function setAdmin($admin)
 	{
@@ -139,35 +135,4 @@ class Manager
 		//$actions = array('imstart');
 		if(function_exists('exec_action')) exec_action('imstart');
 	}
-
-	// Todo: check is used in 3.0?
-	public function renameTmpDir($item)
-	{
-		$err = false;
-		foreach($item->fields as $fieldname => $fieldvalue)
-		{
-			if($fieldvalue->type != 'imageupload' && $fieldvalue->type != 'fileupload') continue;
-
-			$inputClassName = 'Input'.ucfirst($fieldvalue->type);
-			$InputType = new $inputClassName($item->fields->$fieldname);
-
-			// try to rename file directory
-			$newpath = IM_IMAGE_UPLOAD_DIR.$item->id.'.'.$item->categoryid.'/';
-			if(!rename($fieldvalue->value, $newpath))
-				return false;
-
-			$resultinput = $InputType->prepareInput($newpath);
-
-			if(!isset($resultinput) || empty($resultinput))
-				return false;
-
-			foreach($resultinput as $inputputkey => $inputvalue)
-				$item->fields->$fieldname->$inputputkey = $inputvalue;
-		}
-
-		if($item->save() && !$err) return true;
-
-		return false;
-	}
-
 }

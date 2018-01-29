@@ -96,16 +96,17 @@ class ItemManager extends Manager
 	 * Removes one of the child objects
 	 *
 	 * @param Item|Field|Category $obj - The object that you want to delete
+	 * @param bool $complete
 	 *
 	 * @return bool
 	 */
-	public function remove(& $obj)
+	public function remove(& $obj, $complete = true)
 	{
 		if($obj instanceof Item) {
-			return $this->itemMapper->remove($obj);
+			return $this->itemMapper->remove($obj, $complete);
 		}
 		elseif($obj instanceof Field) {
-			return $this->fieldMapper->remove($obj);
+			return $this->fieldMapper->remove($obj, $complete);
 		}
 		elseif($obj instanceof Category) {
 			return $this->categoryMapper->remove($obj);

@@ -310,10 +310,10 @@ class CategoryMapper extends Mapper
 	 *
 	 * @return bool
 	 */
-	public function remove(& $obj)
+	public function remove(& $obj, $complete = true)
 	{
 		if($obj instanceof Category) { return $this->removeCategory($obj); }
-		elseif($obj instanceof Field) { return $this->removeField($obj); }
+		elseif($obj instanceof Field) { return $this->imanager->fieldMappar->remove($obj, $complete); }
 
 		throw new \ErrorException('Object type is unknown');
 		return false;
@@ -381,7 +381,7 @@ class CategoryMapper extends Mapper
 	 *
 	 * @return bool
 	 */
-	protected function removeField(Field & $field)
+	/*protected function removeField(Field & $field, $complete = true)
 	{
 		$this->init($field->categoryid);
 		if(!isset($this->fields[$field->name])) {
@@ -405,5 +405,5 @@ class CategoryMapper extends Mapper
 		}
 		trigger_error('Field object could not be deleted', E_USER_WARNING);
 		return false;
-	}
+	}*/
 }

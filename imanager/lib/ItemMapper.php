@@ -58,10 +58,21 @@ class ItemMapper extends Mapper
 	 *
 	 * @return bool
 	 */
-	public function remove(Item & $item)
+	public function remove(Item & $item, $complete = true)
 	{
 		$this->init($item->categoryid);
 		if(!isset($this->items[$item->id])) return false;
+
+		// delete assets?
+		if($complete) {
+			$itemid = $item->id;
+			$categoryid = $item->categoryid;
+			if(file_exists(IM_UPLOADPATH)) {
+				foreach(glob(IM_UPLOADPATH."$categoryid.$itemid.*") as $file) {
+					if(file_exists($file)) { Util::delTree($file); }
+				}
+			}
+		}
 
 		unset($this->items[$item->id]);
 		// Create a backup if necessary
@@ -340,7 +351,7 @@ class ItemMapper extends Mapper
 	 *
 	 * @return bool
 	 */
-	public function rebuild($category_id)
+	public function rebuild($category_id, array $options = array())
 	{
 		$this->init($category_id);
 		if($this->items) {
@@ -348,6 +359,14 @@ class ItemMapper extends Mapper
 			foreach($this->items as $item) {
 				$item->declutter();
 				$items[$item->id] = $item;
+				// Delete assets related to a field?
+				if($options['removeAssets'] && $options['fieldId']) {
+					if(file_exists(IM_UPLOADPATH)) {
+						foreach(glob(IM_UPLOADPATH."$item->categoryid.$item->id.$options[fieldId]") as $file) {
+							if(file_exists($file)) { Util::delTree($file); }
+						}
+					}
+				}
 			}
 			if($items) {
 				if($this->imanager->config->backupItems) {
