@@ -153,17 +153,18 @@ class Category extends Object
 
 	/**
 	 * @param $obj
+	 * @param bool $complete
 	 *
 	 * @return bool
 	 * @throws \ErrorException
 	 */
-	public function remove(& $obj)
+	public function remove(& $obj, $complete = true)
 	{
 		$this->init();
 		if($obj instanceof Item) {
-			return $this->imanager->itemMapper->remove($obj);
+			return $this->imanager->itemMapper->remove($obj, $complete);
 		} elseif($obj instanceof Field) {
-			return $this->imanager->fieldMapper->remove($obj);
+			return $this->imanager->fieldMapper->remove($obj, $complete);
 		}
 		trigger_error('Object type is unknown', E_USER_WARNING);
 		return false;
