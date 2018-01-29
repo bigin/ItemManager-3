@@ -27,16 +27,13 @@ class Manager
 	public function __construct()
 	{
 		spl_autoload_register(array($this, 'loader'));
-
 		require_once(IM_SOURCEPATH.'processors/FieldInterface.php');
 		require_once(IM_SOURCEPATH.'processors/InputInterface.php');
 		include_once(IM_ROOTPATH.'imanager/phpthumb/ThumbLib.inc.php');
-
 		$this->config = Util::buildConfig();
 		$this->sanitizer = new Sanitizer();
 		$this->input = new Input($this->config, $this->sanitizer);
 		Util::buildLanguage();
-		$this->setActions();
 		set_error_handler(__NAMESPACE__.'\Util::imErrorHandler');
 	}
 
@@ -120,19 +117,4 @@ class Manager
 	 */
 	protected function _imSectionCache() { return new SectionCache(); }
 
-
-	// Todo: check is used in 3.0?
-	public function setAdmin($admin)
-	{
-		$this->admin = $admin;
-	}
-
-	// Todo: check is used in 3.0?
-	// Set Actions
-	public function setActions()
-	{
-		//global $plugins;
-		//$actions = array('imstart');
-		if(function_exists('exec_action')) exec_action('imstart');
-	}
 }
