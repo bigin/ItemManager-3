@@ -39,15 +39,25 @@
 <main role="main">
 <?php
 
-$category = $imanager->getCategory('name=My Test Category');
+/*$category = $imanager->getCategory(1);
 if($category) {
-	$val = '5B6';
-	if(is_numeric($val)) {
-		$users = $category->getItems("id=$val");
-	}
+	$item = $category->getItem(3);
+	$bool = $category->remove($item);
 }
 // let your result pass through the filter again
-\Imanager\Util::preformat($users);
+\Imanager\Util::preformat($item);
+\Imanager\Util::preformat($bool);*/
+
+$category = $imanager->getCategory(1);
+if($category) {
+	$field = $category->getField('name=files');
+	$bool = $category->remove($field);
+}
+// let your result pass through the filter again
+\Imanager\Util::preformat($field);
+\Imanager\Util::preformat($bool);
+
+
 
 /*$category = new \Imanager\Category();
 $category->set('name', 'My Bla Category');
@@ -379,8 +389,8 @@ if($item && $imanager->input->post->action == 'save')
 
 echo '<form action="./" method="post">';
 
-$fieldMarkup->set('url', 'framework/');
-$fieldMarkup->set('action', 'framework/imanager/upload/server/php/index.php');
+$fieldMarkup->set('url', '');
+$fieldMarkup->set('action', 'imanager/upload/server/php/index.php');
 $fieldMarkup->set('id', $field->name);
 $fieldMarkup->set('categoryid', $field->categoryid);
 $fieldMarkup->set('itemid', $item->id);
