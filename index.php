@@ -19,8 +19,9 @@
 </head>
 <body>
 <main role="main">
-	<h1>Easy and Simple to Use</h1>
-	<p>If you're seeing the date format here <strong><?php echo $imanager->config->systemDateFormat; ?></strong>,
+	<h1>IManager</h1>
+	<p><i>IManager is a simple flat-file PHP framework, its extremely lightweight and easy to use.</i></p>
+	<p>If you're seeing the date format here <strong style="color:red"><?php echo $imanager->config->systemDateFormat; ?></strong>,
 		it says IManager has been properly included.</p>
 </main>
 <footer role="contentinfo">
