@@ -35,7 +35,12 @@ class FieldMapper extends Mapper
 		}
 		if(file_exists($this->path)) {
 			$this->fields = include($this->path);
-			$this->total = count($this->fields);
+			if(is_array($this->fields)) {
+				$this->total = count($this->fields);
+			} else {
+				$this->fields = array();
+				$this->total = 0;
+			}
 			return true;
 		}
 		unset($this->fields);
@@ -59,6 +64,7 @@ class FieldMapper extends Mapper
 	public function getField($stat, array $fields=array())
 	{
 		$locfields = !empty($fields) ? $fields : $this->fields;
+		if(!is_array($locfields)) { return null; }
 		// nothing to select
 		if(empty($fields)) {
 			if(!$this->countFields() || $this->countFields() <= 0) { return false; }

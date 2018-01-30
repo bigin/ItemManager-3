@@ -30,7 +30,12 @@ class CategoryMapper extends Mapper
 		}
 		if(file_exists($this->path)) {
 			$this->categories = include($this->path);
-			$this->total = count($this->categories);
+			if(is_array($this->categories)) {
+				$this->total = count($this->categories);
+			} else {
+				$this->categories = array();
+				$this->total = 0;
+			}
 			return true;
 		}
 		unset($this->categories);

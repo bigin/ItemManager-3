@@ -42,7 +42,12 @@ class ItemMapper extends Mapper
 		}
 		if(file_exists($this->path)) {
 			$this->items = include($this->path);
-			$this->total = count($this->items);
+			if(is_array($this->items)) {
+				$this->total = count($this->items);
+			} else {
+				$this->items = array();
+				$this->total = 0;
+			}
 			return true;
 		}
 		unset($this->items);
