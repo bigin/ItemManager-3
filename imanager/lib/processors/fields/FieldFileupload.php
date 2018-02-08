@@ -97,11 +97,6 @@ class FieldFileupload implements FieldInterface
 
 	public function render()
 	{
-		if(is_null($this->name)) {
-			trigger_error('FieldFileupload::$name expected, null given', E_USER_WARNING);
-			return false;
-		}
-
 		$siteUrl = rawurlencode($this->url);
 		$this->jsurl = $this->url.'imanager/upload/js/';
 		$urlParams = "itemid={$this->itemid}&categoryid={$this->categoryid}&fieldid={$this->
