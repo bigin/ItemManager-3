@@ -5,7 +5,7 @@ define('IM_ROOTPATH', $basedir.'/');
 define('IM_SOURCEPATH', IM_ROOTPATH.'imanager/lib/');
 define('IM_SITEROOT', 'data/');
 define('IM_DATAPATH', IM_ROOTPATH.IM_SITEROOT);
-define('IM_UPLOADHANDLERPATH', IM_ROOTPATH.'upload/');
+define('IM_UPLOADHANDLERPATH', IM_ROOTPATH.'imanager/upload/server/php/');
 define('IM_CATEGORYPATH', IM_DATAPATH.'categories/');
 define('IM_FIELDSPATH', IM_DATAPATH.'fields/');
 define('IM_ITEMPATH', IM_DATAPATH.'items/');

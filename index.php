@@ -48,20 +48,16 @@ if($category) {
 \Imanager\Util::preformat($item);
 \Imanager\Util::preformat($bool);*/
 
-$category = $imanager->getCategory(1);
-if($category) {
-	$field = $category->getField('name=files');
-	$bool = $category->remove($field);
-}
-// let your result pass through the filter again
-\Imanager\Util::preformat($field);
-\Imanager\Util::preformat($bool);
-
 
 
 /*$category = new \Imanager\Category();
-$category->set('name', 'My Bla Category');
-$category->save();*/
+$category->set('name', 'Gallery');
+$category->save();
+$newField = new \Imanager\Field($category->id);
+$newField->set('type', 'fileupload');
+$newField->set('name', 'images');
+$newField->set('label', 'Visuals');
+$newField->save();*/
 
 /*$category = $imanager->getCategory('name=My Bla Category');
 if(!$category) {
@@ -348,7 +344,7 @@ echo $output;*/
 /**
  * Create new image with images
  */
-/*$category = $imanager->getCategory(1);
+$category = $imanager->getCategory(1);
 $field = $category->getField('name=images');
 $fieldMarkup = new \Imanager\FieldFileupload();
 $timestamp_images = time();
@@ -405,7 +401,7 @@ echo $fieldMarkup->renderJsLibs();
 echo '<input type="hidden" name="action" value="save">';
 echo '<button type="submit">Save</button>';
 
-echo '</form>';*/
+echo '</form>';
 
 /**
  * Imanager's file upload form with multiple upload fields, example:
@@ -418,7 +414,8 @@ echo '</form>';*/
 	// Prepare input value
 	$dataSent = array(
 		'file' => $imanager->input->post->position_images,
-		'title' => $imanager->input->post->title_images
+		'title' => $imanager->input->post->title_images,
+		'timestamp' => $timestamp_images
 	);
 	$result = $item->set('images', $dataSent);
 	if($result !== true) {
