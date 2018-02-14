@@ -76,9 +76,9 @@ class FileuploadFieldValue
 			$thumb->{$type}($width, $height);
 			$thumb->save(IM_UPLOADPATH.$dir.'/thumbnail/'.$width.'x'.$height.'_'.$this->name, @$path_parts['extension']);
 		}
-		$resized = clone $this;
-		$resized->url = $this->path.'thumbnail/'.$width.'x'.$height.'_'.$this->name;
-		return $resized;
+		//$resized = clone $this;
+		//$resized->urls = $this->path.'thumbnail/'.$width.'x'.$height.'_'.$this->name;
+		return $this->path.'thumbnail/'.$width.'x'.$height.'_'.$this->name;
 	}
 
 }
