@@ -43,17 +43,17 @@ class UploadHandler
 
 	protected $imanager = null;
 
-	function __construct($options = null, $initialize = true, $error_messages = null)
+	function init($options = null, $execute = true, $error_messages = null)
 	{
 		$this->imanager = imanager();
 
 		if(!$this->imanager->input->get->fieldid || !$this->imanager->input->get->categoryid) {
-			trigger_error('fieldid and categoryid expected', E_USER_WARNING);
+			//trigger_error('fieldid and categoryid expected', E_USER_WARNING);
 			return false;
 		}
 
 		if(!$this->imanager->input->get->itemid && !$this->imanager->input->get->timestamp) {
-			trigger_error('Neither a timestamp nor an itemid was passed', E_USER_WARNING);
+			//trigger_error('Neither a timestamp nor an itemid was passed', E_USER_WARNING);
 			return false;
 		}
 
@@ -210,12 +210,12 @@ class UploadHandler
 		if($error_messages) {
 			$this->error_messages = $error_messages + $this->error_messages;
 		}
-		if($initialize) {
-			$this->initialize();
+		if($execute) {
+			$this->execute();
 		}
 	}
 
-	protected function initialize()
+	protected function execute()
 	{
 		switch ($this->get_server_var('REQUEST_METHOD')) {
 			case 'OPTIONS':

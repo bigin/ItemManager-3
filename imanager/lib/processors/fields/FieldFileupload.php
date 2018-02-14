@@ -158,7 +158,61 @@ class FieldFileupload implements FieldInterface
 		<!-- The File Upload user interface plugin -->
 		<script src="<?php echo $this->jsurl; ?>jquery.fileupload-ui.js"></script>
 		<script src="<?php echo $this->jsurl; ?>jquery.fileupload-jquery-ui.js"></script>
+		<script src="<?php echo $this->jsurl; ?>field.actions.js"></script>
 		<?php return ob_get_clean();
+	}
+
+	public function renderJsBlock()
+	{
+		$siteUrl = rawurlencode($this->url);
+		$urlParams = "itemid={$this->itemid}&categoryid={$this->categoryid}&fieldid={$this->
+			fieldid}&timestamp={$this->timestamp}&siteurl={$siteUrl}";
+		$block =
+		'<script>
+			$(function() {
+			"use strict";
+			// Initialize the jQuery File Upload widget:
+			$("#fileupload_'.$this->id.'").fileupload({
+				// Uncomment the following to send cross-domain cookies:
+				url: "'.$this->action.'?'.$urlParams.'",
+				uploadTemplateId: "template-upload_'.$this->id.'",
+				downloadTemplateId: "template-download_'.$this->id.'",
+			},
+			"option",
+			{
+				previewMaxWidth: '.$this->imanager->config->thumbSize['width'].',
+				previewMaxHeight: '.$this->imanager->config->thumbSize['height'].'
+			},
+			"redirect",
+				window.location.href.replace(
+					/\/[^\/]*$/,
+					"/cors/result.html?%s"
+				)
+			);
+			$("#fileupload_'.$this->id.'").addClass("fileupload-processing");
+			$.ajax({
+				url: $("#fileupload_'.$this->id.'").fileupload("option", "url"),
+				dataType: "json",
+				context: $("#fileupload_'.$this->id.'")[0]
+			}).always(function (result) {
+				console.log(result);
+				$("#fileupload_'.$this->id.'").removeClass("fileupload-processing");
+			}).done(function (result) {
+				//console.log(result);
+			$(this).fileupload("option", "done")
+				.call(this, $.Event("done"), {result: result});
+			});
+			// Load existing files:
+			$(".table tbody").sortable({
+				items:"tr.sortable", handle:"td",
+				update:function(e,ui) {
+					renumberImages();
+				}
+			});
+			renumberImages();
+		});
+		</script>';
+		return $block;
 	}
 
 	public function getConfigFieldtype()
