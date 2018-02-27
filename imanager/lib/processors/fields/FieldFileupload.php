@@ -74,6 +74,14 @@ class FieldFileupload implements FieldInterface
 		'accept_types' => 'gif|jpe?g|png'
 	);
 
+	public $labels = array(
+		'add_files' => 'Add Files',
+		'start' => 'Upload',
+		'cancel' => 'Cancel',
+		'delete' => 'Remove',
+		'placeholder' => 'Enter an image title',
+	);
+
 	/**
 	 * FieldFileupload constructor
 	 */
@@ -104,11 +112,11 @@ class FieldFileupload implements FieldInterface
 
 		return $this->imanager->templateParser->render('fields/fileupload', array(
 				'action' => $this->action,
-				'add_files' => MsgReporter::getRecord('add_files'),
-				'start_upload' => MsgReporter::getRecord('start_upload'),
-				'cancel_upload' => MsgReporter::getRecord('cancel_upload'),
-				'delete_upload' => MsgReporter::getRecord('delete_upload'),
-				'imagetitle_placeholder' => MsgReporter::getRecord('imagetitle_placeholder'),
+				'add_files' => $this->labels['add_files'],
+				'start_upload' => $this->labels['start'],
+				'cancel_upload' => $this->labels['cancel'],
+				'delete_upload' => $this->labels['delete'],
+				'imagetitle_placeholder' => $this->labels['placeholder'],
 				'jsurl' => $this->jsurl,
 				'scripturl' => "{$this->action}?{$urlParams}",
 				'deleteurl' => "&{$urlParams}",
@@ -195,7 +203,7 @@ class FieldFileupload implements FieldInterface
 				dataType: "json",
 				context: $("#fileupload_'.$this->id.'")[0]
 			}).always(function (result) {
-				console.log(result);
+				//console.log(result);
 				$("#fileupload_'.$this->id.'").removeClass("fileupload-processing");
 			}).done(function (result) {
 				//console.log(result);
