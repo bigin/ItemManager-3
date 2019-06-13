@@ -165,7 +165,7 @@ $newField->set('type', 'fileupload');
 $newField->set('label', 'Files');
 $configs = new \Imanager\FieldConfigs();
 $configs->accept_types = 'gif|jpe?g|png';
-$field->set('configs', $configs);
+$newField->set('configs', $configs);
 $newField->save();*/
 
 
