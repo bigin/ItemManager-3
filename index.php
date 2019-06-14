@@ -39,6 +39,56 @@
 <main role="main">
 <?php
 
+////////////////////////////////////////////////
+// IManager 3.1
+////////////////////////////////////////////////
+
+/**
+ * Create new categorie mit 2 fields: text, password
+ */
+/*$category = new \Imanager\Category();
+$category->set('name', 'Testcategory');
+$category->save();
+$newField = new \Imanager\Field($category->id);
+$newField->set('type', 'text')
+	->set('name', 'content')
+	->set('label', 'My Text')
+	->save();
+$newField = new \Imanager\Field($category->id);
+$newField->set('type', 'password')
+	->set('name', 'password')
+	->set('label', 'Enter your password')
+	->save();*/
+
+/**
+ * Create new item in the "Testcategory"
+ */
+/*$item = new \Imanager\Item(1);
+$item->set('name', 'Test User')
+	->set('content', 'This is BCRYPTed item')
+	->set('password', ['password' => 'NtBz39Äö', 'confirm_password' => 'NtBz39Äö'])
+	->save();*/
+
+/**
+ * Load an Item and compare the passwords (simulates login)
+ */
+/*$category = $imanager->getCategory(1);
+$item = $category->getItem('name=Test User');
+$enteredPass = 'NtBz39Äö';
+\Imanager\Util::preformat($item->password->compare($enteredPass));*/
+
+/**
+ * Chained Item Select
+ */
+/*$item = $imanager->getCategory('name=Testcategory')->getItem('name=Test User');
+\Imanager\Util::preformat($item);*/
+
+
+
+////////////////////////////////////////////////
+// IManager 3.0
+////////////////////////////////////////////////
+
 /*$category = $imanager->getCategory(1);
 if($category) {
 	$item = $category->getItem(3);
@@ -48,16 +98,6 @@ if($category) {
 \Imanager\Util::preformat($item);
 \Imanager\Util::preformat($bool);*/
 
-
-
-/*$category = new \Imanager\Category();
-$category->set('name', 'Gallery');
-$category->save();
-$newField = new \Imanager\Field($category->id);
-$newField->set('type', 'fileupload');
-$newField->set('name', 'images');
-$newField->set('label', 'Visuals');
-$newField->save();*/
 
 /*$category = $imanager->getCategory('name=My Bla Category');
 if(!$category) {
@@ -344,7 +384,7 @@ echo $output;*/
 /**
  * Create new image with images
  */
-$category = $imanager->getCategory(1);
+/*$category = $imanager->getCategory(1);
 $field = $category->getField('name=images');
 $fieldMarkup = new \Imanager\FieldFileupload();
 $timestamp_images = time();
@@ -401,7 +441,7 @@ echo $fieldMarkup->renderJsLibs();
 echo '<input type="hidden" name="action" value="save">';
 echo '<button type="submit">Save</button>';
 
-echo '</form>';
+echo '</form>';*/
 
 /**
  * Imanager's file upload form with multiple upload fields, example:

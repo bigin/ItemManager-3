@@ -30,7 +30,6 @@ class InputText implements InputInterface
 
 	/**
 	 * @var null int
-	 * NOTE: Deprecated (for compatibility purposes it will remain in for the time being)
 	 */
 	public $errorCode = null;
 
@@ -79,7 +78,7 @@ class InputText implements InputInterface
 		// Check input required
 		if(($this->required) && empty($value)) {
 			$this->errorCode = self::EMPTY_REQUIRED;
-			return $this->errorCode;
+			return false;
 		}
 
 		// Sanitize input
@@ -92,24 +91,22 @@ class InputText implements InputInterface
 		// Sanitizer has wiped the value?
 		if(!$this->value) {
 			$this->errorCode = self::WRONG_VALUE_FORMAT;
-			return $this->errorCode;
+			return false;
 		}
 
 		// Check min value length
 		if($this->minLen > 0 && mb_strlen($this->value, 'UTF-8') < (int) $this->minLen) {
 			$this->errorCode = self::ERR_MIN_LENGTH;
-			return $this->errorCode;
+			return false;
 		}
 
 		// Check max value length
 		if($this->maxLen > 0 && mb_strlen($this->value, 'UTF-8') > (int) $this->maxLen) {
 			$this->errorCode = self::ERR_MAX_LENGTH;
-			return $this->errorCode;
+			return false;
 		}
 
-		return $this->value;
-
-		//return true;
+		return true;
 	}
 
 	/**
