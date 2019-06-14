@@ -1,4 +1,3 @@
-README.md
 # ItemManager - Simple Flat-File PHP Framework
 _Ideal for smaller projects with smaller-sized data volumes, standalone, no database required - flexible and powerful API!_
 
