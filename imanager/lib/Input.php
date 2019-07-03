@@ -86,7 +86,10 @@ class UrlSegments
 			'useTrailingSlash' => true
 		];
 		$options = array_merge($defaults, $options);
-		if($this->total <= 1) { return $this->segment{($this->total - 1)}.(($options['useTrailingSlash']) ? '/' : ''); }
+		if($this->total <= 1) {
+			if($this->total == 0) { return '';}
+			return $this->segment{($this->total - 1)}.(($options['useTrailingSlash']) ? '/' : '');
+		}
 		$buf = '';
 		foreach($this->segment as $key => $value) {
 			$buf .= $this->segment{($key)}.'/';
