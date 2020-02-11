@@ -1,5 +1,5 @@
 # ItemManager 
-> decoupled and reusable PHP flat-file library for web applications   
+> – Decoupled and reusable PHP flat-file library for web applications.   
 
 ![](https://im.ehret-studio.com/tuts/data/uploads/im-banner.png)   
 
