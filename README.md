@@ -3,7 +3,7 @@
 
 ![](https://im.ehret-studio.com/tuts/data/uploads/im-banner.png)   
 
-Define custom content types dynamically, create your own ecosystem of modules, static websites, extensions for already existing systems or even any web applicationen you like.   
+Define custom content types dynamically, create your own ecosystem of modules, static websites, extensions for already existing systems or even any web applications you like.   
 
 _Ideal for smaller projects with smaller-sized data volumes, standalone, no database required - flexible and powerful API._
 
