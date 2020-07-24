@@ -64,7 +64,7 @@
 			<span class="preview"></span>
 		</td>
 		<td>
-			<p class="name">{%=file.name%}</p>
+			<p class="name"><span class="heading">[[name_heading]]</span> {%=file.name%}</p>
 	<strong class="error text-danger"></strong>
 	</td>
 	<td>
@@ -105,7 +105,7 @@
 			</span>
 		</td>
 		<td>
-			<p class="name">
+			<p class="name"><span class="heading">[[name_heading]] </span>
 				{% if (file.url) { %}
 					<a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" {%=file.thumbnailUrl?'data-gallery':''%}>{%=file.name%}</a>
 				{% } else { %}
