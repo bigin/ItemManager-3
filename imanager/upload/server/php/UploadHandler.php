@@ -70,7 +70,7 @@ class UploadHandler
 
 		// A new item (Upload directory has not yet been created)
 		if(!$this->imanager->input->get->itemid) {
-			$timestamp = $this->imanager->sanitizer->date($this->imanager->input->get->timestamp);
+            $timestamp = $this->imanager->sanitizer->date($this->imanager->input->get->timestamp);
 			if(!$timestamp) { 
                 Util::dataLog(__METHOD__.'(); Aborting: Invalid format of the time stamp.');
                 return false; 
@@ -88,8 +88,9 @@ class UploadHandler
 		}
 
 		$item = null;
-		$category = $this->imanager->getCategory($categoryid);
-		if($category) { $item = $category->getItem($this->imanager->input->get->itemid); }
+        $category = $this->imanager->getCategory($categoryid);
+        
+		if(isset($itemid) && $category) { $item = $category->getItem($itemid); }
 		if($item && $field) {
 			if(empty($this->positions) && $item->{$field->name}) {
 				foreach($item->{$field->name} as $i => $itemfile) {
