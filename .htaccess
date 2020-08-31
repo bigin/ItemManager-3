@@ -1,6 +1,10 @@
 RewriteEngine On
 AddDefaultCharset UTF-8
 
+# Note: If you experience a (500) error, it may indicate your host does not allow setting one or
+# more of these options. First try replacing the +FollowSymLinks with +SymLinksifOwnerMatch.
+
+# Do not show directory indexes (strongly recommended)
 Options -Indexes
 Options +SymLinksIfOwnerMatch
 # Options +SymLinksifOwnerMatch
