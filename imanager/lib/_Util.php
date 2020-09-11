@@ -13,11 +13,11 @@ class Util
 		include(IM_ROOTPATH.'imanager/inc/config.php');
 		if(file_exists(IM_SETTINGSPATH.'custom.config.php')) { include(IM_SETTINGSPATH.'custom.config.php'); }
 		if($config->debug) { error_reporting(E_ALL); }
+		else { error_reporting(0); }
 		if(!isset($_SESSION) && self::checkCookieAllowed($config)) { 
 			// session_set_cookie_params(['secure' => 1, 'samesite' => 'lax']);
 			session_start(); 
 		}
-		else { error_reporting(0); }
 		//$config->getScriptUrl();
 		return $config;
 	}
