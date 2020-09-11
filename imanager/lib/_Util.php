@@ -13,6 +13,10 @@ class Util
 		include(IM_ROOTPATH.'imanager/inc/config.php');
 		if(file_exists(IM_SETTINGSPATH.'custom.config.php')) { include(IM_SETTINGSPATH.'custom.config.php'); }
 		if($config->debug) { error_reporting(E_ALL); }
+		if(!isset($_SESSION) && self::checkCookieAllowed($config)) { 
+			// session_set_cookie_params(['secure' => 1, 'samesite' => 'lax']);
+			session_start(); 
+		}
 		else { error_reporting(0); }
 		//$config->getScriptUrl();
 		return $config;
@@ -327,5 +331,21 @@ class Util
 		$message = "Type: " . get_class( $e ) . "; Message: {$e->getMessage()}; File: {$e->getFile()}; Line: {$e->getLine()};";
 		self::dataLog($message);
 		exit();
+	}
+
+	/**
+	 * It checks if the config variable sessionAllow is 
+	 * set to true or false.
+	 * 
+	 * @param object
+	 * 
+	 * @return bool
+	 */
+	protected static function checkCookieAllowed($config)
+	{
+		if($config->sessionAllow instanceof \Closure) {
+			return ($config->sessionAllow)();
+		}
+		return $config->sessionAllow; 
 	}
 }

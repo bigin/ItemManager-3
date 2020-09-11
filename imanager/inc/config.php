@@ -14,6 +14,14 @@
 $config->debug = true;
 
 /**
+ * Allows setting session cookie. 
+ * If you want to prevent setting session set this value to "false"
+ * 
+ * @var bool|callable
+ */
+$config->sessionAllow = true;
+
+/**
  * Max length for the fieds names
  *
  * @var integer

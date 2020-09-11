@@ -1,9 +1,4 @@
 <?php
-if(!isset($_SESSION)) {
-	// PHP 7.3 > session_set_cookie_params(['secure' => 1, 'samesite' => 'lax']); 
-	session_start(); 
-}
-
 // Define constants
 include_once __DIR__.'/_def.php';
 // Util
