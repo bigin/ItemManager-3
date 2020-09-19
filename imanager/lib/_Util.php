@@ -12,24 +12,17 @@ class Util
 		$config = new Config();
 		include(IM_ROOTPATH.'imanager/inc/config.php');
 		if(file_exists(IM_SETTINGSPATH.'custom.config.php')) { include(IM_SETTINGSPATH.'custom.config.php'); }
-		if($config->debug) { error_reporting(E_ALL); }
+		if($config->debug) { error_reporting(E_ALL); /* E_ERROR | E_COMPILE_ERROR | E_WARNING */ }
 		else { error_reporting(0); }
+		if($config->imErrorHandler) {
+			set_error_handler(__NAMESPACE__.'\Util::imErrorHandler');
+			register_shutdown_function(__NAMESPACE__.'\Util::imShutdownErrorHandler');
+		}
 		if(!isset($_SESSION) && self::checkCookieAllowed($config)) { 
 			// session_set_cookie_params(['secure' => 1, 'samesite' => 'lax']);
 			session_start(); 
 		}
-		//$config->getScriptUrl();
 		return $config;
-	}
-
-	/**
-	 * @param null $path
-	 * @param string $language
-	 */
-	public static function buildLanguage($path = null, $language = 'en_US.php')
-	{
-		global $i18n;
-		if(file_exists(IM_ROOTPATH.'imanager/lang/'.$language)) { include(IM_ROOTPATH.'imanager/lang/'.$language); }
 	}
 
 	/**
@@ -275,11 +268,10 @@ class Util
 	 * @param $string
 	 * @param $file
 	 * @param $line
-	 * @param $context
 	 *
 	 * @return bool
 	 */
-	public static function imErrorHandler($number, $string, $file, $line, $context)
+	public static function imErrorHandler($number, $string, $file, $line)
 	{
         // Determine if this error is one of the enabled ones in php config (php.ini, .htaccess, etc)
         $error_is_enabled = (bool)($number & ini_get('error_reporting'));
@@ -308,6 +300,14 @@ class Util
 		}
 	}
 
+	public static function imShutdownErrorHandler()
+	{
+		$err = error_get_last();
+		if(! is_null($err)) {
+			self::logException(new \ErrorException($err['message'], $err['type'], 1, $err['file'], $err['line']));
+		}
+	}
+
 	/**
 	 * This method is used to log and show ItemManager internal exceptions
 	 *
@@ -318,17 +318,21 @@ class Util
 		$error_is_enabled = (bool)(ini_get('error_reporting'));
 
 		if($error_is_enabled) {
-			print "<div style='text-align: center;'>";
+			print "<div style='text-align: center; font-family: monospace;'>";
 			print "<h2 style='color: rgb(190, 50, 50);'>Exception Occured:</h2>";
 			print "<table style='text-align: left; display: inline-block;'>";
-			print "<tr style='background-color:rgb(230,230,230);'><th style='width: 80px;'>Type</th><td>" . get_class( $e ) . "</td></tr>";
+			print "<tr style='background-color:rgb(230,230,230);'><th style='width: 80px;'>Type</th><td>".self::humanErrorType($e->getCode())."</td></tr>";
 			print "<tr style='background-color:rgb(240,240,240);'><th>Message</th><td>{$e->getMessage()}</td></tr>";
 			print "<tr style='background-color:rgb(230,230,230);'><th>File</th><td>{$e->getFile()}</td></tr>";
 			print "<tr style='background-color:rgb(240,240,240);'><th>Line</th><td>{$e->getLine()}</td></tr>";
-			print "</table><p>This error message was shown because site is in debug mode (\$config->debug = true;). Error has been logged</p></div>";
+			print "</table><p>This error message was shown because site is in debug mode (\$config->debug = true;). Error has been logged</p>";
+			print "<h3 style='color: rgb(190, 50, 50);'>Trace:</h3>";
+			print "<table style='text-align: left; display: inline-block;'>";
+			print "<tr style='background-color:rgb(230,230,230);'><td>".nl2br($e->getTraceAsString())."</td></tr>";
+			print "</table>";
 		}
 
-		$message = "Type: " . get_class( $e ) . "; Message: {$e->getMessage()}; File: {$e->getFile()}; Line: {$e->getLine()};";
+		$message = "Type: ".get_class($e)."; Message: {$e->getMessage()}; File: {$e->getFile()}; Line: {$e->getLine()};";
 		self::dataLog($message);
 		exit();
 	}
@@ -347,5 +351,49 @@ class Util
 			return ($config->sessionAllow)();
 		}
 		return $config->sessionAllow; 
+	}
+
+	/**
+	 * Returns user-friendly error code.
+	 * 
+	 * @param integer $type
+	 * 
+	 * @return string 
+	 */
+	public static function humanErrorType($type)
+	{
+		switch($type) {
+			case E_ERROR: // 1
+				return 'E_ERROR';
+			case E_WARNING: // 2
+				return 'E_WARNING';
+			case E_PARSE: // 4
+				return 'E_PARSE';
+			case E_NOTICE: // 8
+				return 'E_NOTICE';
+			case E_CORE_ERROR: // 16
+				return 'E_CORE_ERROR';
+			case E_CORE_WARNING: // 32
+				return 'E_CORE_WARNING';
+			case E_COMPILE_ERROR: // 64
+				return 'E_COMPILE_ERROR';
+			case E_COMPILE_WARNING: // 128
+				return 'E_COMPILE_WARNING';
+			case E_USER_ERROR: // 256
+				return 'E_USER_ERROR';
+			case E_USER_WARNING: // 512
+				return 'E_USER_WARNING';
+			case E_USER_NOTICE: // 1024
+				return 'E_USER_NOTICE';
+			case E_STRICT: // 2048
+				return 'E_STRICT';
+			case E_RECOVERABLE_ERROR: // 4096
+				return 'E_RECOVERABLE_ERROR';
+			case E_DEPRECATED: // 8192
+				return 'E_DEPRECATED';
+			case E_USER_DEPRECATED: // 16384
+				return 'E_USER_DEPRECATED';
+		}
+		return '';
 	}
 }

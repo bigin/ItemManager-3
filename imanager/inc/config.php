@@ -14,6 +14,13 @@
 $config->debug = true;
 
 /**
+ * If ItemManager's own ErrorHandler should be used "true"
+ * 
+ * @var bool
+ */
+$config->imErrorHandler = true;
+
+/**
  * Allows setting session cookie. 
  * If you want to prevent setting session set this value to "false"
  * 
