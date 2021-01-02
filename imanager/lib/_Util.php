@@ -7,20 +7,16 @@ class Util
 	 *
 	 * @return Config object
 	 */
-	public static function buildConfig()
+	public static function buildConfig(): Config
 	{
 		$config = new Config();
 		include(IM_ROOTPATH.'imanager/inc/config.php');
 		if(file_exists(IM_SETTINGSPATH.'custom.config.php')) { include(IM_SETTINGSPATH.'custom.config.php'); }
-		if($config->debug) { error_reporting(E_ALL); /* E_ERROR | E_COMPILE_ERROR | E_WARNING */ }
+		if($config->debug) { error_reporting(E_ALL); }
 		else { error_reporting(0); }
 		if($config->imErrorHandler) {
 			set_error_handler(__NAMESPACE__.'\Util::imErrorHandler');
 			register_shutdown_function(__NAMESPACE__.'\Util::imShutdownErrorHandler');
-		}
-		if(!isset($_SESSION) && self::checkCookieAllowed($config)) { 
-			// session_set_cookie_params(['secure' => 1, 'samesite' => 'lax']);
-			session_start(); 
 		}
 		return $config;
 	}
@@ -36,10 +32,10 @@ class Util
 		$filename = empty($file) ? IM_LOGPATH.'imlog_'.date('Ym').'.txt' : IM_LOGPATH.$file.'.txt';
 		if(!file_exists($filename)) { self::install($filename);}
 		if(!$handle = fopen($filename, 'a+')) { return; }
-		$datum = date(imanager('config')->systemDateFormat, time());
+		$datum = date('d.m.Y H:i:s', time());
 		if(!fwrite($handle, '[ '.$datum.' ]'. ' ' . print_r($data, true) . "\r\n")) { return; }
 		fclose($handle);
-		chmod($filename, imanager('config')->chmodFile);
+		chmod($filename, 0644);
 	}
 
 	/**
@@ -275,7 +271,8 @@ class Util
 	{
         // Determine if this error is one of the enabled ones in php config (php.ini, .htaccess, etc)
         $error_is_enabled = (bool)($number & ini_get('error_reporting'));
-        
+		
+		self::dataLog($number);
         // DISABLED by @ e.g. @your_function() ...
         if(error_reporting() === 0) return;
 
@@ -300,7 +297,7 @@ class Util
 		}
 	}
 
-	public static function imShutdownErrorHandler()
+	public static function imShutdownErrorHandler(): void
 	{
 		$err = error_get_last();
 		if(! is_null($err)) {
@@ -313,7 +310,7 @@ class Util
 	 *
 	 * @param \Exception $e
 	 */
-	public static function logException(\Exception $e)
+	public static function logException(\Exception $e): void
 	{
 		$error_is_enabled = (bool)(ini_get('error_reporting'));
 
@@ -332,25 +329,9 @@ class Util
 			print "</table>";
 		}
 
-		$message = "Type: ".get_class($e)."; Message: {$e->getMessage()}; File: {$e->getFile()}; Line: {$e->getLine()};";
+		$message = "Type: ".self::humanErrorType($e->getCode())."; Message: {$e->getMessage()}; File: {$e->getFile()}; Line: {$e->getLine()};";
 		self::dataLog($message);
 		exit();
-	}
-
-	/**
-	 * It checks if the config variable sessionAllow is 
-	 * set to true or false.
-	 * 
-	 * @param object
-	 * 
-	 * @return bool
-	 */
-	protected static function checkCookieAllowed($config)
-	{
-		if($config->sessionAllow instanceof \Closure) {
-			return ($config->sessionAllow)();
-		}
-		return $config->sessionAllow; 
 	}
 
 	/**
@@ -360,7 +341,7 @@ class Util
 	 * 
 	 * @return string 
 	 */
-	public static function humanErrorType($type)
+	public static function humanErrorType($type): string
 	{
 		switch($type) {
 			case E_ERROR: // 1

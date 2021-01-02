@@ -3,6 +3,7 @@
 class Input
 {
 	public $sanitizer;
+	public $requestBody;
 	public $post;
 	public $get;
 	public $put;
@@ -15,6 +16,7 @@ class Input
 	public function __construct($config, $sanitizer) {
 		$this->sanitizer = $sanitizer;
 		$this->config = $config;
+		$this->requestBody = file_get_contents('php://input'); 
 		$this->urlSegments = new UrlSegments($this->sanitizer);
 		$this->parseUrl();
 		$this->post = new Post();
@@ -59,13 +61,14 @@ class Input
 		foreach($_POST as $key => $value) { $this->post->{$key} = $value; }
 		foreach($_GET as $key => $value) { $this->get->{$key} = $value; }
 		if($_SERVER['REQUEST_METHOD'] == 'PATCH') {
-			parse_str(file_get_contents('php://input'), $_PATCH);
+			parse_str($this->requestBody, $_PATCH);
 			foreach($_PATCH as $key => $value) { $this->patch->{$key} = $value; }
 		}
 		elseif($_SERVER['REQUEST_METHOD'] == 'PUT') {
-			parse_str(file_get_contents('php://input'), $_PUT);
+			parse_str($this->requestBody, $_PUT);
 			foreach($_PUT as $key => $value) { $this->put->{$key} = $value; }
 		}
+		//foreach($_PATCH as $key => $value) { $this->post->{$key} = $value; }
 		if(!$this->pageNumber && isset($_GET[$this->config->pageNumbersUrlSegment]) &&
 			(int) $_GET[$this->config->pageNumbersUrlSegment] != 0) {
 			$this->pageNumber = (int) $_GET[$this->config->pageNumbersUrlSegment];
