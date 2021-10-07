@@ -1,23 +1,23 @@
-<?php include('imanager.php'); ?>
+<?php
+
+include('imanager.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8">
 
-	<title>Page Title</title>
+	<title>IManager Tests</title>
 
-	<meta name="description" content="">
+	<meta name="description" content="This file is only used for testing, once you have checked it, you can delete it.">
 
 	<!-- Mobile-friendly viewport -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<!-- Style sheet link -->
-	<!--<link href="css/main.css" rel="stylesheet" type="text/css" media="all">-->
-	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-
-	<!-- js stuff -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+	<!-- Style sheet link – when upload is used -->
+	<!-- <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css"> -->
+	<!-- js stuff – when upload is used -->
+	<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script> -->
 
 </head>
 <body>
@@ -38,6 +38,62 @@
 </header>
 <main role="main">
 	<?php
+	////////////////////////////////////////////////
+	// IManager 3.2.2
+	////////////////////////////////////////////////
+
+	/**
+	 * ex.0001
+	 * 
+	 * Create a category with fields if it does not already exist.
+	 * Note, however, that setting the field attribute 'name-bug' 
+	 * on the second field will cause an exception.
+	 */
+	/* $myCategory = $imanager->getCategory('name=Testcategory');
+	if(! $myCategory) {
+		$myCategory = new \Imanager\Category();
+		if($myCategory->set('name', 'Testcategory')
+			->set('slug', 'Just for test')
+			->save()) {
+
+			$field = new \Imanager\Field($myCategory->id);
+			$field->set('type', 'text')
+				->set('name', 'my-field')
+				->set('label', 'Nur ein Test')
+				->save();
+
+			$field = new \Imanager\Field($myCategory->id);
+			$field->set('type', 'text')
+				->set('name-bug', 'blabla')
+				->set('label', 'error Illegal field attribute')
+				->save();
+		}
+
+	} */
+
+	/**
+	 * ex. 0002
+	 * 
+	 * This is the addition to the example 0001
+	 */
+	/* $myCategory = $imanager->getCategory('name=Testcategory');
+	$field = new \Imanager\Field($myCategory->id);
+	$field->set('type', 'text')
+		->set('name', 'blabla')
+		->save();
+
+	$myItem = new \Imanager\Item($myCategory->id);
+	$myItem->set('my_field', "I don't know.")
+		->set('blabla', "<script>alert('xss');</script>")
+		->save();
+
+	// This causes an error: "Uncaught Error: Call to a member function save() on null",
+	// cause value cannot contain a space.
+	$myItem = new \Imanager\Item($myCategory->id);
+	$myItem->set('my_field', "I don't know.")
+		->set('blabla', " ")
+		->save(); */
+	
 
 	////////////////////////////////////////////////
 	// IManager 3.1
